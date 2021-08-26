@@ -36,4 +36,12 @@ export class GooseGamePage implements OnInit {
     }
   }
 
+  lanciaDado() {
+    const lancio = Math.floor(Math.random() * 6) + 1;
+    console.log(lancio);
+    var immagineDado = <HTMLInputElement>document.getElementById("cubo")
+    //TODO rivedere la posizione degli assets
+    immagineDado.src = "../../../assets/game-assets/dado" + lancio + ".png";
+  }
+
 }
