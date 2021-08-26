@@ -8,9 +8,17 @@
 
   <div>
     <div class="player">
-      <img src="./game-assets/duck.png">
+      <img src="../../../assets/game-assets/duck.png">
       <ion-label>Rondy</ion-label>
     </div>
   </div>
+
+  <img src="../../../assets/game-assets/duck.png" id='i1' style="position:absolute; left: 500; top: 100;">
+  <br><br><br><br>
+
+  <ion-button expand="block" (click)="muoviPedina('right')">destra</ion-button>
+  <ion-button expand="block" (click)="muoviPedina('down')">sotto</ion-button>
+  <ion-button expand="block" (click)="muoviPedina('left')">sinistra</ion-button>
+  <ion-button expand="block" (click)="muoviPedina('up')">sopra</ion-button>
 
 </ion-content>
