@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Domanda</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-list>
+    <ion-radio-group value="" (ionChange)="radioGroupChange($event)">
+      <ion-list-header>
+        <ion-label>{{ question.q }}</ion-label>
+      </ion-list-header>
+
+      <ion-item *ngFor="let answer of answers" [id]="answer">
+        <ion-label>{{ answer }}</ion-label>
+        <!-- <ion-label>Giusto!</ion-label>
+        <ion-label>Sbagliato</ion-label> -->
+        <ion-radio slot="start" [value]="answer"></ion-radio>
+      </ion-item>
+
+    </ion-radio-group>
+
+    <!-- <ion-item lines="none">
+      <ion-label style="text-align: center; color:var(--ion-color-danger); font-size: 30px;">Peccato! La risposta è errata :(</ion-label>
+    </ion-item> -->
+  </ion-list>
+</ion-content>

@@ -1,27 +1,128 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>goose-game</ion-title>
+    <ion-title>Gioco dell'Oca</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-  <div>
-    <div class="player">
-      <img src="../../../assets/game-assets/duck.png">
-      <ion-label>Rondy</ion-label>
-    </div>
-  </div>
+  <ion-row>
+    <ion-card class="players-board" color="primary">
+      <ion-item lines="full" color="primary">
+        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+        <ion-label style="text-align: center;">GIOCATORI</ion-label>
+        <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+      </ion-item>
 
-  <img src="../../../assets/game-assets/duck.png" id='i1' style="position:absolute; left: 500; top: 100;">
-  <br><br><br><br>
+      <ion-slides [options]="{ slidesPerView: 'auto', zoom: true, grabCursor: true }">
+        <ion-slide *ngFor="let p of players" style="width: 80px; height: 100px;">
+          <ion-col>
+            <ion-label>
+              <p>{{ p.username }}</p>
+            </ion-label>
+            <ion-img style="pointer-events:none" src="../../../assets/game-assets/duck64.png"></ion-img>
+          </ion-col>
+        </ion-slide>
+      </ion-slides>
+    </ion-card>
 
-  <ion-button expand="block" (click)="muoviPedina('right')">destra</ion-button>
-  <ion-button expand="block" (click)="muoviPedina('down')">sotto</ion-button>
-  <ion-button expand="block" (click)="muoviPedina('left')">sinistra</ion-button>
-  <ion-button expand="block" (click)="muoviPedina('up')">sopra</ion-button>
+    <ion-card color="primary" class="dieroll-board">
+      <ion-card-header>
+        <ion-card-subtitle style="text-align: center;">Fai click per lanciare il dado</ion-card-subtitle>
+        <ion-button [class.button-disabled]="!myTurn" color="secondary" shape="round" expand="block"
+          (click)="lanciaDado()">Lancia</ion-button>
+      </ion-card-header>
+
+      <ion-card-content style="align-items: center;">
+        <!-- <img src="../../../assets/game-assets/dado1.png" id='cubo' style="margin:auto;"> -->
+        <div style="height: 60px !important; width: 60px !important;" class="backgroundImageDado" id="cubo"></div>
+      </ion-card-content>
+    </ion-card>
+  </ion-row>
+
   <ion-button expand="block" (click)="lanciaDado()">dado</ion-button>
-  
-  <div style="height: 60px !important; width: 60px !important;"class="backgroundImageDado" id="cubo"></div>
+  <div class="board">
+    <table style="margin:auto;">
+      <tr class="row">
+        <td class="game-cell">
+          <ion-label>{{ cells[0].title }}</ion-label>
+          <img *ngIf="players.length > 0" src="../../../assets/game-assets/duck64.png" id='goose1'
+            [title]="players[0].username" class="goose1">
+          <img *ngIf="players.length > 1" src="../../../assets/game-assets/duck64.png" id='goose2'
+            [title]="players[1].username" class="goose2">
+          <img *ngIf="players.length > 2" src="../../../assets/game-assets/duck64.png" id='goose3'
+            [title]="players[2].username" class="goose3">
+          <img *ngIf="players.length > 3" src="../../../assets/game-assets/duck64.png" id='goose4'
+            [title]="players[3].username" class="goose4">
+          <img *ngIf="players.length > 4" src="../../../assets/game-assets/duck64.png" id='goose5'
+            [title]="players[4].username" class="goose5">
+          <img *ngIf="players.length > 5" src="../../../assets/game-assets/duck64.png" id='goose6'
+            [title]="players[5].username" class="goose6">
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[1].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[2].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[3].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[4].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[5].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[6].title }}</ion-label>
+        </td>
+        <!-- <td class="game-cell">
+          <ion-label>{{ cells[7].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[8].title }}</ion-label>
+        </td> -->
+      </tr>
 
+      <tr class="row">
+        <td class="empty-cell"></td>
+        <td class="empty-cell"></td>
+        <td class="empty-cell"></td>
+        <td class="empty-cell"></td>
+        <td class="empty-cell"></td>
+        <td class="empty-cell"></td>
+        <!-- <td class="empty-cell"></td>
+        <td class="empty-cell"></td> -->
+        <td class="game-cell">
+          <ion-label>{{ cells[7].title }}</ion-label>
+        </td>
+      </tr>
+
+      <tr class="row">
+        <td class="game-cell">
+          <ion-label>{{ cells[14].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[13].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[12].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[11].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[10].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[9].title }}</ion-label>
+        </td>
+        <td class="game-cell">
+          <ion-label>{{ cells[8].title }}</ion-label>
+        </td>
+      </tr>
+
+    </table>
+  </div>
 </ion-content>
