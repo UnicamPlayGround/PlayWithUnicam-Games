@@ -38,10 +38,17 @@ export class GooseGamePage implements OnInit {
 
   lanciaDado() {
     const lancio = Math.floor(Math.random() * 6) + 1;
-    console.log(lancio);
-    var immagineDado = <HTMLInputElement>document.getElementById("cubo")
+    console.log("lancio " + lancio);
+    var immagineDado = <HTMLInputElement>document.getElementById("cubo");
+    immagineDado.removeAttribute("class");
+    immagineDado.classList.add("rollDice");
+    immagineDado.classList.add("mostra" + lancio);
+    
     //TODO rivedere la posizione degli assets
-    immagineDado.src = "../../../assets/game-assets/dado" + lancio + ".png";
+    immagineDado.classList.add("mostra"+lancio);
+    
+    setTimeout(function () {
+      immagineDado.classList.remove("rollDice");
+    }, 1500);
   }
-
 }

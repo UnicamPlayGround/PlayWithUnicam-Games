@@ -1,0 +1,42 @@
+.rollDice{
+    animation: shake 0.5s infinite
+}
+.backgroundImageDado{
+    background-image: url("../../../assets/game-assets/dado1.png");
+}
+@keyframes shake{
+    0%{
+        transform: rotate(25deg);
+    }
+    20%{
+        transform: rotate(-25deg);
+    }
+    50%{
+        transform: rotate(25deg);
+    }
+    75%{
+        transform: rotate(-25deg);
+    }
+    100%{
+        transform: rotate(25deg);
+    }
+}
+
+.mostra1{
+    background-image: url("../../../assets/game-assets/dado1.png");
+}
+.mostra2{
+    background-image: url("../../../assets/game-assets/dado2.png");
+}
+.mostra3{
+    background-image: url("../../../assets/game-assets/dado3.png");
+}
+.mostra4{
+    background-image: url("../../../assets/game-assets/dado4.png");
+}
+.mostra5{
+    background-image: url("../../../assets/game-assets/dado5.png");
+}
+.mostra6{
+    background-image: url("../../../assets/game-assets/dado6.png");
+}
