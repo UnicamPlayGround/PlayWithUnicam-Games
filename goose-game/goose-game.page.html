@@ -15,7 +15,7 @@
       </ion-item>
 
       <ion-slides [options]="{ slidesPerView: 'auto', zoom: true, grabCursor: true }">
-        <ion-slide *ngFor="let p of players" style="width: 80px; height: 100px;">
+        <ion-slide *ngFor="let p of lobbyPlayers" style="width: 80px; height: 100px;">
           <ion-col>
             <ion-label>
               <p>{{ p.username }}</p>
@@ -34,30 +34,18 @@
       </ion-card-header>
 
       <ion-card-content style="align-items: center;">
-        <!-- <img src="../../../assets/game-assets/dado1.png" id='cubo' style="margin:auto;"> -->
         <div style="height: 60px !important; width: 60px !important;" class="backgroundImageDado" id="cubo"></div>
       </ion-card-content>
     </ion-card>
   </ion-row>
 
-  <ion-button expand="block" (click)="lanciaDado()">dado</ion-button>
   <div class="board">
     <table style="margin:auto;">
       <tr class="row">
         <td class="game-cell">
           <ion-label>{{ cells[0].title }}</ion-label>
-          <img *ngIf="players.length > 0" src="../../../assets/game-assets/duck64.png" id='goose1'
-            [title]="players[0].username" class="goose1">
-          <img *ngIf="players.length > 1" src="../../../assets/game-assets/duck64.png" id='goose2'
-            [title]="players[1].username" class="goose2">
-          <img *ngIf="players.length > 2" src="../../../assets/game-assets/duck64.png" id='goose3'
-            [title]="players[2].username" class="goose3">
-          <img *ngIf="players.length > 3" src="../../../assets/game-assets/duck64.png" id='goose4'
-            [title]="players[3].username" class="goose4">
-          <img *ngIf="players.length > 4" src="../../../assets/game-assets/duck64.png" id='goose5'
-            [title]="players[4].username" class="goose5">
-          <img *ngIf="players.length > 5" src="../../../assets/game-assets/duck64.png" id='goose6'
-            [title]="players[5].username" class="goose6">
+          <img *ngFor="let player of gamePlayers" src="../../../assets/game-assets/duck64.png" [id]='player.goose'
+            [title]="player.username" [class]="player.goose">
         </td>
         <td class="game-cell">
           <ion-label>{{ cells[1].title }}</ion-label>
@@ -77,12 +65,6 @@
         <td class="game-cell">
           <ion-label>{{ cells[6].title }}</ion-label>
         </td>
-        <!-- <td class="game-cell">
-          <ion-label>{{ cells[7].title }}</ion-label>
-        </td>
-        <td class="game-cell">
-          <ion-label>{{ cells[8].title }}</ion-label>
-        </td> -->
       </tr>
 
       <tr class="row">
@@ -92,8 +74,6 @@
         <td class="empty-cell"></td>
         <td class="empty-cell"></td>
         <td class="empty-cell"></td>
-        <!-- <td class="empty-cell"></td>
-        <td class="empty-cell"></td> -->
         <td class="game-cell">
           <ion-label>{{ cells[7].title }}</ion-label>
         </td>

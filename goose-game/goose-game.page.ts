@@ -15,8 +15,13 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./goose-game.page.scss'],
 })
 export class GooseGamePage implements OnInit {
-  players = [];
-  local_player;
+  // partecipanti della lobby (solo username)
+  lobbyPlayers = [];
+  // giocatori { username, goose, info}
+  gamePlayers = [];
+  // me stesso { username, goose }
+  localPlayerIndex;
+  // true se è il mio turno, false altrimenti
   myTurn = false;
   cells = [
     { title: '1', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
@@ -53,20 +58,14 @@ export class GooseGamePage implements OnInit {
     private errorManager: ErrorManagerService,
     private http: HttpClient) {
     this.loadPlayers();
-    this.getInfoPartita();
     this.ping();
     this.timerGiocatori = timerService.getTimer(() => { this.loadPlayers() }, 15000);
     this.timerInfoPartita = timerService.getTimer(() => { this.getInfoPartita() }, 3000);
     this.timerPing = timerService.getTimer(() => { this.ping() }, 4000);
   }
 
-  async ngOnInit() {
-    // TODO
-    const token = (await this.loginService.getToken()).value;
-    const decoded_token: any = jwt_decode(token);
-    this.local_player = decoded_token.username;
+  async ngOnInit() { }
 
-  }
 
   async loadPlayers() {
     //TODO
@@ -74,8 +73,10 @@ export class GooseGamePage implements OnInit {
 
     (await this.lobbyManager.getPartecipanti()).subscribe(
       async (res) => {
-        this.players = res['results'];
-        console.log(this.players);
+        this.lobbyPlayers = res['results'];
+        console.log(this.lobbyPlayers);
+
+        if (this.gamePlayers.length == 0) this.setGamePlayers();
       },
       async (res) => {
         this.timerService.stopTimer(this.timerGiocatori);
@@ -83,8 +84,26 @@ export class GooseGamePage implements OnInit {
       });
   }
 
+  async setGamePlayers() {
+    const token = (await this.loginService.getToken()).value;
+    const decodedToken: any = jwt_decode(token);
+
+    var counter = 1;
+    this.lobbyPlayers.forEach(player => {
+      const tmp = { 'username': player.username, 'goose': "goose" + counter, 'info': [] }
+
+      if (tmp.username == decodedToken.username)
+        this.localPlayerIndex = this.gamePlayers.length;
+
+      this.gamePlayers.push(tmp);
+      counter++;
+    });
+
+    console.log('this.gamePlayers:', this.gamePlayers);
+    this.getInfoPartita();
+  }
+
   async getInfoPartita() {
-    //TODO
     const token_value = (await this.loginService.getToken()).value;
     const headers = { 'token': token_value };
 
@@ -93,7 +112,40 @@ export class GooseGamePage implements OnInit {
         this.info_partita = res['results'][0];
         console.log('this.info_partita:', this.info_partita);
 
-        if (this.info_partita.giocatore_corrente == this.local_player && !this.myTurn) {
+        if (this.info_partita.info) {
+          var mosseAggiornate = [];
+
+          this.info_partita.info.giocatori.forEach(p => {
+            if (p.username != this.gamePlayers[this.localPlayerIndex].username) {
+              mosseAggiornate = p.info_giocatore;
+
+              console.log('mosseAggiornate:', mosseAggiornate);
+
+              this.gamePlayers.forEach(player => {
+                if (player.username != this.gamePlayers[this.localPlayerIndex].username) {
+                  const differenza = mosseAggiornate.length - player.info.length;
+                  console.log('differenza:', differenza);
+
+                  for (let i = (mosseAggiornate.length - differenza); i < mosseAggiornate.length; i++) {
+                    player.info.push(mosseAggiornate[i]);
+
+                    var posizione = 0;
+
+                    for (let k = 0; k < i; k++) {
+                      posizione += mosseAggiornate[k];
+                    }
+
+
+                    this.muoviPedina(player.goose, posizione, mosseAggiornate[i]);
+                  }
+                }
+              });
+              mosseAggiornate = [];
+            }
+          });
+        }
+
+        if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn) {
           this.iniziaTurno();
         }
       },
@@ -123,7 +175,6 @@ export class GooseGamePage implements OnInit {
   }
 
   async concludiTurno(info) {
-    this.alertCreator.createInfoAlert('Tempo scaduto!', 'Il tuo turno è terminato, attendi che gli altri giocatori completino il proprio!');
     this.myTurn = false;
 
     const token_value = (await this.loginService.getToken()).value;
@@ -166,40 +217,52 @@ export class GooseGamePage implements OnInit {
     return await modal.present();
   }
 
-  muoviPedina(direzione) {
+  muoviPedina(goose, posizione, lancio) {
+    const interval = setInterval(() => {
+      if (lancio == 0) {
+        clearInterval(interval);
+        return;
+      }
+
+      if (posizione >= 7 && posizione < 9)
+        this.effettuaSpostamento(goose, 'down');
+      else if (posizione >= 9)
+        this.effettuaSpostamento(goose, 'left');
+      else this.effettuaSpostamento(goose, 'right');
+      lancio--;
+    }, 700);
+  }
+
+  effettuaSpostamento(goose, direzione) {
     console.log(direzione);
     var step = 170;
     switch (direzione) {
       case "down":
-        var x = document.getElementById('goose1').offsetTop + step;
-        document.getElementById('goose1').style.top = x + "px";
+        var x = document.getElementById(goose).offsetTop + step;
+        document.getElementById(goose).style.top = x + "px";
         break;
       case "up":
-        var x = document.getElementById('goose1').offsetTop - step;
-        document.getElementById('goose1').style.top = x + "px";
+        var x = document.getElementById(goose).offsetTop - step;
+        document.getElementById(goose).style.top = x + "px";
         break;
       case "left":
-        var y = document.getElementById('goose1').offsetLeft - step;
-        document.getElementById('goose1').style.left = y + "px";
-        document.getElementById('goose1').style.transform = "scaleX(+1)";
+        var y = document.getElementById(goose).offsetLeft - step;
+        document.getElementById(goose).style.left = y + "px";
+        document.getElementById(goose).style.transform = "scaleX(+1)";
         break;
       case "right":
-        var y = document.getElementById('goose1').offsetLeft + step;
-        document.getElementById('goose1').style.left = y + "px";
-        document.getElementById('goose1').style.transform = "scaleX(-1)";
+        var y = document.getElementById(goose).offsetLeft + step;
+        document.getElementById(goose).style.left = y + "px";
+        document.getElementById(goose).style.transform = "scaleX(-1)";
         break;
-    }
-    this.posizione++;
-
-    if (this.posizione == 15) {
-      this.alertCreator.createInfoAlert("Fine partita", "pippo ha vinto!");
     }
   }
 
   lanciaDado() {
     var lancio = Math.floor(Math.random() * 6) + 1;
-    const toSend = lancio;
-    console.log("lancio " + lancio);
+
+    this.gamePlayers[this.localPlayerIndex].info.push(lancio);
+
     var immagineDado = <HTMLInputElement>document.getElementById("cubo");
     immagineDado.removeAttribute("class");
     immagineDado.classList.add("rollDice");
@@ -218,15 +281,15 @@ export class GooseGamePage implements OnInit {
         //TODO
         //this.presentaDomanda();
 
-        this.concludiTurno(toSend);
+        this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
         return;
       }
 
       if (this.posizione >= 7 && this.posizione < 9)
-        this.muoviPedina('down');
+        this.effettuaSpostamento(this.gamePlayers[this.localPlayerIndex].goose, 'down');
       else if (this.posizione >= 9)
-        this.muoviPedina('left');
-      else this.muoviPedina('right');
+        this.effettuaSpostamento(this.gamePlayers[this.localPlayerIndex].goose, 'left');
+      else this.effettuaSpostamento(this.gamePlayers[this.localPlayerIndex].goose, 'right');
       lancio--;
     }, 700);
   }
