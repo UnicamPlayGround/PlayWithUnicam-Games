@@ -20,7 +20,7 @@
             <ion-label>
               <p>{{ p.username }}</p>
             </ion-label>
-            <ion-img style="pointer-events:none" src="../../../assets/game-assets/duck64.png"></ion-img>
+            <ion-img style="pointer-events:none" src="./game-assets/duck64.png"></ion-img>
           </ion-col>
         </ion-slide>
       </ion-slides>
@@ -44,8 +44,11 @@
       <tr class="row">
         <td id="c0" class="game-cell">
           <ion-label>{{ cells[0].title }}</ion-label>
-          <img *ngFor="let player of gamePlayers" src="../../../assets/game-assets/duck64.png" [id]='player.goose'
-            [title]="player.username" [class]="player.goose">
+          <div *ngFor="let player of gamePlayers" [class]="player.goose" [id]='player.goose' [title]="player.username">
+            <ion-label>{{ player.username }}</ion-label>
+            <img src="./game-assets/duck64.png">
+          </div>
+
         </td>
         <td id="c1" class="game-cell">
           <ion-label>{{ cells[1].title }}</ion-label>
