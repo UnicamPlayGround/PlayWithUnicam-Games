@@ -24,6 +24,7 @@ export class GooseGamePage implements OnInit {
   // true se è il mio turno, false altrimenti
   myTurn = false;
   cells = [
+    { title: 'START' },
     { title: '1', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
     { title: '2', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
     { title: '3', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
@@ -42,8 +43,6 @@ export class GooseGamePage implements OnInit {
   ];
 
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
-
-  posizione = 1;
 
   private timerGiocatori;
   private timerPing;
@@ -66,20 +65,14 @@ export class GooseGamePage implements OnInit {
 
   async ngOnInit() { }
 
-
   async loadPlayers() {
-    //TODO
-    console.log("sto caricando i giocatori...");
-
     (await this.lobbyManager.getPartecipanti()).subscribe(
       async (res) => {
         this.lobbyPlayers = res['results'];
-        console.log(this.lobbyPlayers);
-
         if (this.gamePlayers.length == 0) this.setGamePlayers();
       },
       async (res) => {
-        this.timerService.stopTimer(this.timerGiocatori);
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
         this.errorManager.stampaErrore(res, 'Impossibile caricare i giocatori!');
       });
   }
@@ -98,8 +91,6 @@ export class GooseGamePage implements OnInit {
       this.gamePlayers.push(tmp);
       counter++;
     });
-
-    console.log('this.gamePlayers:', this.gamePlayers);
     this.getInfoPartita();
   }
 
@@ -112,7 +103,7 @@ export class GooseGamePage implements OnInit {
         this.info_partita = res['results'][0];
         console.log('this.info_partita:', this.info_partita);
 
-        if (this.info_partita.info) {
+        if (this.info_partita && this.info_partita.info) {
           var mosseAggiornate = [];
 
           this.info_partita.info.giocatori.forEach(p => {
@@ -122,7 +113,7 @@ export class GooseGamePage implements OnInit {
               console.log('mosseAggiornate:', mosseAggiornate);
 
               this.gamePlayers.forEach(player => {
-                if (player.username != this.gamePlayers[this.localPlayerIndex].username) {
+                if (player.username == p.username) {
                   const differenza = mosseAggiornate.length - player.info.length;
                   console.log('differenza:', differenza);
 
@@ -150,8 +141,7 @@ export class GooseGamePage implements OnInit {
         }
       },
       async (res) => {
-        //TODO stoppare anche l'altro timer
-        this.timerService.stopTimer(this.timerPing);
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
         this.errorManager.stampaErrore(res, 'Ping fallito');
       }
     );
@@ -162,8 +152,7 @@ export class GooseGamePage implements OnInit {
     (await this.lobbyManager.ping()).subscribe(
       async (res) => { },
       async (res) => {
-        //TODO stoppare anche l'altro timer
-        this.timerService.stopTimer(this.timerPing);
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
         this.errorManager.stampaErrore(res, 'Ping fallito');
       }
     );
@@ -189,8 +178,7 @@ export class GooseGamePage implements OnInit {
         console.log("ASPETTA");
       },
       async (res) => {
-        //TODO stoppare anche l'altro timer
-        this.timerService.stopTimer(this.timerPing);
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
         this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
       }
     );
@@ -198,13 +186,13 @@ export class GooseGamePage implements OnInit {
 
   //TODO finire dopo che Rossi risponde
   async presentaDomanda() {
-    const modal = await this.modalController.create({
-      component: CellQuestionPage,
-      componentProps: {
-        question: this.cells[this.posizione].question
-      },
-      cssClass: 'fullheight'
-    });
+    // const modal = await this.modalController.create({
+    //   component: CellQuestionPage,
+    //   componentProps: {
+    //     question: this.cells[this.posizione].question
+    //   },
+    //   cssClass: 'fullheight'
+    // });
 
     // modal.onDidDismiss().then((data) => {
     //   const mod_user = data['data'];
@@ -214,25 +202,29 @@ export class GooseGamePage implements OnInit {
     //     this.users[index] = mod_user;
     // });
 
-    return await modal.present();
+    // return await modal.present();
   }
 
   muoviPedina(goose, posizione, lancio) {
     const interval = setInterval(() => {
       if (lancio == 0) {
         clearInterval(interval);
+
+        //TODO
+        //this.presentaDomanda();
+
+        if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+          this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
         return;
       }
 
-      if (posizione >= 7 && posizione < 9)
-        this.effettuaSpostamento(goose, 'down');
-      else if (posizione >= 9)
-        this.effettuaSpostamento(goose, 'left');
-      else this.effettuaSpostamento(goose, 'right');
+      document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
       lancio--;
     }, 700);
   }
 
+
+  //TODO da eliminare
   effettuaSpostamento(goose, direzione) {
     console.log(direzione);
     var step = 170;
@@ -261,6 +253,12 @@ export class GooseGamePage implements OnInit {
   lanciaDado() {
     var lancio = Math.floor(Math.random() * 6) + 1;
 
+    var posizione = 0;
+
+    for (let i = 0; i < this.gamePlayers[this.localPlayerIndex].info.length; i++) {
+      posizione += this.gamePlayers[this.localPlayerIndex].info[i];
+    }
+
     this.gamePlayers[this.localPlayerIndex].info.push(lancio);
 
     var immagineDado = <HTMLInputElement>document.getElementById("cubo");
@@ -275,22 +273,6 @@ export class GooseGamePage implements OnInit {
       immagineDado.classList.remove("rollDice");
     }, 1500);
 
-    const interval = setInterval(() => {
-      if (lancio == 0) {
-        clearInterval(interval);
-        //TODO
-        //this.presentaDomanda();
-
-        this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
-        return;
-      }
-
-      if (this.posizione >= 7 && this.posizione < 9)
-        this.effettuaSpostamento(this.gamePlayers[this.localPlayerIndex].goose, 'down');
-      else if (this.posizione >= 9)
-        this.effettuaSpostamento(this.gamePlayers[this.localPlayerIndex].goose, 'left');
-      else this.effettuaSpostamento(this.gamePlayers[this.localPlayerIndex].goose, 'right');
-      lancio--;
-    }, 700);
+    this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, posizione, lancio);
   }
 }
