@@ -65,6 +65,11 @@ export class GooseGamePage implements OnInit {
 
   async ngOnInit() { }
 
+  /**
+   * Recupera i partecipanti della lobby.
+   * La prima volta che viene fatto, vengono inizializzati i giocatori tramite il
+   * metodo setGamePlayers().
+   */
   async loadPlayers() {
     (await this.lobbyManager.getPartecipanti()).subscribe(
       async (res) => {
@@ -77,6 +82,10 @@ export class GooseGamePage implements OnInit {
       });
   }
 
+  /**
+   * Inizializza i giocatori inserendoli nell'array "gamePlayers" ed assegnando ad ognuno una pedina.
+   * Viene salvato l'indice del giocatore locale nella variabile "localPlayerIndex". 
+   */
   async setGamePlayers() {
     const token = (await this.loginService.getToken()).value;
     const decodedToken: any = jwt_decode(token);
@@ -94,6 +103,9 @@ export class GooseGamePage implements OnInit {
     this.getInfoPartita();
   }
 
+  /**
+   * Recupera i dati della partita corrente //TODO
+   */
   async getInfoPartita() {
     const token_value = (await this.loginService.getToken()).value;
     const headers = { 'token': token_value };
@@ -103,48 +115,50 @@ export class GooseGamePage implements OnInit {
         this.info_partita = res['results'][0];
         console.log('this.info_partita:', this.info_partita);
 
-        if (this.info_partita && this.info_partita.info) {
-          var mosseAggiornate = [];
+        if (this.info_partita && this.info_partita.info)
+          await this.aggiornaMosseAvversari();
 
-          this.info_partita.info.giocatori.forEach(p => {
-            if (p.username != this.gamePlayers[this.localPlayerIndex].username) {
-              mosseAggiornate = p.info_giocatore;
-
-              console.log('mosseAggiornate:', mosseAggiornate);
-
-              this.gamePlayers.forEach(player => {
-                if (player.username == p.username) {
-                  const differenza = mosseAggiornate.length - player.info.length;
-                  console.log('differenza:', differenza);
-
-                  for (let i = (mosseAggiornate.length - differenza); i < mosseAggiornate.length; i++) {
-                    player.info.push(mosseAggiornate[i]);
-
-                    var posizione = 0;
-
-                    for (let k = 0; k < i; k++) {
-                      posizione += mosseAggiornate[k];
-                    }
-
-
-                    this.muoviPedina(player.goose, posizione, mosseAggiornate[i]);
-                  }
-                }
-              });
-              mosseAggiornate = [];
-            }
-          });
-        }
-
-        if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn) {
+        if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
           this.iniziaTurno();
-        }
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
         this.errorManager.stampaErrore(res, 'Ping fallito');
       }
     );
+  }
+
+  async aggiornaMosseAvversari() {
+    var mosseAggiornate = [];
+
+    this.info_partita.info.giocatori.forEach(p => {
+      if (p.username != this.gamePlayers[this.localPlayerIndex].username) {
+        mosseAggiornate = p.info_giocatore;
+
+        this.gamePlayers.forEach(player => {
+          if (player.username == p.username) {
+            const differenza = mosseAggiornate.length - player.info.length;
+
+            for (let i = (mosseAggiornate.length - differenza); i < mosseAggiornate.length; i++) {
+              player.info.push(mosseAggiornate[i]);
+              this.muoviPedina(player.goose, this.getPosizionePedina(player.goose), mosseAggiornate[i]);
+            }
+          }
+        });
+        mosseAggiornate = [];
+      }
+    });
+  }
+
+  /**
+   * Recupera l'id della casella in cui si trova la pedina e ne ritorna il numero.
+   * 
+   * @param goose L'id della pedina di cui si vuole conoscere la posizione.
+   * @returns Il numero della casella dove si trova la pedina.
+   */
+  getPosizionePedina(goose) {
+    var cellId = document.getElementById(goose).parentElement.id;
+    return parseInt(cellId.substr(1));
   }
 
   async ping() {
@@ -253,12 +267,6 @@ export class GooseGamePage implements OnInit {
   lanciaDado() {
     var lancio = Math.floor(Math.random() * 6) + 1;
 
-    var posizione = 0;
-
-    for (let i = 0; i < this.gamePlayers[this.localPlayerIndex].info.length; i++) {
-      posizione += this.gamePlayers[this.localPlayerIndex].info[i];
-    }
-
     this.gamePlayers[this.localPlayerIndex].info.push(lancio);
 
     var immagineDado = <HTMLInputElement>document.getElementById("cubo");
@@ -273,6 +281,6 @@ export class GooseGamePage implements OnInit {
       immagineDado.classList.remove("rollDice");
     }, 1500);
 
-    this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, posizione, lancio);
+    this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose), lancio);
   }
 }
