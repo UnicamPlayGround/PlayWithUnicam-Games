@@ -117,8 +117,7 @@ export class GooseGamePage implements OnInit {
 
         if (this.info_partita && this.info_partita.info)
           await this.aggiornaMosseAvversari();
-
-        if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+        else if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
           this.iniziaTurno();
       },
       async (res) => {
@@ -138,11 +137,21 @@ export class GooseGamePage implements OnInit {
         this.gamePlayers.forEach(player => {
           if (player.username == p.username) {
             const differenza = mosseAggiornate.length - player.info.length;
+            var lancio = 0;
 
             for (let i = (mosseAggiornate.length - differenza); i < mosseAggiornate.length; i++) {
+              console.log(player.username + ' ha fatto ' + mosseAggiornate[i]);
               player.info.push(mosseAggiornate[i]);
-              this.muoviPedina(player.goose, this.getPosizionePedina(player.goose), mosseAggiornate[i]);
+              lancio += mosseAggiornate[i];
             }
+            this.muoviPedina(player.goose, this.getPosizionePedina(player.goose), lancio);
+
+            var aggiornamento = setTimeout(() => {
+              console.log('nel timeout');
+              if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+                this.iniziaTurno();
+              clearTimeout(aggiornamento);
+            }, 1000 * lancio);
           }
         });
         mosseAggiornate = [];
@@ -200,23 +209,23 @@ export class GooseGamePage implements OnInit {
 
   //TODO finire dopo che Rossi risponde
   async presentaDomanda() {
-    // const modal = await this.modalController.create({
-    //   component: CellQuestionPage,
-    //   componentProps: {
-    //     question: this.cells[this.posizione].question
-    //   },
-    //   cssClass: 'fullheight'
-    // });
+    const modal = await this.modalController.create({
+      component: CellQuestionPage,
+      componentProps: {
+        question: this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].question
+      },
+      cssClass: 'fullheight'
+    });
 
-    // modal.onDidDismiss().then((data) => {
-    //   const mod_user = data['data'];
-    //   console.log('mod_user', mod_user);
+    modal.onDidDismiss().then((data) => {
+      // const mod_user = data['data'];
+      // console.log('mod_user', mod_user);
 
-    //   if (mod_user)
-    //     this.users[index] = mod_user;
-    // });
+      // if (mod_user)
+      //   this.users[index] = mod_user;
+    });
 
-    // return await modal.present();
+    return await modal.present();
   }
 
   muoviPedina(goose, posizione, lancio) {
@@ -224,8 +233,7 @@ export class GooseGamePage implements OnInit {
       if (lancio == 0) {
         clearInterval(interval);
 
-        //TODO
-        //this.presentaDomanda();
+        // this.presentaDomanda();
 
         if (goose == this.gamePlayers[this.localPlayerIndex].goose)
           this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
