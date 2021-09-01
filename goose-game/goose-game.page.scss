@@ -103,32 +103,61 @@
     width: 170px;
     height: 170px;
     text-align: center;
-    ion-label{
+    // ion-label{
+    //     font-weight: bold;
+    //     font-size: 20px;
+    // }
+}
+
+.font-cell{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+@media only screen and (min-width: 1190px) and (max-width: 1430px){
+    .game-cell{
+        width: 140px;
+        height: 140px;
+    }
+    .empty-cell{
+        width: 140px;
+        height: 140px;
+    }
+    .font-cell{
+        font-size: 18px;
         font-weight: bold;
-        font-size: 20px;
     }
 }
 
-// @media only screen and (min-width: 1000px) and (max-width: 1400px){
-//     .game-cell{
-//         width: 100px;
-//         height: 100px;
-//     }
-// }
+@media only screen and (min-width: 841px) and (max-width: 1189px){
+    .game-cell{
+        width: 100px;
+        height: 100px;
+    }
+    .empty-cell{
+        width: 100px;
+        height: 100px;
+    }
+    .font-cell{
+        font-size: 13px;
+        font-weight: bold;
+    }
+}
 
-// @media only screen and (min-width: 800px) and (max-width: 999px){
-//     .game-cell{
-//         width: 70px;
-//         height: 70px;
-//     }
-// }
-
-// @media only screen and (min-width: 0px) and (max-width: 799px){
-//     .game-cell{
-//         width: 100px;
-//         height: 100px;
-//     }
-// }
+ @media only screen and (min-width: 601px) and (max-width: 840px){
+.game-cell{
+    width: 70px;
+    height: 70px;
+}
+.empty-cell{
+    width: 70px;
+    height: 70px;
+}
+.font-cell{
+    font-size: 13px;
+    font-weight: bold;
+}
+}
 
 .row{
     display: flex;
@@ -173,3 +202,4 @@
     margin-left: -92px;
     transform: scaleX(-1);
 }
+

@@ -233,7 +233,7 @@ export class GooseGamePage implements OnInit {
       if (lancio == 0) {
         clearInterval(interval);
 
-        // this.presentaDomanda();
+        //this.presentaDomanda();
 
         if (goose == this.gamePlayers[this.localPlayerIndex].goose)
           this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
