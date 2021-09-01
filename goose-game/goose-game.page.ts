@@ -235,14 +235,41 @@ export class GooseGamePage implements OnInit {
 
         //this.presentaDomanda();
 
-        if (goose == this.gamePlayers[this.localPlayerIndex].goose)
-          this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
+        // if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+        //   this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
         return;
+      }
+
+      if (posizione == 15) {
+        if (lancio > 1) {
+          clearInterval(interval);
+          document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
+          this.tornaIndietro(goose, posizione, --lancio);
+          return;
+        } else {
+          console.log("HAI VINTO!");
+          return;
+        }
       }
 
       document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
       lancio--;
     }, 700);
+  }
+
+  tornaIndietro(goose, posizione, lancio) {
+    const interval = setInterval(() => {
+      if (lancio == 0) {
+        clearInterval(interval);
+
+        // if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+        //   this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
+        return;
+      }
+      console.log("posizione ", posizione);
+      document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
+      lancio--;
+    }, 600);
   }
 
 
