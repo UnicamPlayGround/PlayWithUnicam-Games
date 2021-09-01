@@ -228,6 +228,11 @@ export class GooseGamePage implements OnInit {
     return await modal.present();
   }
 
+  controllaConclusioneTurno(goose) {
+    if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+      this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
+  }
+
   muoviPedina(goose, posizione, lancio) {
     const interval = setInterval(() => {
       if (lancio == 0) {
@@ -240,21 +245,30 @@ export class GooseGamePage implements OnInit {
         return;
       }
 
-      if (posizione == 15) {
-        if (lancio > 1) {
-          clearInterval(interval);
-          document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
-          this.tornaIndietro(goose, posizione, --lancio);
-          return;
-        } else {
-          console.log("HAI VINTO!");
-          return;
-        }
-      }
+      if (this.controllaSeTornareIndietro(posizione, lancio, goose, interval)) {
+        if (goose == this.gamePlayers[this.localPlayerIndex].goose && posizione == 14 && lancio == 1)
+          this.alertCreator.createInfoAlert('Hai vinto!', 'Complimenti, hai vinto!');
 
-      document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
-      lancio--;
+        document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
+        lancio--;
+      }
     }, 700);
+  }
+
+  //TODO rinominare
+  controllaSeTornareIndietro(posizione, lancio, goose, interval) {
+    if (posizione == 15) {
+      if (lancio > 1) {
+        clearInterval(interval);
+        document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
+        this.tornaIndietro(goose, posizione, --lancio);
+        return false;
+      } else if (lancio == 1) {
+        clearInterval(interval);
+        document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
+        return false;
+      }
+    } else return true;
   }
 
   tornaIndietro(goose, posizione, lancio) {
@@ -266,7 +280,7 @@ export class GooseGamePage implements OnInit {
         //   this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
         return;
       }
-      console.log("posizione ", posizione);
+
       document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
       lancio--;
     }, 600);
