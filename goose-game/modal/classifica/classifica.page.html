@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>classifica</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-item lines="full" *ngFor="let giocatore of classifica">
+    <ion-avatar slot="start">
+      <img src="https://image.flaticon.com/icons/png/512/4333/4333609.png" alt="avatar player">
+    </ion-avatar>
+
+    <ion-label>{{ giocatore.username }}</ion-label>
+    <ion-label>{{ giocatore.posizione }}</ion-label>
+  </ion-item>
+
+</ion-content>

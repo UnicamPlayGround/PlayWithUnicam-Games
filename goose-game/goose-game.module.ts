@@ -8,6 +8,7 @@ import { GooseGamePageRoutingModule } from './goose-game-routing.module';
 
 import { GooseGamePage } from './goose-game.page';
 import { CellQuestionPageModule } from './modal/cell-question/cell-question.module';
+import { ClassificaPageModule } from './modal/classifica/classifica.module';
 
 @NgModule({
   imports: [
@@ -15,8 +16,9 @@ import { CellQuestionPageModule } from './modal/cell-question/cell-question.modu
     FormsModule,
     IonicModule,
     GooseGamePageRoutingModule,
-    CellQuestionPageModule
+    CellQuestionPageModule,
+    ClassificaPageModule
   ],
   declarations: [GooseGamePage]
 })
-export class GooseGamePageModule {}
+export class GooseGamePageModule { }

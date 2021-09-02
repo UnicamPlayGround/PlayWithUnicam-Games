@@ -4,6 +4,7 @@ import { LoginService } from 'src/app/services/login-service/login.service';
 import jwt_decode from 'jwt-decode';
 import { ModalController } from '@ionic/angular';
 import { CellQuestionPage } from './modal/cell-question/cell-question.page';
+import { ClassificaPage } from './modal/classifica/classifica.page';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
@@ -17,10 +18,13 @@ import { HttpClient } from '@angular/common/http';
 export class GooseGamePage implements OnInit {
   // partecipanti della lobby (solo username)
   lobbyPlayers = [];
+
   // giocatori { username, goose, info}
   gamePlayers = [];
+
   // me stesso { username, goose }
   localPlayerIndex;
+
   // true se è il mio turno, false altrimenti
   myTurn = false;
   cells = [
@@ -235,6 +239,82 @@ export class GooseGamePage implements OnInit {
     return await modal.present();
   }
 
+  private calcolaClassifica() {
+    var classifica = [];
+    var numeroCaselle = 15;
+    this.gamePlayers.forEach(player => {
+      var posizione = 0;
+      player.info.forEach(lancio => {
+        posizione += lancio;
+
+        if (posizione > numeroCaselle) {
+          var dif = posizione - numeroCaselle;
+          posizione = numeroCaselle - dif;
+        }
+      });
+
+      var toSave = {
+        "username": player.username,
+        "posizione": posizione
+      }
+
+      classifica.push(toSave);
+    });
+
+    return this.ordinaClassifica(classifica);
+  }
+
+  private ordinaClassifica(classifica) {
+    classifica.sort(function (a, b) {
+      return b.posizione - a.posizione;
+    });
+    return classifica;
+  }
+
+  async mostraClassifica() {
+    const modal = await this.modalController.create({
+      component: ClassificaPage,
+      componentProps: {
+        classifica: this.calcolaClassifica()
+      },
+      cssClass: 'fullheight'
+    });
+
+    // modal.onDidDismiss().then((data) => {
+    //   const mod_user = data['data'];
+
+    //   //TODO 
+    //   if (mod_user)
+    //     this.iniziaTurno();
+    //   else
+    //     this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
+    // });
+    return await modal.present();
+  }
+
+  private cercaGiocatoreByGoose(goose) {
+    return this.gamePlayers.filter(giocatore => {
+      if (giocatore.goose == goose)
+        return giocatore;
+    })[0];
+  }
+
+  private controllaFinePartita(posizione, lancio, goose, intervalloMovimentoPedina) {
+    if (posizione == 14 && lancio == 1) {
+      this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
+
+      var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
+      if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+        this.alertCreator.createAlert("Vittoria", "Complimenti, hai vinto la partita!", button);
+      else {
+        const vincitore = this.cercaGiocatoreByGoose(goose);
+        this.alertCreator.createAlert("Peccato!", vincitore.username + " ha vinto!", button);
+      }
+
+      clearInterval(intervalloMovimentoPedina);
+    }
+  }
+
   muoviPedina(goose, posizione, lancio) {
     const intervalloMovimentoPedina = setInterval(() => {
       if (lancio == 0) {
@@ -251,9 +331,7 @@ export class GooseGamePage implements OnInit {
         console.log("intervallo");
         //TODO da rigaurdare
         if (this.controllaDirezionePedina(posizione, lancio)) {
-          if (goose == this.gamePlayers[this.localPlayerIndex].goose && posizione == 14 && lancio == 1)
-            this.alertCreator.createInfoAlert('Hai vinto!', 'Complimenti, hai vinto!');
-
+          this.controllaFinePartita(posizione, lancio, goose, intervalloMovimentoPedina);
           document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
           lancio--;
         } else {
@@ -309,7 +387,7 @@ export class GooseGamePage implements OnInit {
 
   lanciaDado() {
     var lancio = Math.floor(Math.random() * 6) + 1;
-
+    
     this.gamePlayers[this.localPlayerIndex].info.push(lancio);
 
     var immagineDado = <HTMLInputElement>document.getElementById("cubo");
