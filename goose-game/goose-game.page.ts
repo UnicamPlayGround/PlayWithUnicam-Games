@@ -192,9 +192,7 @@ export class GooseGamePage implements OnInit {
     this.myTurn = true;
   }
 
-  async concludiTurno(info) {
-    this.myTurn = false;
-
+  private async inviaDatiPartita(info, fineTurno) {
     const token_value = (await this.loginService.getToken()).value;
 
     const to_send = {
@@ -203,6 +201,27 @@ export class GooseGamePage implements OnInit {
     }
 
     this.http.put('/game/save', to_send).subscribe(
+      async (res) => {
+        if (fineTurno)
+          this.concludiTurno();
+      },
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
+      }
+    );
+  }
+
+  async concludiTurno() {
+    this.myTurn = false;
+
+    const token_value = (await this.loginService.getToken()).value;
+
+    const to_send = {
+      'token': token_value
+    }
+
+    this.http.put('/game/fine-turno', to_send).subscribe(
       async (res) => {
         console.log("ASPETTA");
       },
@@ -231,10 +250,11 @@ export class GooseGamePage implements OnInit {
     modal.onDidDismiss().then((data) => {
       const mod_user = data['data'];
 
-      if (mod_user)
+      if (mod_user) {
+        this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, false);
         this.iniziaTurno();
-      else
-        this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
+      } else
+        this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
     });
     return await modal.present();
   }
@@ -301,7 +321,7 @@ export class GooseGamePage implements OnInit {
 
   private controllaFinePartita(posizione, lancio, goose, intervalloMovimentoPedina) {
     if (posizione == 14 && lancio == 1) {
-      this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
+      this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
 
       var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
       if (goose == this.gamePlayers[this.localPlayerIndex].goose)
@@ -387,7 +407,7 @@ export class GooseGamePage implements OnInit {
 
   lanciaDado() {
     var lancio = Math.floor(Math.random() * 6) + 1;
-    
+
     this.gamePlayers[this.localPlayerIndex].info.push(lancio);
 
     var immagineDado = <HTMLInputElement>document.getElementById("cubo");
