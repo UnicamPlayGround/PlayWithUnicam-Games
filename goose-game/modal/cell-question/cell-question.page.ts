@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavParams } from '@ionic/angular';
+import { ModalController, NavParams } from '@ionic/angular';
 
 @Component({
   selector: 'app-cell-question',
@@ -11,7 +11,8 @@ export class CellQuestionPage implements OnInit {
   answers = [];
 
   constructor(
-    private navParams: NavParams
+    private navParams: NavParams,
+    private modalController: ModalController
   ) { }
 
   ngOnInit() {
@@ -36,11 +37,17 @@ export class CellQuestionPage implements OnInit {
     if (event.detail.value === this.question.a1) {
       console.log("RISPOSTA CORRETTA");
       document.getElementById(event.detail.value).classList.add("correct-answer");
+      this.modalController.dismiss(true);
     }
     else {
       console.log("RISPOSTA ERRATA");
       document.getElementById(event.detail.value).classList.add("wrong-answer");
       document.getElementById(this.question.a1).classList.add("correct-answer");
+      this.modalController.dismiss(false);
     }
+  }
+  
+  closeModal(){
+    this.modalController.dismiss();
   }
 }

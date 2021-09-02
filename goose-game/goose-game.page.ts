@@ -144,14 +144,16 @@ export class GooseGamePage implements OnInit {
               player.info.push(mosseAggiornate[i]);
               lancio += mosseAggiornate[i];
             }
-            this.muoviPedina(player.goose, this.getPosizionePedina(player.goose), lancio);
 
-            var aggiornamento = setTimeout(() => {
-              console.log('nel timeout');
-              if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
-                this.iniziaTurno();
-              clearTimeout(aggiornamento);
-            }, 1000 * lancio);
+            if (lancio != 0)
+              this.muoviPedina(player.goose, this.getPosizionePedina(player.goose), lancio);
+
+            // var aggiornamento = setTimeout(() => {
+            //   console.log('nel timeout');
+            //   if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+            //      this.iniziaTurno();
+            //   clearTimeout(aggiornamento);
+            // }, 1200 * lancio);
           }
         });
         mosseAggiornate = [];
@@ -207,7 +209,12 @@ export class GooseGamePage implements OnInit {
     );
   }
 
-  //TODO finire dopo che Rossi risponde
+  /**
+   * Dopo lo spostamento della pedina, presenta una Modal in cui sarà contenuta una domanda.
+   * Se l'utente risponde correttamente alla domanda, può continuare a lanciare il dado,
+   * altrimenti il turno passa al prossimo avversario. 
+   * @returns presenta la Modal.
+   */
   async presentaDomanda() {
     const modal = await this.modalController.create({
       component: CellQuestionPage,
@@ -218,47 +225,51 @@ export class GooseGamePage implements OnInit {
     });
 
     modal.onDidDismiss().then((data) => {
-      // const mod_user = data['data'];
-      // console.log('mod_user', mod_user);
+      const mod_user = data['data'];
 
-      // if (mod_user)
-      //   this.users[index] = mod_user;
+      if (mod_user)
+        this.iniziaTurno();
+      else
+        this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
     });
-
     return await modal.present();
   }
 
-  controllaConclusioneTurno(goose) {
-    if (goose == this.gamePlayers[this.localPlayerIndex].goose)
-      this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
-  }
-
   muoviPedina(goose, posizione, lancio) {
-    const interval = setInterval(() => {
+    const intervalloMovimentoPedina = setInterval(() => {
       if (lancio == 0) {
-        clearInterval(interval);
+        console.log("il lancio è = 0");
+        clearInterval(intervalloMovimentoPedina);
 
-        //this.presentaDomanda();
+        if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+          this.presentaDomanda();
 
-        this.controllaConclusioneTurno(goose);
-        return;
-      }
+        if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+          this.iniziaTurno();
 
-      //TODO da rigaurdare
-      if (this.controllaDirezionePedina(posizione, lancio)) {
-        if (goose == this.gamePlayers[this.localPlayerIndex].goose && posizione == 14 && lancio == 1)
-          this.alertCreator.createInfoAlert('Hai vinto!', 'Complimenti, hai vinto!');
-
-        document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
-        lancio--;
       } else {
-        if (lancio > 1) {
-          clearInterval(interval);
-          document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
-          this.tornaIndietro(goose, posizione, --lancio);
-        } else if (lancio == 1) {
-          clearInterval(interval);
-          document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
+        console.log("intervallo");
+        //TODO da rigaurdare
+        if (this.controllaDirezionePedina(posizione, lancio)) {
+          if (goose == this.gamePlayers[this.localPlayerIndex].goose && posizione == 14 && lancio == 1)
+            this.alertCreator.createInfoAlert('Hai vinto!', 'Complimenti, hai vinto!');
+
+          document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
+          lancio--;
+        } else {
+          if (lancio > 1) {
+            clearInterval(intervalloMovimentoPedina);
+            document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
+            this.tornaIndietro(goose, posizione, --lancio);
+            if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+              this.presentaDomanda();
+
+          } else if (lancio == 1) {
+            clearInterval(intervalloMovimentoPedina);
+            document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
+            if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+              this.presentaDomanda();
+          }
         }
       }
     }, 700);
@@ -281,40 +292,19 @@ export class GooseGamePage implements OnInit {
     const interval = setInterval(() => {
       if (lancio == 0) {
         clearInterval(interval);
-        this.controllaConclusioneTurno(goose);
+
+        if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+          this.presentaDomanda();
+
+        if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+          this.iniziaTurno();
+
         return;
       }
 
       document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
       lancio--;
     }, 600);
-  }
-
-
-  //TODO da eliminare
-  effettuaSpostamento(goose, direzione) {
-    console.log(direzione);
-    var step = 170;
-    switch (direzione) {
-      case "down":
-        var x = document.getElementById(goose).offsetTop + step;
-        document.getElementById(goose).style.top = x + "px";
-        break;
-      case "up":
-        var x = document.getElementById(goose).offsetTop - step;
-        document.getElementById(goose).style.top = x + "px";
-        break;
-      case "left":
-        var y = document.getElementById(goose).offsetLeft - step;
-        document.getElementById(goose).style.left = y + "px";
-        document.getElementById(goose).style.transform = "scaleX(+1)";
-        break;
-      case "right":
-        var y = document.getElementById(goose).offsetLeft + step;
-        document.getElementById(goose).style.left = y + "px";
-        document.getElementById(goose).style.transform = "scaleX(-1)";
-        break;
-    }
   }
 
   lanciaDado() {
@@ -335,5 +325,9 @@ export class GooseGamePage implements OnInit {
     }, 1500);
 
     this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose), lancio);
+  }
+
+  async closeModal() {
+    this.modalController.dismiss();
   }
 }
