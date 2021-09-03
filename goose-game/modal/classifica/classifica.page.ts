@@ -21,5 +21,4 @@ export class ClassificaPage implements OnInit {
   closeModal() {
     this.modalController.dismiss();
   }
-
 }

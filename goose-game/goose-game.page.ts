@@ -420,8 +420,4 @@ export class GooseGamePage implements OnInit {
 
     this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose), lancio);
   }
-
-  async closeModal() {
-    this.modalController.dismiss();
-  }
 }
