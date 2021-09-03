@@ -17,19 +17,12 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./goose-game.page.scss'],
 })
 export class GooseGamePage implements OnInit {
-  // partecipanti della lobby (solo username)
   lobbyPlayers = [];
-
-  // giocatori { username, goose, info}
   gamePlayers = [];
-
-  // me stesso { username, goose }
   localPlayerIndex;
-
-  // true se è il mio turno, false altrimenti
   myTurn = false;
-
   abilitaDado = false;
+
   cells = [
     { title: '0' },
     { title: '1', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
@@ -46,31 +39,7 @@ export class GooseGamePage implements OnInit {
     { title: '12', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
     { title: '13', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
     { title: '14', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '15', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '16', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '17', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '18', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '19', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '20', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '21', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '22', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '23', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '24', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '25', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '26', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '27', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '28', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '29', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '30', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '31', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '32', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '33', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '34', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '35', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '36', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '37', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '38', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    // { title: '39', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } }
+    { title: '15', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } }
   ];
 
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
@@ -90,16 +59,13 @@ export class GooseGamePage implements OnInit {
     private http: HttpClient) {
     this.loadPlayers();
     this.ping();
-    this.timerGiocatori = timerService.getTimer(() => { this.loadPlayers() }, 15000);
-    this.timerInfoPartita = timerService.getTimer(() => { this.getInfoPartita() }, 3000);
+    this.timerGiocatori = timerService.getTimer(() => { this.loadPlayers() }, 4000);
+    this.timerInfoPartita = timerService.getTimer(() => { this.getInfoPartita() }, 1000);
     this.timerPing = timerService.getTimer(() => { this.ping() }, 4000);
   }
 
   async ngOnInit() {
-    console.log('this.lobbyPlayers', this.lobbyPlayers);
-    console.log('this.gamePlayers', this.gamePlayers);
     this.createGameBoard();
-    //this.createPlayersGoose();
   }
 
   /**
@@ -107,9 +73,7 @@ export class GooseGamePage implements OnInit {
    * alla partita. 
    */
   createPlayersGoose() {
-    console.log("sono dentro createGoose");
     this.gamePlayers.forEach(player => {
-      console.log('player', player);
       const goose = document.createElement("div");
       goose.id = player.goose;
       goose.title = player.username;
@@ -118,7 +82,6 @@ export class GooseGamePage implements OnInit {
       goose.appendChild(this.getGooseName(player.username));
       goose.appendChild(this.getGooseImg(player.goose));
       document.getElementById("c0").appendChild(goose);
-      console.log(goose);
     });
   }
 
@@ -131,7 +94,6 @@ export class GooseGamePage implements OnInit {
   getGooseName(username) {
     const name = document.createElement("p");
     name.textContent = username;
-    console.log('name', name);
     return name;
   }
 
@@ -145,7 +107,6 @@ export class GooseGamePage implements OnInit {
   getGooseImg(goose) {
     const img = document.createElement("img");
     img.src = "../../../assets/game-assets/" + goose + ".png";
-    console.log('img', img);
     return img;
   }
 
@@ -153,7 +114,6 @@ export class GooseGamePage implements OnInit {
    * Costruisce il tabellone di gioco in base alle caselle contenute in 'this.cells'.
    */
   createGameBoard() {
-    console.log("sono dentro createGameBoard");
     var currentRowNumber = 0;
     var direction = true;
 
@@ -320,16 +280,12 @@ export class GooseGamePage implements OnInit {
         this.gamePlayers.forEach(player => {
           if (player.username == p.username) {
             const differenza = mosseAggiornate.length - player.info.length;
-            var lancio = 0;
 
             for (let i = (mosseAggiornate.length - differenza); i < mosseAggiornate.length; i++) {
-              console.log(player.username + ' ha fatto ' + mosseAggiornate[i]);
               player.info.push(mosseAggiornate[i]);
-              lancio += mosseAggiornate[i];
+              if (mosseAggiornate[i] != 0)
+                this.muoviPedina(player.goose, mosseAggiornate[i]);
             }
-
-            if (lancio != 0)
-              this.muoviPedina(player.goose, this.getPosizionePedina(player.goose), lancio);
           }
         });
         mosseAggiornate = [];
@@ -349,7 +305,6 @@ export class GooseGamePage implements OnInit {
   }
 
   async ping() {
-    console.log("ping...");
     (await this.lobbyManager.ping()).subscribe(
       async (res) => { },
       async (res) => {
@@ -368,10 +323,7 @@ export class GooseGamePage implements OnInit {
   private async inviaDatiPartita(info, fineTurno) {
     const token_value = (await this.loginService.getToken()).value;
 
-    const to_send = {
-      'token': token_value,
-      'info_giocatore': info
-    }
+    const to_send = { 'token': token_value, 'info_giocatore': info }
 
     this.http.put('/game/save', to_send).subscribe(
       async (res) => {
@@ -387,17 +339,11 @@ export class GooseGamePage implements OnInit {
 
   async concludiTurno() {
     this.myTurn = false;
-
     const token_value = (await this.loginService.getToken()).value;
-
-    const to_send = {
-      'token': token_value
-    }
+    const to_send = { 'token': token_value }
 
     this.http.put('/game/fine-turno', to_send).subscribe(
-      async (res) => {
-        console.log("ASPETTA");
-      },
+      async (res) => {},
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
         this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
@@ -446,11 +392,7 @@ export class GooseGamePage implements OnInit {
         }
       });
 
-      var toSave = {
-        "username": player.username,
-        "posizione": posizione
-      }
-
+      var toSave = { "username": player.username, "posizione": posizione }
       classifica.push(toSave);
     });
 
@@ -486,86 +428,51 @@ export class GooseGamePage implements OnInit {
     })[0];
   }
 
-  private controllaFinePartita(posizione, lancio, goose, intervalloMovimentoPedina) {
-    if (posizione == (this.cells.length - 2) && lancio == 1) {
-      this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
-
+  private controllaFinePartita(posizione, goose) {
+    if (posizione == (this.cells.length - 1)) {
       var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
-      if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+
+      if (goose == this.gamePlayers[this.localPlayerIndex].goose) {
+        this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, false);
         this.alertCreator.createAlert("Vittoria", "Complimenti, hai vinto la partita!", button);
-      else {
+      } else {
         const vincitore = this.cercaGiocatoreByGoose(goose);
         this.alertCreator.createAlert("Peccato!", vincitore.username + " ha vinto!", button);
       }
-
-      clearInterval(intervalloMovimentoPedina);
-    }
+      return true;
+    } else return false;
   }
 
-  muoviPedina(goose, posizione, lancio) {
+  muoviPedina(goose, lancio) {
+    var direzione = true;
+
     const intervalloMovimentoPedina = setInterval(() => {
+      var posizione = this.getPosizionePedina(goose);
+
       if (lancio == 0) {
         clearInterval(intervalloMovimentoPedina);
 
-        if (goose == this.gamePlayers[this.localPlayerIndex].goose)
-          this.presentaDomanda();
+        if (!this.controllaFinePartita(posizione, goose)) {
+          if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+            this.presentaDomanda();
 
-        if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
-          this.iniziaTurno();
-
-      } else {
-
-        if (this.controllaDirezionePedina(posizione, lancio)) {
-          this.controllaFinePartita(posizione, lancio, goose, intervalloMovimentoPedina);
-          document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
-          lancio--;
-        } else {
-          if (lancio > 1) {
-            clearInterval(intervalloMovimentoPedina);
-            document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
-            this.tornaIndietro(goose, posizione, --lancio);
-
-          } else if (lancio == 1) {
-            clearInterval(intervalloMovimentoPedina);
-            document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
-            if (goose == this.gamePlayers[this.localPlayerIndex].goose)
-              this.presentaDomanda();
-          }
+          if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+            this.iniziaTurno();
         }
+      } else {
+        if (posizione == (this.cells.length - 1)) direzione = false;
+
+        this.effettuaSpostamento(goose, posizione, direzione);
+        lancio--;
       }
     }, 700);
   }
 
-  /**
-   * Controlla se una Pedina deve andare avanti o indietro.
-   * @param posizione Posizione attuale della Pedina
-   * @param lancio Valore ottenuto dal lancio del dado
-   * @returns true se la Pedina può continuare ad andare avanti, false altrimenti.
-   */
-  controllaDirezionePedina(posizione, lancio) {
-    if (posizione == (this.cells.length - 1) && lancio >= 1)
-      return false;
+  effettuaSpostamento(goose, posizione, direzione) {
+    if (direzione)
+      document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
     else
-      return true;
-  }
-
-  tornaIndietro(goose, posizione, lancio) {
-    const interval = setInterval(() => {
-      if (lancio == 0) {
-        clearInterval(interval);
-
-        if (goose == this.gamePlayers[this.localPlayerIndex].goose)
-          this.presentaDomanda();
-
-        if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
-          this.iniziaTurno();
-
-        return;
-      }
-
       document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
-      lancio--;
-    }, 600);
   }
 
   lanciaDado() {
@@ -586,6 +493,6 @@ export class GooseGamePage implements OnInit {
       immagineDado.classList.remove("rollDice");
     }, 1500);
 
-    this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose), lancio);
+    this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, lancio);
   }
 }
