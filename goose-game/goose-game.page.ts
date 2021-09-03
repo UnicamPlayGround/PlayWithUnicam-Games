@@ -6,6 +6,7 @@ import { ModalController } from '@ionic/angular';
 import { CellQuestionPage } from './modal/cell-question/cell-question.page';
 import { ClassificaPage } from './modal/classifica/classifica.page';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
+import { Router } from '@angular/router';
 import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { HttpClient } from '@angular/common/http';
@@ -59,6 +60,7 @@ export class GooseGamePage implements OnInit {
     private lobbyManager: LobbyManagerService,
     private timerService: TimerServiceService,
     private errorManager: ErrorManagerService,
+    private router: Router,
     private http: HttpClient) {
     this.loadPlayers();
     this.ping();
@@ -300,15 +302,9 @@ export class GooseGamePage implements OnInit {
       cssClass: 'fullheight'
     });
 
-    // modal.onDidDismiss().then((data) => {
-    //   const mod_user = data['data'];
-
-    //   //TODO 
-    //   if (mod_user)
-    //     this.iniziaTurno();
-    //   else
-    //     this.concludiTurno(this.gamePlayers[this.localPlayerIndex].info);
-    // });
+    modal.onDidDismiss().then((data) => {
+      this.router.navigateByUrl('/lobby-guest', { replaceUrl: true });
+    });
     return await modal.present();
   }
 
