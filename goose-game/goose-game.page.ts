@@ -17,31 +17,12 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./goose-game.page.scss'],
 })
 export class GooseGamePage implements OnInit {
+  cells = [];
   lobbyPlayers = [];
   gamePlayers = [];
   localPlayerIndex;
   myTurn = false;
   abilitaDado = false;
-
-  cells = [
-    { title: '0' },
-    { title: '1', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '2', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '3', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '4', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '5', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '6', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '7', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '8', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '9', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '10', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '11', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '12', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '13', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '14', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } },
-    { title: '15', question: { q: 'Che ora è?', a1: 'le 3', a2: 'le 4', a3: 'le 5' } }
-  ];
-
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
 
   private timerGiocatori;
@@ -58,6 +39,7 @@ export class GooseGamePage implements OnInit {
     public toastController: ToastController,
     private router: Router,
     private http: HttpClient) {
+    this.getGameConfig();
     this.loadPlayers();
     this.ping();
     this.timerGiocatori = timerService.getTimer(() => { this.loadPlayers() }, 3000);
@@ -65,8 +47,22 @@ export class GooseGamePage implements OnInit {
     this.timerPing = timerService.getTimer(() => { this.ping() }, 4000);
   }
 
-  async ngOnInit() {
-    this.createGameBoard();
+  async ngOnInit() { }
+
+  async getGameConfig() {
+    const token_value = (await this.loginService.getToken()).value;
+    const headers = { 'token': token_value };
+
+    this.http.get('/game/config', { headers }).subscribe(
+      async (res) => {
+        this.cells = res['results'][0].config.cells;
+        this.createGameBoard();
+      },
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.errorManager.stampaErrore(res, 'File di configurazione mancante');
+      }
+    );
   }
 
   /**
