@@ -456,7 +456,7 @@ export class GooseGamePage implements OnInit {
     });
 
     modal.onDidDismiss().then((data) => {
-      this.router.navigateByUrl('/lobby-guest', { replaceUrl: true });
+      this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
     });
     return await modal.present();
   }
