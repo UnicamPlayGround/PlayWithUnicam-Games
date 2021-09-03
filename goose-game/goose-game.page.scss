@@ -1,9 +1,40 @@
+ion-content{
+    --background: linear-gradient(#045164, #2460a5, #39a3fa);
+}
+
+.game-title{
+    --background: linear-gradient(#337fa1, #2460a5, #39a3fa);
+
+    ion-title{
+        text-align: center;
+        font-family: "Andale Mono", monospace;
+        font-weight: bold;
+        font-size: 30px;
+        color: #fff;
+        text-shadow: 3px 2px #2460a5;
+    }
+}
+
+.dieroll-toolbar{
+    --background: linear-gradient(#337fa1, #2460a5, #39a3fa);
+}
+
+.dieroll-board{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:150px;
+}
+
+// ANIMAZIONI DADO
 .rollDice{
     animation: shake 0.5s infinite
 }
+
 .backgroundImageDado{
     background-image: url("../../../assets/game-assets/dado1.png");
 }
+
 @keyframes shake{
     0%{
         transform: rotate(25deg);
@@ -41,165 +72,323 @@
     background-image: url("../../../assets/game-assets/dado6.png")
 }
 
-.players-board{
-    // margin:auto;
-    margin-top: 15px;
-    max-width:484px;
-    align-items: center;
+.players-legend{
+    --background: rgba(0,0,0,0);
 
-    ion-card-title{
-        font-weight: bold;
-        text-align: center;
+    .legend-item{
+        margin-left: 10px;
+        display:flex;
+        line-height:20px;
+        height:20px;
+        .legend-item-text{
+            float:left;
+            margin-left:5px; 
+            color:#fff;
+        }
+        .goose1-square{ color:#fff; background:#fff; }
+        .goose2-square{ color:rgb(224, 40, 117); background: rgb(224, 40, 117); }
+        .goose3-square{ color:rgb(236, 189, 35); background: rgb(236, 189, 35); }
+        .goose4-square{ color:rgb(37, 108, 190); background: rgb(37, 108, 190); }
+        .goose5-square{ color:rgb(199, 95, 10); background:rgb(199, 95, 10); }
+        .goose6-square{ color:rgb(54, 207, 195); background:rgb(54, 207, 195); }
     }
-}
-
-.dieroll-board{
-    // margin:auto;
-    margin-top: 15px;
-    max-width:484px;
-    align-items: center;
-}
-
-/* Tablet Styles */
-@media only screen and (min-width: 0px) and (max-width: 512px){
-    .players-board {
-        margin-left: 15px;
-        margin-right: 15px;
-    }
-
-    .dieroll-board {
-        margin-left: 15px;
-        margin-right: 15px;
-    }
-}
-
-.player{
-    // border:1px solid black;
-    align-items: center;
-    max-width: 100px;
 }
 
 .board{
-    background-color: lightblue;
     padding: 20px;
 }
 
-.grey{
-    background-color: grey;
+::ng-deep.row{
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.empty-cell{
-    // background-color: rgb(90, 170, 190);
-    // border: 1px solid rgb(28, 68, 78);
+::ng-deep.empty-cell{
     width: 170px;
     height: 170px;
     text-align: center;
 }
 
-.game-cell{
+::ng-deep.game-cell{
     padding:10px;
     background-color: rgb(90, 170, 190);
     border: 1px solid rgb(28, 68, 78);
     width: 170px;
     height: 170px;
     text-align: center;
-    // ion-label{
-    //     font-weight: bold;
-    //     font-size: 20px;
-    // }
+
+    ion-label{
+        font-size: 20px;
+        font-weight: bold;
+    }
 }
 
-.font-cell{
-    font-size: 20px;
-    font-weight: bold;
+::ng-deep.goose{
+    position:absolute;
+    max-width:64px;
+    max-height:64px;
+    p{
+        z-index: 1;
+        position:absolute;
+        margin-top:0px;
+        min-width: 64px;
+        text-align: center;
+        font-weight: bold;
+        text-shadow: -1.5px 0 #000, 0 1.5px #000, 1.5px 0 #000, 0 -1.5px #000;
+        color: rgb(208, 255, 0);
+    }
+    img{
+        margin-top:18px;
+        transform: scaleX(-1);
+    }
+}
+
+::ng-deep.goose1{
+    margin-left:6.5rem;
+    margin-top: -2rem;
+}
+
+::ng-deep.goose2{
+    margin-left:6.5rem;
+    margin-top: 3rem;
+}
+
+::ng-deep.goose3{  
+    margin-left:3rem;
+    margin-top: -4rem;
+}
+
+::ng-deep.goose4{
+    margin-left:3rem;
+    margin-top: 1rem;
+}
+
+::ng-deep.goose5{
+    margin-left:-0.5rem;
+    margin-top: -2rem;
+}
+
+::ng-deep.goose6{
+    margin-left:-0.5rem;
+    margin-top: 3rem;
 }
 
 @media only screen and (min-width: 1190px) and (max-width: 1430px){
-    .game-cell{
+    ::ng-deep.game-cell{
         width: 140px;
         height: 140px;
     }
-    .empty-cell{
+    ::ng-deep.empty-cell{
         width: 140px;
         height: 140px;
     }
-    .font-cell{
-        font-size: 18px;
-        font-weight: bold;
+    ::ng-deep.goose{
+        max-width:60px;
+        max-height:60px;
+    }
+    ::ng-deep.goose1{
+        margin-left:5rem;
+        margin-top: -3rem;
+    }
+    ::ng-deep.goose2{
+        margin-left:5rem;
+        margin-top: 1.5rem;
+    }
+    ::ng-deep.goose3{  
+        margin-left:2rem;
+        margin-top: -5rem;
+    }
+    ::ng-deep.goose4{
+        margin-left:2rem;
+        margin-top: 0rem;
+    }
+    ::ng-deep.goose5{
+        margin-left:-1rem;
+        margin-top: -3rem;
+    }
+    ::ng-deep.goose6{
+        margin-left:-1rem;
+        margin-top: 1.5rem;
     }
 }
 
-@media only screen and (min-width: 841px) and (max-width: 1189px){
-    .game-cell{
+@media only screen and (min-width: 1021px) and (max-width: 1189px){
+    ::ng-deep.game-cell{
+        width: 120px;
+        height: 120px;
+    }
+    ::ng-deep.empty-cell{
+        width: 120px;
+        height: 120px;
+    }
+    ::ng-deep.goose{
+        max-width:55px;
+        max-height:55px;
+    }
+    ::ng-deep.goose1{
+        margin-left:4.2rem;
+        margin-top: -3.5rem;
+    }
+    ::ng-deep.goose2{
+        margin-left:4.2rem;
+        margin-top: 0.8rem;
+    }
+    ::ng-deep.goose3{  
+        margin-left:1.5rem;
+        margin-top: -5rem;
+    }
+    ::ng-deep.goose4{
+        margin-left:1.5rem;
+        margin-top: -0.5rem;
+    }
+    ::ng-deep.goose5{
+        margin-left:-1.5rem;
+        margin-top: -3.5rem;
+    }
+    ::ng-deep.goose6{
+        margin-left:-1.5rem;
+        margin-top: 0.8rem;
+    }
+}
+
+@media only screen and (min-width: 861px) and (max-width: 1020px){
+    ::ng-deep.game-cell{
         width: 100px;
         height: 100px;
     }
-    .empty-cell{
+    ::ng-deep.empty-cell{
         width: 100px;
         height: 100px;
     }
-    .font-cell{
-        font-size: 13px;
-        font-weight: bold;
+    ::ng-deep.goose{
+        max-width:50px;
+        max-height:50px;
+    }
+    ::ng-deep.goose1{
+        margin-left:3rem;
+        margin-top: -3.2rem;
+    }
+    ::ng-deep.goose2{
+        margin-left:3rem;
+        margin-top: -0.2rem;
+    }
+    ::ng-deep.goose3{  
+        margin-left:1rem;
+        margin-top: -3.2rem;
+    }
+    ::ng-deep.goose4{
+        margin-left:1rem;
+        margin-top: -0.2rem;
+    }
+    ::ng-deep.goose5{
+        margin-left:-1.2rem;
+        margin-top: -3.2rem;
+    }
+    ::ng-deep.goose6{
+        margin-left:-1.2rem;
+        margin-top: -0.2rem;
     }
 }
 
- @media only screen and (min-width: 601px) and (max-width: 840px){
-.game-cell{
-    width: 70px;
-    height: 70px;
-}
-.empty-cell{
-    width: 70px;
-    height: 70px;
-}
-.font-cell{
-    font-size: 13px;
-    font-weight: bold;
-}
-}
-
-.row{
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.goose1{
-    position: absolute;
-    transform: scaleX(-1);
-}
-
-.goose2{
-    position: absolute;
-    margin-top: 40px;
-    margin-left: -6px;
-    transform: scaleX(-1);
-}
-
-.goose3{
-    position: absolute;
-    margin-top: 80px;
-    margin-left: -12px;
-    transform: scaleX(-1);
-}
-
-.goose4{
-    position: absolute;
-    margin-left: -80px;
-    transform: scaleX(-1);
+@media only screen and (min-width: 780px) and (max-width: 860px){
+    ::ng-deep.game-cell{
+        width: 90px;
+        height: 90px;
+    }
+    ::ng-deep.empty-cell{
+        width: 90px;
+        height: 90px;
+    }
+    ::ng-deep.goose{
+        max-width:45px;
+        max-height:45px;
+    }
+    ::ng-deep.goose1{
+        margin-left:2.8rem;
+        margin-top: -3.2rem;
+    }
+    ::ng-deep.goose2{
+        margin-left:2.8rem;
+        margin-top: -0.5rem;
+    }
+    ::ng-deep.goose3{  
+        margin-left:0.8rem;
+        margin-top: -3.2rem;
+    }
+    ::ng-deep.goose4{
+        margin-left:0.8rem;
+        margin-top: -0.5rem;
+    }
+    ::ng-deep.goose5{
+        margin-left:-1.2rem;
+        margin-top: -3.2rem;
+    }
+    ::ng-deep.goose6{
+        margin-left:-1.2rem;
+        margin-top: -0.5rem;
+    }
 }
 
-.goose5{
-    position: absolute;
-    margin-top: 40px;
-    margin-left: -86px;
-    transform: scaleX(-1);
+ @media only screen and (min-width: 0px) and (max-width: 779px){
+    ::ng-deep.game-cell{
+        width: 75px;
+        height: 75px;
+    }
+    ::ng-deep.empty-cell{
+        width: 75px;
+        height: 75px;
+    }
+    ::ng-deep.goose{
+        max-width:40px;
+        max-height:40px;
+    }
+    ::ng-deep.goose1{
+        margin-left:2rem;
+        margin-top: -3.5rem;
+    }
+    ::ng-deep.goose2{
+        margin-left:2rem;
+        margin-top: -1.2rem;
+    }
+    ::ng-deep.goose3{  
+        margin-left:0.4rem;
+        margin-top: -3.5rem;
+    }
+    ::ng-deep.goose4{
+        margin-left:0.4rem;
+        margin-top: -1.2rem;
+    }
+    ::ng-deep.goose5{
+        margin-left:-1.3rem;
+        margin-top: -3.5rem;
+    }
+    ::ng-deep.goose6{
+        margin-left:-1.3rem;
+        margin-top: -1.2rem;
+    }
 }
 
-.goose6{
-    position: absolute;
-    margin-top: 80px;
-    margin-left: -92px;
-    transform: scaleX(-1);
+// Per nascondere alcuni elementi e mostrarne altri
+@media only screen and (max-width: 1020px){
+    .game-title{
+        display: none !important;
+    }
+    .dieroll-board{
+        display: none !important;
+    }
+    ::ng-deep.goose{
+        p{
+            display: none !important;
+        }
+    }
 }
 
+// Per nascondere alcuni elementi e mostrarne altri
+@media only screen and (min-width: 1021px){
+    .dieroll-toolbar{
+        display: none !important;
+    }
+    .players-legend{
+        display: none !important;
+    }
+}
