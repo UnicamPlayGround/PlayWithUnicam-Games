@@ -299,12 +299,17 @@ export class GooseGamePage implements OnInit {
           if (player.username == p.username) {
             const differenza = mosseAggiornate.length - player.info.length;
 
-            for (let i = (mosseAggiornate.length - differenza); i < mosseAggiornate.length; i++) {
-              player.info.push(mosseAggiornate[i]);
-              if (mosseAggiornate[i] != 0) {
-                this.presentToast(this.getToastMessage(player.username, mosseAggiornate[i], i));
-                this.muoviPedina(player.goose, mosseAggiornate[i]);
+            if (differenza > 0) {
+              for (let i = (mosseAggiornate.length - differenza); i < mosseAggiornate.length; i++) {
+                player.info.push(mosseAggiornate[i]);
+                if (mosseAggiornate[i] != 0) {
+                  this.presentToast(this.getToastMessage(player.username, mosseAggiornate[i], i));
+                  this.muoviPedina(player.goose, mosseAggiornate[i]);
+                }
               }
+            } else {
+              if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+                this.iniziaTurno();
             }
           }
         });
@@ -314,16 +319,17 @@ export class GooseGamePage implements OnInit {
   }
 
   getToastMessage(player, lancio, nMossa) {
-    if (nMossa == 0)
-      return player + " ha lanciato il dado ed è uscito " + lancio + "!";
-    else return player + " ha risposto correttamente alla domanda, quindi ha ritirato il dado ed è uscito " + lancio + "!";
+    //TODO
+    // if (nMossa == 0)
+    return player + " ha lanciato il dado ed è uscito " + lancio + "!";
+    // else return player + " ha risposto correttamente alla domanda, quindi ha ritirato il dado ed è uscito " + lancio + "!";
   }
 
   async presentToast(message) {
     const toast = await this.toastController.create({
       message: message,
       position: 'top',
-      color: 'primary',
+      cssClass: 'toast',
       duration: 4500
     });
     await toast.present();
@@ -403,10 +409,9 @@ export class GooseGamePage implements OnInit {
     });
 
     modal.onDidDismiss().then((data) => {
-      const mod_user = data['data'];
+      const rispostaCorretta = data['data'];
 
-      if (mod_user) {
-        this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, false);
+      if (rispostaCorretta) {
         this.iniziaTurno();
       } else
         this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
@@ -452,6 +457,7 @@ export class GooseGamePage implements OnInit {
     });
 
     modal.onDidDismiss().then((data) => {
+      this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
       this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
     });
     return await modal.present();
@@ -489,8 +495,10 @@ export class GooseGamePage implements OnInit {
         clearInterval(intervalloMovimentoPedina);
 
         if (!this.controllaFinePartita(posizione, goose)) {
-          if (goose == this.gamePlayers[this.localPlayerIndex].goose)
+          if (goose == this.gamePlayers[this.localPlayerIndex].goose) {
+            this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, false);
             this.presentaDomanda();
+          }
 
           if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
             this.iniziaTurno();
