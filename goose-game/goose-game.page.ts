@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
 import jwt_decode from 'jwt-decode';
-import { ModalController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { CellQuestionPage } from './modal/cell-question/cell-question.page';
 import { ClassificaPage } from './modal/classifica/classifica.page';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
@@ -24,6 +24,7 @@ export class GooseGamePage implements OnInit {
   myTurn = false;
   abilitaDado = false;
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
+  lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
 
   private timerGiocatori;
   private timerPing;
@@ -31,17 +32,20 @@ export class GooseGamePage implements OnInit {
 
   constructor(
     private alertCreator: AlertCreatorService,
+    private loadingController: LoadingController,
     private loginService: LoginService,
     private modalController: ModalController,
     private lobbyManager: LobbyManagerService,
     private timerService: TimerServiceService,
     private errorManager: ErrorManagerService,
-    public toastController: ToastController,
+    private toastController: ToastController,
     private router: Router,
-    private http: HttpClient) {
+    private http: HttpClient
+  ) {
     this.getGameConfig();
     this.loadPlayers();
     this.ping();
+    this.loadInfoLobby()
     this.timerGiocatori = timerService.getTimer(() => { this.loadPlayers() }, 3000);
     this.timerInfoPartita = timerService.getTimer(() => { this.getInfoPartita() }, 1000);
     this.timerPing = timerService.getTimer(() => { this.ping() }, 4000);
@@ -205,6 +209,23 @@ export class GooseGamePage implements OnInit {
   }
 
   /**
+   * Carica le Informazioni della Lobby.
+   */
+  private async loadInfoLobby() {
+    const tokenValue = (await this.loginService.getToken()).value;
+    const decodedToken: any = jwt_decode(tokenValue);
+
+    (await this.lobbyManager.loadInfoLobby()).subscribe(
+      async (res) => {
+        this.lobby = res['results'][0];
+      },
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.errorManager.stampaErrore(res, 'Impossibile caricare la Lobby!');
+      });
+  }
+
+  /**
    * Recupera i partecipanti della lobby.
    * La prima volta che viene fatto, vengono inizializzati i giocatori tramite il
    * metodo setGamePlayers().
@@ -213,6 +234,7 @@ export class GooseGamePage implements OnInit {
     (await this.lobbyManager.getPartecipanti()).subscribe(
       async (res) => {
         this.lobbyPlayers = res['results'];
+        console.log("LOBBY PLAYERS: ", this.lobbyPlayers);
         if (this.gamePlayers.length == 0) this.setGamePlayers();
         if (this.gamePlayers.length > this.lobbyPlayers.length) this.rimuoviGiocatore();
       },
@@ -351,6 +373,7 @@ export class GooseGamePage implements OnInit {
       async (res) => { },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        //TODO inserire router
         this.errorManager.stampaErrore(res, 'Ping fallito');
       }
     );
@@ -456,11 +479,23 @@ export class GooseGamePage implements OnInit {
       cssClass: 'fullheight'
     });
 
-    modal.onDidDismiss().then((data) => {
+    modal.onDidDismiss().then(async () => {
       this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-      this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
+      if (this.gamePlayers[this.localPlayerIndex].username == this.lobby.admin_lobby)
+        this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
+      else
+        this.router.navigateByUrl('/lobby-guest', { replaceUrl: true });
     });
-    return await modal.present();
+
+    if (this.gamePlayers[this.localPlayerIndex].username != this.lobby.admin_lobby) {
+      const loading = await this.loadingController.create();
+      await loading.present();
+      setTimeout(async () => {
+        await loading.dismiss();
+        return await modal.present();
+      }, 2500);
+    } else
+      return await modal.present();
   }
 
   private cercaGiocatoreByGoose(goose) {
@@ -468,6 +503,21 @@ export class GooseGamePage implements OnInit {
       if (giocatore.goose == goose)
         return giocatore;
     })[0];
+  }
+
+  private async terminaPartita() {
+    if (this.gamePlayers[this.localPlayerIndex].username == this.lobby.admin_lobby) {
+      const tokenValue = (await this.loginService.getToken()).value;
+      var headers = { 'token': tokenValue };
+
+      this.http.delete('/partita/termina', { headers }).subscribe(
+        async (res) => {
+          this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita);
+        },
+        async (res) => {
+          this.errorManager.stampaErrore(res, 'Terminazione Partita Fallita');
+        });
+    }
   }
 
   private controllaFinePartita(posizione, goose) {
@@ -481,6 +531,8 @@ export class GooseGamePage implements OnInit {
         const vincitore = this.cercaGiocatoreByGoose(goose);
         this.alertCreator.createAlert("Peccato!", vincitore.username + " ha vinto!", button);
       }
+      this.terminaPartita();
+
       return true;
     } else return false;
   }
@@ -509,7 +561,7 @@ export class GooseGamePage implements OnInit {
         this.effettuaSpostamento(goose, posizione, direzione);
         lancio--;
       }
-    }, 700);
+    }, 600);
   }
 
   effettuaSpostamento(goose, posizione, direzione) {
