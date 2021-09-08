@@ -4,7 +4,7 @@ import { LoginService } from 'src/app/services/login-service/login.service';
 import jwt_decode from 'jwt-decode';
 import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { CellQuestionPage } from './modal/cell-question/cell-question.page';
-import { ClassificaPage } from './modal/classifica/classifica.page';
+import { ClassificaPage } from '../../users/player/modal/classifica/classifica.page';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { Router } from '@angular/router';
 import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
@@ -107,7 +107,7 @@ export class GooseGamePage implements OnInit {
    */
   getGooseImg(goose) {
     const img = document.createElement("img");
-    img.src = "../../../assets/game-assets/" + goose + ".png";
+    img.src = "game-assets/goose-game/game-assets/" + goose + ".png";
     return img;
   }
 

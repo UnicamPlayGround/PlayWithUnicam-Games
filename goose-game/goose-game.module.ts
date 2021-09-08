@@ -8,7 +8,7 @@ import { GooseGamePageRoutingModule } from './goose-game-routing.module';
 
 import { GooseGamePage } from './goose-game.page';
 import { CellQuestionPageModule } from './modal/cell-question/cell-question.module';
-import { ClassificaPageModule } from './modal/classifica/classifica.module';
+import { ClassificaPageModule } from '../../users/player/modal/classifica/classifica.module';
 
 @NgModule({
   imports: [

@@ -32,7 +32,7 @@ ion-content{
 }
 
 .backgroundImageDado{
-    background-image: url("../../../assets/game-assets/dado1.png");
+    background-image: url("../../../assets/icon/dado1.png");
 }
 
 @keyframes shake{
@@ -54,22 +54,22 @@ ion-content{
 }
 
 .mostra1{
-    background-image: url("../../../assets/game-assets/dado1.png");
+    background-image: url("../../../assets/icon/dado1.png");
 }
 .mostra2{
-    background-image: url("../../../assets/game-assets/dado2.png");
+    background-image: url("../../../assets/icon/dado2.png");
 }
 .mostra3{
-    background-image: url("../../../assets/game-assets/dado3.png");
+    background-image: url("../../../assets/icon/dado3.png");
 }
 .mostra4{
-    background-image: url("../../../assets/game-assets/dado4.png");
+    background-image: url("../../../assets/icon/dado4.png");
 }
 .mostra5{
-    background-image: url("../../../assets/game-assets/dado5.png");
+    background-image: url("../../../assets/icon/dado5.png");
 }
 .mostra6{
-    background-image: url("../../../assets/game-assets/dado6.png")
+    background-image: url("../../../assets/icon/dado6.png")
 }
 
 .players-legend{
@@ -86,11 +86,11 @@ ion-content{
             color:#fff;
         }
         .goose1-square{ color:#fff; background:#fff; }
-        .goose2-square{ color:rgb(224, 40, 117); background: rgb(224, 40, 117); }
-        .goose3-square{ color:rgb(236, 189, 35); background: rgb(236, 189, 35); }
-        .goose4-square{ color:rgb(37, 108, 190); background: rgb(37, 108, 190); }
-        .goose5-square{ color:rgb(199, 95, 10); background:rgb(199, 95, 10); }
-        .goose6-square{ color:rgb(54, 207, 195); background:rgb(54, 207, 195); }
+        .goose2-square{ color:rgb(246, 41, 75); background: rgb(246, 41, 75); }
+        .goose3-square{ color:rgb(255, 204, 0); background: rgb(255, 204, 0); }
+        .goose4-square{ color:rgb(22, 106, 175); background: rgb(22, 106, 175); }
+        .goose5-square{ color:rgb(196, 98, 32); background:rgb(196, 98, 32); }
+        .goose6-square{ color:rgb(82, 210, 182); background:rgb(82, 210, 182); }
     }
 }
 
