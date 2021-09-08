@@ -386,11 +386,10 @@ export class GooseGamePage implements OnInit {
   }
 
   private async inviaDatiPartita(info, fineTurno) {
-    const token_value = (await this.loginService.getToken()).value;
+    const tokenValue = (await this.loginService.getToken()).value;
+    const toSend = { 'token': tokenValue, 'info_giocatore': info }
 
-    const to_send = { 'token': token_value, 'info_giocatore': info }
-
-    this.http.put('/game/save', to_send).subscribe(
+    this.http.put('/game/save', toSend).subscribe(
       async (res) => {
         if (fineTurno)
           this.concludiTurno();
@@ -404,10 +403,10 @@ export class GooseGamePage implements OnInit {
 
   async concludiTurno() {
     this.myTurn = false;
-    const token_value = (await this.loginService.getToken()).value;
-    const to_send = { 'token': token_value }
+    const tokenValue = (await this.loginService.getToken()).value;
+    const toSend = { 'token': tokenValue }
 
-    this.http.put('/game/fine-turno', to_send).subscribe(
+    this.http.put('/game/fine-turno', toSend).subscribe(
       async (res) => { },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
@@ -487,15 +486,7 @@ export class GooseGamePage implements OnInit {
         this.router.navigateByUrl('/lobby-guest', { replaceUrl: true });
     });
 
-    if (this.gamePlayers[this.localPlayerIndex].username != this.lobby.admin_lobby) {
-      const loading = await this.loadingController.create();
-      await loading.present();
-      setTimeout(async () => {
-        await loading.dismiss();
-        return await modal.present();
-      }, 2500);
-    } else
-      return await modal.present();
+    return await modal.present();
   }
 
   private cercaGiocatoreByGoose(goose) {
@@ -506,18 +497,16 @@ export class GooseGamePage implements OnInit {
   }
 
   private async terminaPartita() {
-    if (this.gamePlayers[this.localPlayerIndex].username == this.lobby.admin_lobby) {
-      const tokenValue = (await this.loginService.getToken()).value;
-      var headers = { 'token': tokenValue };
+    const tokenValue = (await this.loginService.getToken()).value;
+    const toSend = { 'token': tokenValue }
 
-      this.http.delete('/partita/termina', { headers }).subscribe(
-        async (res) => {
-          this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita);
-        },
-        async (res) => {
-          this.errorManager.stampaErrore(res, 'Terminazione Partita Fallita');
-        });
-    }
+    this.http.put('/partita/termina', toSend).subscribe(
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita);
+      },
+      async (res) => {
+        this.errorManager.stampaErrore(res, 'Terminazione Partita Fallita');
+      });
   }
 
   private controllaFinePartita(posizione, goose) {
@@ -526,12 +515,12 @@ export class GooseGamePage implements OnInit {
 
       if (goose == this.gamePlayers[this.localPlayerIndex].goose) {
         this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, false);
+        this.terminaPartita();
         this.alertCreator.createAlert("Vittoria", "Complimenti, hai vinto la partita!", button);
       } else {
         const vincitore = this.cercaGiocatoreByGoose(goose);
         this.alertCreator.createAlert("Peccato!", vincitore.username + " ha vinto!", button);
       }
-      this.terminaPartita();
 
       return true;
     } else return false;
