@@ -4,12 +4,13 @@ import { LoginService } from 'src/app/services/login-service/login.service';
 import jwt_decode from 'jwt-decode';
 import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { CellQuestionPage } from './modal/cell-question/cell-question.page';
-import { ClassificaPage } from '../../users/player/modal/classifica/classifica.page';
+import { ClassificaPage } from '../../modal-pages/classifica/classifica.page';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { Router } from '@angular/router';
 import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { HttpClient } from '@angular/common/http';
+import { DadiPage } from 'src/app/modal-pages/dadi/dadi.page';
 
 @Component({
   selector: 'app-goose-game',
@@ -560,24 +561,26 @@ export class GooseGamePage implements OnInit {
       document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
   }
 
-  lanciaDado() {
+  async lanciaDado() {
     this.abilitaDado = !this.abilitaDado;
-    var lancio = Math.floor(Math.random() * 6) + 1;
 
-    this.gamePlayers[this.localPlayerIndex].info.push(lancio);
+    const modal = await this.modalController.create({
+      component: DadiPage,
+      componentProps: {
+        nDadi: 1
+      },
+      cssClass: 'fullscreen'
+    });
 
-    var immagineDado = <HTMLInputElement>document.getElementById("cubo");
-    immagineDado.removeAttribute("class");
-    immagineDado.classList.add("rollDice");
-    immagineDado.classList.add("mostra" + lancio);
+    modal.onDidDismiss().then((data) => {
+      const lancio = data['data'];
 
-    //TODO rivedere la posizione degli assets
-    immagineDado.classList.add("mostra" + lancio);
+      if (lancio) {
+        this.gamePlayers[this.localPlayerIndex].info.push(lancio);
+        this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, lancio);
+      }
+    });
 
-    setTimeout(function () {
-      immagineDado.classList.remove("rollDice");
-    }, 1500);
-
-    this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, lancio);
+    return await modal.present();
   }
 }

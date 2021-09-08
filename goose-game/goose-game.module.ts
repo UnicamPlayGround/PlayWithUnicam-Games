@@ -8,7 +8,8 @@ import { GooseGamePageRoutingModule } from './goose-game-routing.module';
 
 import { GooseGamePage } from './goose-game.page';
 import { CellQuestionPageModule } from './modal/cell-question/cell-question.module';
-import { ClassificaPageModule } from '../../users/player/modal/classifica/classifica.module';
+import { ClassificaPageModule } from '../../modal-pages/classifica/classifica.module';
+import { DadiPageModule } from 'src/app/modal-pages/dadi/dadi.module';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { ClassificaPageModule } from '../../users/player/modal/classifica/classi
     IonicModule,
     GooseGamePageRoutingModule,
     CellQuestionPageModule,
-    ClassificaPageModule
+    ClassificaPageModule,
+    DadiPageModule
   ],
   declarations: [GooseGamePage]
 })

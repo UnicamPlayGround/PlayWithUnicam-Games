@@ -5,8 +5,6 @@
 
   <ion-toolbar class="dieroll-toolbar">
     <ion-item lines="none" style="--background: rgba(0,0,0,0);">
-      <div slot="end" style="height: 60px !important; width: 60px !important;" class="backgroundImageDado" id="cubo">
-      </div>
       <ion-button slot="end" [class.button-disabled]="!abilitaDado" color="secondary" shape="round" expand="block"
         (click)="lanciaDado()">
         Tira il dado
@@ -25,7 +23,6 @@
 
 <ion-content>
   <div class="dieroll-board">
-    <div style="height: 60px !important; width: 60px !important;" class="backgroundImageDado" id="cubo2"></div>
     <ion-button [class.button-disabled]="!myTurn" color="secondary" size="large" shape="round" (click)="lanciaDado()"
       style="position:absolute; right: 50px;">Lancia dado</ion-button>
   </div>
