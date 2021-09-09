@@ -223,7 +223,7 @@ export class GooseGamePage implements OnInit {
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Impossibile caricare la Lobby!');
+        this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
       });
   }
 
@@ -320,7 +320,7 @@ export class GooseGamePage implements OnInit {
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Recupero Informazioni Partita Fallito!');
+        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
       }
     );
   }
@@ -345,8 +345,6 @@ export class GooseGamePage implements OnInit {
                 }
               }
             } else {
-              console.log("myTurn", this.myTurn);
-              console.log("fineAggiornamento", this.fineAggiornamento);
               if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn && this.fineAggiornamento)
                 this.iniziaTurno();
             }
@@ -538,7 +536,7 @@ export class GooseGamePage implements OnInit {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita);
       },
       async (res) => {
-        this.errorManager.stampaErrore(res, 'Terminazione Partita Fallita');
+        this.errorManager.stampaErrore(res, 'Terminazione partita fallita');
       });
   }
 
