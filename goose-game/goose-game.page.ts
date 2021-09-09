@@ -248,6 +248,10 @@ export class GooseGamePage implements OnInit {
       });
   }
 
+  /**
+   * Controlla se un giocatore abbandona la partita.
+   * In quel caso verrà rimossa la pedina relativa al giocatore.
+   */
   rimuoviGiocatore() {
     var localUsernames = this.gamePlayers.map(p => { return p.username });
     var updatedUsernames = this.lobbyPlayers.map(p => { return p.username });
@@ -352,6 +356,10 @@ export class GooseGamePage implements OnInit {
     // else return player + " ha risposto correttamente alla domanda, quindi ha ritirato il dado ed è uscito " + lancio + "!";
   }
 
+  /**
+   * Mostra il toas con il messaggio passato in input
+   * @param message messaggio che deve essere mostrato nel toast
+   */
   async presentToast(message) {
     const toast = await this.toastController.create({
       message: message,
@@ -384,6 +392,11 @@ export class GooseGamePage implements OnInit {
     );
   }
 
+  /**
+   * Fa iniziare il turno ad un giocatore. 
+   * Viene mostrato un Alert che comunica l'inizio del turno e viene abilitato il bottone per il lancio del dato.
+   * Inoltre la variabile "myTurn" viene impostata a true
+   */
   iniziaTurno() {
     this.alertCreator.createInfoAlert('Tocca a te!', 'È il tuo turno, tira il dado per procedere!');
     this.myTurn = true;
@@ -448,6 +461,10 @@ export class GooseGamePage implements OnInit {
     return await modal.present();
   }
 
+  /**
+   * Calcola e ritorna la classifica finale della partita.
+   * Per ogni giocatore, nella classifica verrà salvata la posizione della sua pedina nel tabellone.
+   */
   private calcolaClassifica() {
     var classifica = [];
     var numeroCaselle = this.cells.length - 1;
