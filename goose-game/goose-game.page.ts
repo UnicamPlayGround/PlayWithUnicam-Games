@@ -271,6 +271,7 @@ export class GooseGamePage implements OnInit {
         return p.username !== username;
       });
     });
+    this.setLocalPlayerIndex();
   }
 
   /**
@@ -278,21 +279,25 @@ export class GooseGamePage implements OnInit {
    * Viene salvato l'indice del giocatore locale nella variabile "localPlayerIndex". 
    */
   async setGamePlayers() {
-    const token = (await this.loginService.getToken()).value;
-    const decodedToken: any = jwt_decode(token);
-
     var counter = 1;
     this.lobbyPlayers.forEach(player => {
       const tmp = { 'username': player.username, 'goose': "goose" + counter, 'info': [] }
-
-      if (tmp.username == decodedToken.username)
-        this.localPlayerIndex = this.gamePlayers.length;
-
       this.gamePlayers.push(tmp);
       counter++;
     });
+    this.setLocalPlayerIndex();
     this.createPlayersGoose();
     this.getInfoPartita();
+  }
+
+  /**
+   * Scorre l'array 'gamePlayers' e salva l'indice della posizione del giocatore locale
+   * nella variabile 'localPlayerIndex'.
+   */
+  async setLocalPlayerIndex() {
+    const token = (await this.loginService.getToken()).value;
+    const decodedToken: any = jwt_decode(token);
+    this.localPlayerIndex = this.gamePlayers.map(p => p.username).indexOf(decodedToken.username);
   }
 
   /**
