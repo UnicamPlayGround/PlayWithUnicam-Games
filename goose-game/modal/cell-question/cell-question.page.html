@@ -1,28 +1,29 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Domanda</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Domanda casella #{{ nCasella }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-  <ion-list>
+  <ion-list class="modal">
+
+    <ion-item lines="full">
+      <p style="font-size: 16px; color:var(--ion-color-primary);">Rispondi correttamente alla seguente domanda per poter
+        lanciare nuovamente il dado!
+      </p>
+    </ion-item>
+
     <ion-radio-group value="" (ionChange)="radioGroupChange($event)">
       <ion-list-header>
-        <ion-label>{{ question.q }}</ion-label>
+        <h2 style="font-size: 18px;">{{ question.q }}</h2>
       </ion-list-header>
 
       <ion-item *ngFor="let answer of answers" [id]="answer">
         <ion-label>{{ answer }}</ion-label>
-        <!-- <ion-label>Giusto!</ion-label>
-        <ion-label>Sbagliato</ion-label> -->
         <ion-radio slot="start" [value]="answer"></ion-radio>
       </ion-item>
-
     </ion-radio-group>
-    <!-- <ion-item lines="none">
-      <ion-label style="text-align: center; color:var(--ion-color-danger); font-size: 30px;">Peccato! La risposta è errata :(</ion-label>
-    </ion-item> -->
   </ion-list>
 
 </ion-content>

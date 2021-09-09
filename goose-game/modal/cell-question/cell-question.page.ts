@@ -7,6 +7,7 @@ import { ModalController, NavParams } from '@ionic/angular';
   styleUrls: ['./cell-question.page.scss'],
 })
 export class CellQuestionPage implements OnInit {
+  nCasella;
   question: any;
   answers = [];
 
@@ -16,9 +17,8 @@ export class CellQuestionPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.nCasella = this.navParams.get('nCasella');
     this.question = this.navParams.get('question');
-    console.log('this.question:', this.question);
-
     this.answers.push(this.question.a1, this.question.a2, this.question.a3);
     this.shuffleAnswers();
   }
@@ -46,8 +46,8 @@ export class CellQuestionPage implements OnInit {
       this.modalController.dismiss(false);
     }
   }
-  
-  closeModal(){
+
+  closeModal() {
     this.modalController.dismiss();
   }
 }

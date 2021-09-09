@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
 import jwt_decode from 'jwt-decode';
-import { LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { CellQuestionPage } from './modal/cell-question/cell-question.page';
 import { ClassificaPage } from '../../modal-pages/classifica/classifica.page';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
@@ -26,14 +26,13 @@ export class GooseGamePage implements OnInit {
   abilitaDado = false;
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
   lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
-
+  fineAggiornamento = true;
   private timerGiocatori;
   private timerPing;
   private timerInfoPartita;
 
   constructor(
     private alertCreator: AlertCreatorService,
-    private loadingController: LoadingController,
     private loginService: LoginService,
     private modalController: ModalController,
     private lobbyManager: LobbyManagerService,
@@ -44,7 +43,6 @@ export class GooseGamePage implements OnInit {
     private http: HttpClient
   ) {
     this.getGameConfig();
-    this.loadPlayers();
     this.ping();
     this.loadInfoLobby()
     this.timerGiocatori = timerService.getTimer(() => { this.loadPlayers() }, 3000);
@@ -62,6 +60,7 @@ export class GooseGamePage implements OnInit {
       async (res) => {
         this.cells = res['results'][0].config.cells;
         this.createGameBoard();
+        this.loadPlayers();
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
@@ -237,7 +236,6 @@ export class GooseGamePage implements OnInit {
     (await this.lobbyManager.getPartecipanti()).subscribe(
       async (res) => {
         this.lobbyPlayers = res['results'];
-        console.log("LOBBY PLAYERS: ", this.lobbyPlayers);
         if (this.gamePlayers.length == 0) this.setGamePlayers();
         if (this.gamePlayers.length > this.lobbyPlayers.length) this.rimuoviGiocatore();
       },
@@ -311,9 +309,12 @@ export class GooseGamePage implements OnInit {
       async (res) => {
         this.info_partita = res['results'][0];
 
-        if (this.info_partita && this.info_partita.info)
-          await this.aggiornaMosseAvversari();
-        else if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+        if (this.info_partita && this.info_partita.info) {
+          if (this.gamePlayers.length == 1 && this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+            this.iniziaTurno();
+          else await this.aggiornaMosseAvversari();
+
+        } else if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
           this.iniziaTurno();
       },
       async (res) => {
@@ -344,7 +345,9 @@ export class GooseGamePage implements OnInit {
                 }
               }
             } else {
-              if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+              console.log("myTurn", this.myTurn);
+              console.log("fineAggiornamento", this.fineAggiornamento);
+              if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn && this.fineAggiornamento)
                 this.iniziaTurno();
             }
           }
@@ -450,6 +453,7 @@ export class GooseGamePage implements OnInit {
     const modal = await this.modalController.create({
       component: CellQuestionPage,
       componentProps: {
+        nCasella: this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].title,
         question: this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].question
       },
       cssClass: 'fullheight'
@@ -558,11 +562,15 @@ export class GooseGamePage implements OnInit {
   muoviPedina(goose, lancio) {
     var direzione = true;
 
+    if (goose != this.gamePlayers[this.localPlayerIndex].goose)
+      this.fineAggiornamento = false;
+
     const intervalloMovimentoPedina = setInterval(() => {
       var posizione = this.getPosizionePedina(goose);
 
       if (lancio == 0) {
         clearInterval(intervalloMovimentoPedina);
+        this.fineAggiornamento = true;
 
         if (!this.controllaFinePartita(posizione, goose)) {
           if (goose == this.gamePlayers[this.localPlayerIndex].goose) {
