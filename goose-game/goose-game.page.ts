@@ -65,6 +65,7 @@ export class GooseGamePage implements OnInit {
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'File di configurazione mancante');
       }
     );
@@ -222,6 +223,7 @@ export class GooseGamePage implements OnInit {
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Impossibile caricare la Lobby!');
       });
   }
@@ -241,6 +243,7 @@ export class GooseGamePage implements OnInit {
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Impossibile caricare i giocatori!');
       });
   }
@@ -306,7 +309,8 @@ export class GooseGamePage implements OnInit {
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.errorManager.stampaErrore(res, 'Ping fallito');
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Recupero Informazioni Partita Fallito!');
       }
     );
   }
@@ -374,7 +378,7 @@ export class GooseGamePage implements OnInit {
       async (res) => { },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        //TODO inserire router
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Ping fallito');
       }
     );
@@ -397,6 +401,7 @@ export class GooseGamePage implements OnInit {
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
       }
     );
@@ -411,6 +416,7 @@ export class GooseGamePage implements OnInit {
       async (res) => { },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
       }
     );
