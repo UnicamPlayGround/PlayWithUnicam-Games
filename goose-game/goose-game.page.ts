@@ -365,7 +365,7 @@ export class GooseGamePage implements OnInit {
       message: message,
       position: 'top',
       cssClass: 'toast',
-      duration: 4500
+      duration: 3500
     });
     await toast.present();
   }
@@ -592,13 +592,14 @@ export class GooseGamePage implements OnInit {
       componentProps: {
         nDadi: 1
       },
-      cssClass: 'fullscreen'
+      cssClass: 'die-roll-modal'
     });
 
     modal.onDidDismiss().then((data) => {
       const lancio = data['data'];
 
       if (lancio) {
+        this.presentToast("Hai totalizzato " + lancio + "!")
         this.gamePlayers[this.localPlayerIndex].info.push(lancio);
         this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, lancio);
       }
