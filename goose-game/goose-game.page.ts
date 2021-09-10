@@ -406,7 +406,7 @@ export class GooseGamePage implements OnInit {
   iniziaTurno() {
     this.alertCreator.createInfoAlert('Tocca a te!', 'È il tuo turno, tira il dado per procedere!');
     this.myTurn = true;
-    this.abilitaDado = !this.abilitaDado;
+    this.abilitaDado = true;
   }
 
   private async inviaDatiPartita(info, fineTurno) {
@@ -531,8 +531,8 @@ export class GooseGamePage implements OnInit {
 
   /**
    * Controlla se esiste un giocatore con la stessa pedina passata in input.
-   * Se esite, ritorna il giocaotre
-   * @param goose la pedina
+   * Se esite, ritorna il giocatore.
+   * @param goose la pedina del giocatore
    * @returns il giocatore
    */
   private cercaGiocatoreByGoose(goose) {
@@ -617,7 +617,7 @@ export class GooseGamePage implements OnInit {
   }
 
   /**
-   * Fa muovere la pedina di una casella in alla direzione passata in input.
+   * Fa muovere la pedina di una casella in base alla direzione passata in input.
    * @param goose la pedina da muovere
    * @param posizione la posizione iniziale della pedina
    * @param direzione la direzione verso cui si deve muovere la pedina
@@ -635,7 +635,7 @@ export class GooseGamePage implements OnInit {
    * @returns presenta la modal
    */
   async lanciaDado() {
-    this.abilitaDado = !this.abilitaDado;
+    this.abilitaDado = false;
 
     const modal = await this.modalController.create({
       component: DadiPage,
