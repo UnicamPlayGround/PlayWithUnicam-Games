@@ -510,7 +510,7 @@ export class GooseGamePage implements OnInit {
     });
 
     modal.onDidDismiss().then(async () => {
-      this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+      this.timerService.stopTimers(this.timerPing);
       if (this.gamePlayers[this.localPlayerIndex].username == this.lobby.admin_lobby)
         this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
       else
@@ -549,6 +549,7 @@ export class GooseGamePage implements OnInit {
         this.terminaPartita();
         this.alertCreator.createAlert("Vittoria", "Complimenti, hai vinto la partita!", button);
       } else {
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita);
         const vincitore = this.cercaGiocatoreByGoose(goose);
         this.alertCreator.createAlert("Peccato!", vincitore.username + " ha vinto!", button);
       }
