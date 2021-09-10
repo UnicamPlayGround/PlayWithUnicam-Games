@@ -23,6 +23,9 @@ export class CellQuestionPage implements OnInit {
     this.shuffleAnswers();
   }
 
+  /**
+   * Mescola le domande da mostrare sulla modal
+   */
   shuffleAnswers() {
     for (var i = this.answers.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
@@ -32,21 +35,28 @@ export class CellQuestionPage implements OnInit {
     }
   }
 
+  /**
+   * Fornisce la risposta giusta alla domanda presentata sulla modal caricando le opportune classi da css.
+   * Se la risposta data dall'utente è corretta, sarà evidenziata in verde,
+   * altrimenti verrà evidenziata in rosso mentre la risposta giusta verrà evidenziata in verde.
+   * @param event 
+   */
   radioGroupChange(event) {
     console.log("radioGroupChange", event.detail);
     if (event.detail.value === this.question.a1) {
-      console.log("RISPOSTA CORRETTA");
       document.getElementById(event.detail.value).classList.add("correct-answer");
       this.modalController.dismiss(true);
     }
     else {
-      console.log("RISPOSTA ERRATA");
       document.getElementById(event.detail.value).classList.add("wrong-answer");
       document.getElementById(this.question.a1).classList.add("correct-answer");
       this.modalController.dismiss(false);
     }
   }
 
+  /**
+   * Chiude la modal
+   */
   closeModal() {
     this.modalController.dismiss();
   }

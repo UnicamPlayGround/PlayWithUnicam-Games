@@ -469,8 +469,8 @@ export class GooseGamePage implements OnInit {
   }
 
   /**
-   * Calcola e ritorna la classifica finale della partita.
-   * Per ogni giocatore, nella classifica verrà salvata la posizione della sua pedina nel tabellone.
+   * Salva all'interno dell'array "classifica" l'username di tutti i giocatori e la posizione della relativa pedina.
+   * Il metodo ritornerà la classifica finale ordinata chiamando l'opportuno metodo.
    */
   private calcolaClassifica() {
     var classifica = [];
@@ -493,6 +493,11 @@ export class GooseGamePage implements OnInit {
     return this.ordinaClassifica(classifica);
   }
 
+  /**
+   * Ordina la classifica passata in input in base alla posizione delle pedine.
+   * @param classifica array contenente username e posizione di tutti i giocatori della partita
+   * @returns la classifica ordinata
+   */
   private ordinaClassifica(classifica) {
     classifica.sort(function (a, b) {
       return b.posizione - a.posizione;
@@ -500,6 +505,10 @@ export class GooseGamePage implements OnInit {
     return classifica;
   }
 
+  /**
+   * Mostra la modal contenente la classifica finale
+   * @returns presenta la modal
+   */
   async mostraClassifica() {
     const modal = await this.modalController.create({
       component: ClassificaPage,
@@ -520,6 +529,12 @@ export class GooseGamePage implements OnInit {
     return await modal.present();
   }
 
+  /**
+   * Controlla se esiste un giocatore con la stessa pedina passata in input.
+   * Se esite, ritorna il giocaotre
+   * @param goose la pedina
+   * @returns il giocatore
+   */
   private cercaGiocatoreByGoose(goose) {
     return this.gamePlayers.filter(giocatore => {
       if (giocatore.goose == goose)
@@ -527,6 +542,9 @@ export class GooseGamePage implements OnInit {
     })[0];
   }
 
+  /**
+   * Fa terminare la partita e ferma gli opportuni timers.
+   */
   private async terminaPartita() {
     const tokenValue = (await this.loginService.getToken()).value;
     const toSend = { 'token': tokenValue }
@@ -540,6 +558,15 @@ export class GooseGamePage implements OnInit {
       });
   }
 
+  /**
+   * Controlla se la partita è terminata oppure no.
+   * Quindi controlla se la pedina passata in input si è fermata nell'ultima posizione oppure no.
+   * In caso affermativo, la partita verrà terminata richiamando il metodo opportuno e verrà mostrato a video
+   * un alert che comunicherà la vittoria
+   * @param posizione posizione della pedina
+   * @param goose la pedina
+   * @returns true se la partita è terminata, false altrimenti.
+   */
   private controllaFinePartita(posizione, goose) {
     if (posizione == (this.cells.length - 1)) {
       var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
@@ -589,6 +616,12 @@ export class GooseGamePage implements OnInit {
     }, 600);
   }
 
+  /**
+   * Fa muovere la pedina di una casella in alla direzione passata in input.
+   * @param goose la pedina da muovere
+   * @param posizione la posizione iniziale della pedina
+   * @param direzione la direzione verso cui si deve muovere la pedina
+   */
   effettuaSpostamento(goose, posizione, direzione) {
     if (direzione)
       document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
@@ -596,6 +629,11 @@ export class GooseGamePage implements OnInit {
       document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
   }
 
+  /**
+   * Apre la modal dove sarà visualizzato il lancio del dado.
+   * Una volta terminata l'animazione verrà effettuato lo spostamento della pedina richiamando il metodo opportuno
+   * @returns presenta la modal
+   */
   async lanciaDado() {
     this.abilitaDado = !this.abilitaDado;
 
