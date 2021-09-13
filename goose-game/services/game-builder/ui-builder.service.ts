@@ -8,8 +8,11 @@ export class UiBuilderService {
   constructor() { }
 
   /**
- * Costruisce il tabellone di gioco in base alle caselle contenute in 'this.cells'.
- */
+   * Costruisce il tabellone di gioco in base alle caselle contenute nell'array
+   * passato in input.
+   * 
+   * @param cells L'array di caselle con cui costruire il tabellone.
+   */
   createGameBoard(cells) {
     var currentRowNumber = 0;
     var direction = true;
@@ -105,9 +108,11 @@ export class UiBuilderService {
   }
 
   /**
- * Costruisce le pedine dei vari giocatori che partecipano
- * alla partita. 
- */
+   * Costruisce le pedine dei vari giocatori che partecipano alla partita in base
+   * all'array passato in input.
+   * 
+   * @param gamePlayers L'array di giocatori per i quali costruire le pedine.
+   */
   createPlayersGoose(gamePlayers) {
     gamePlayers.forEach(player => {
       const goose = document.createElement("div");
