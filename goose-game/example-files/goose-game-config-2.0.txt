@@ -25,7 +25,7 @@
       "title": "3",
       "question": {
 	    "img_url" : "",
-	    "video_url" : "https://www.youtube.com/embed/3I4zl_8Ges4",
+	    "video_url" : "",
       "q": "Quale tra le seguenti affermazioni è corretta?",
 	    "answers" : [ 
 			"Un software è un applicativo eseguibile dal PC che permette di eseguire determinate operazioni",
