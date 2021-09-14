@@ -64,9 +64,9 @@
       "title": "7",
       "question": {
 	"img_url" : "",
-	"video_url" : "https://www.youtube.com/embed/cWtqmQIVII4",
-        "q": "Qual è l'Università migliore del mondo? E perchè proprio UNICAM?",
-	"answers" : [ "UNICAM", "UNIMC", "UNIVPM"]
+	"video_url" : "",
+        "q": "A cosa servono le ventole nel computer?",
+	"answers" : [ "Raffreddare il pc", "Riscaldare il pc", "Ad accendere il pc"]
       }
     },
        {
@@ -75,7 +75,7 @@
 	"img_url" : "",
 	"video_url" : "",
         "q": "Qual è l'unità di misura della capacità di un Hard Disk?",
-	"answers" : [ "GigaByte", "Bit", "Centimetri quadrati"]
+	"answers" : [ "GigaByte/TeraByte", "Pollici", "Centimetri quadrati"]
       }
     },
         {
@@ -118,9 +118,9 @@
       "title": "13",
       "question": {
 	"img_url" : "",
-	"video_url" : "",
-        "q": "Quali sono le parti fondamentali di un computer?",
-	"answers" : [ "Hardware e Software", "Mouse e tastiera", "Monitor e stampante"]
+	"video_url" : "https://www.youtube.com/embed/lElXAgd1hGA",
+        "q": "Di che università si tratta?",
+	"answers" : [ "UNICAM", "UNIMC", "UNIVPN"]
       }
     },
     {
