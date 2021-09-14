@@ -9,7 +9,9 @@
         "q": "Cosa sono le vibrisse?",
         "a1": "Sono i baffi dei gatti",
         "a2": "Sono gli zoccoli del mulo",
-        "a3": "Sono i denti incisivi dei castori"
+        "a3": "Sono i denti incisivi dei castori",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
+
       }
     },
     {
@@ -18,7 +20,8 @@
         "q": "Quale di queste è una caratteristica della martora?",
         "a1": "Mangia frutta",
         "a2": "Non si arrampica sugli alberi",
-        "a3": "Può cambiare colore e mimetizzarsi con l'ambiente"
+        "a3": "Può cambiare colore e mimetizzarsi con l'ambiente",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -27,7 +30,8 @@
         "q": "Da quante isole è formata la Nuova Zelanda?",
         "a1": "2",
         "a2": "3",
-        "a3": "7"
+        "a3": "7",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -36,7 +40,8 @@
         "q": "In quale costellazione si trova Antares?",
         "a1": "Costellazione dello Scorpione",
         "a2": "Costellazione dell'Acquario",
-        "a3": "Costellazione del Sagittario"
+        "a3": "Costellazione del Sagittario",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -45,7 +50,8 @@
         "q": "In quale continente si trova la Birmania?",
         "a1": "Asia",
         "a2": "Europa",
-        "a3": "Oceania"
+        "a3": "Oceania",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -54,7 +60,8 @@
         "q": "Quale tra queste squadre ha vinto almeno uno scudetto?",
         "a1": "Pro Vercelli",
         "a2": "Palermo",
-        "a3": "Venezia"
+        "a3": "Venezia",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -63,7 +70,8 @@
         "q": "Quale è stata l'ultima nazionale di rugby a vincere il Cinque Nazioni?",
         "a1": "Scozia",
         "a2": "Galles",
-        "a3": "Inghilterra"
+        "a3": "Inghilterra",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -72,7 +80,8 @@
         "q": "A cosa corrisponde un byte?",
         "a1": "8 bit",
         "a2": "2 bit",
-        "a3": "10 bit"
+        "a3": "10 bit",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -81,7 +90,8 @@
         "q": "Come si chiama il programma per navigare in internet?",
         "a1": "Browser",
         "a2": "Server",
-        "a3": "Mouse"
+        "a3": "Mouse",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -90,7 +100,8 @@
         "q": "Quando venne fondata Roma?",
         "a1": "Intorno all'aprile del 753 a. C.",
         "a2": "Nell'anno 86 d. C.",
-        "a3": "Il 12 novembre del 1065 a. C."
+        "a3": "Il 12 novembre del 1065 a. C.",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -99,7 +110,8 @@
         "q": "In quale città italiana è stato redatto il primo documento ufficiale scritto in lingua volgare (cioè non in latino) di cui abbiamo conoscenza?",
         "a1": "Capua",
         "a2": "Bobbio",
-        "a3": "Roma"
+        "a3": "Roma",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -108,7 +120,8 @@
         "q": "Quale strumento suona il noto jazzista americano Keith Jarrett?",
         "a1": "Pianoforte",
         "a2": "Tromba",
-        "a3": "Sax"
+        "a3": "Sax",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -117,7 +130,8 @@
         "q": "Qual è il vero nome di Achille Lauro?",
         "a1": "Lauro De Marinis",
         "a2": "Lauro Silvestri",
-        "a3": "Lauro Rossi"
+        "a3": "Lauro Rossi",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -126,7 +140,8 @@
         "q": "Quale personaggio Harrison Ford interpretava in 'Guerre Stellari'?",
         "a1": "Ian Solo",
         "a2": "Luke Skywalker",
-        "a3": "Darth Vader"
+        "a3": "Darth Vader",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     },
     {
@@ -135,7 +150,8 @@
         "q": "A quale libro si ispira il film 'L'ultimo imperatore'?",
         "a1": "Sono stato imperatore di Aisin Gioro Pu Yi",
         "a2": "L' impero del sole di James G. Ballard",
-        "a3": "Il messaggio dell'imperatore di Franz Kafka"
+        "a3": "Il messaggio dell'imperatore di Franz Kafka",
+        "link": "https://lh3.googleusercontent.com/proxy/WSEckfazQh2c9u6qPpt4whCsUYmiQYMkhhrAtMbygyJhdAfMRkja81Hl3tKXo-VeNbjCNGjQ9DyLabFFobzgq1Q0anZXLgNMTlIOq_oi5QkuOg"
       }
     }
   ]

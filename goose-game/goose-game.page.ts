@@ -348,7 +348,7 @@ export class GooseGamePage implements OnInit {
         nCasella: this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].title,
         question: this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].question
       },
-      cssClass: 'fullheight'
+      cssClass: 'fullscreen'
     });
 
     modal.onDidDismiss().then((data) => {
@@ -524,8 +524,8 @@ export class GooseGamePage implements OnInit {
     });
 
     modal.onDidDismiss().then((data) => {
-      const lancio = data['data'];
-
+      var lancio = data['data'];
+      lancio = 1;
       if (lancio) {
         this.toastCreator.creaToast("Hai totalizzato " + lancio + "!", "top", 3500);
         this.gamePlayers[this.localPlayerIndex].info.push(lancio);

@@ -1,5 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
+import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({ name: 'safe' })
+export class SafePipe implements PipeTransform {
+  constructor(private sanitizer: DomSanitizer) {}
+  transform(url) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+} 
 
 @Component({
   selector: 'app-cell-question',
@@ -10,17 +20,27 @@ export class CellQuestionPage implements OnInit {
   nCasella;
   question: any;
   answers = [];
+  //trustedDashboardUrl : SafeUrl;
 
   constructor(
     private navParams: NavParams,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
     this.nCasella = this.navParams.get('nCasella');
     this.question = this.navParams.get('question');
-    this.answers.push(this.question.a1, this.question.a2, this.question.a3);
+    this.getAnswers();
     this.shuffleAnswers();
+  }
+
+  /**
+   * Inserisce le risposte di una determinata domanda all'interno dell'array 'answers'
+   */
+  getAnswers(){
+    for (let index = 0; index <this.question.answers.length; index++)
+      this.answers.push(this.question.answers[index]);
   }
 
   /**
@@ -43,13 +63,13 @@ export class CellQuestionPage implements OnInit {
    */
   radioGroupChange(event) {
     console.log("radioGroupChange", event.detail);
-    if (event.detail.value === this.question.a1) {
+    if (event.detail.value === this.question.answers[0]) {
       document.getElementById(event.detail.value).classList.add("correct-answer");
       this.modalController.dismiss(true);
     }
     else {
       document.getElementById(event.detail.value).classList.add("wrong-answer");
-      document.getElementById(this.question.a1).classList.add("correct-answer");
+      document.getElementById(this.question.answers[0]).classList.add("correct-answer");
       this.modalController.dismiss(false);
     }
   }
@@ -60,4 +80,12 @@ export class CellQuestionPage implements OnInit {
   closeModal() {
     this.modalController.dismiss();
   }
+
+  // photoURL() {
+  //   return this.transform(this.question.video_url);
+  // }
+
+  // transform(url) {
+  //   return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  // }
 }

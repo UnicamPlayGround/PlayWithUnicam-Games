@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { CellQuestionPageRoutingModule } from './cell-question-routing.module';
 
 import { CellQuestionPage } from './cell-question.page';
+import { SafePipe } from './cell-question.page';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { CellQuestionPage } from './cell-question.page';
     IonicModule,
     CellQuestionPageRoutingModule
   ],
-  declarations: [CellQuestionPage]
+  declarations: [CellQuestionPage, SafePipe]
 })
 export class CellQuestionPageModule {}

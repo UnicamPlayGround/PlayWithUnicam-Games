@@ -13,12 +13,24 @@
         lanciare nuovamente il dado!
       </p>
     </ion-item>
-
+    <div *ngIf="question.video_url">
+      <p><ion-label style="display: block; text-align: center;">Guarda il video e rispondi alla domanda!</ion-label></p>
+      <br>
+      <br>
+      <div style="display: flex; justify-content: center;">
+        <iframe style="display: block; text-align: center;" width="560" height="315" [src]="question.video_url | safe" title="video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      
+    </div>
     <ion-radio-group value="" (ionChange)="radioGroupChange($event)">
       <ion-list-header>
         <h2 style="font-size: 18px;">{{ question.q }}</h2>
       </ion-list-header>
-
+      <div *ngIf="question.img_url" style="display: flex; justify-content: center;">
+        <img src="{{ question.img_url }}" style="height: 200px; width: 200px;">
+      </div>
+      <br>
+      <br>
       <ion-item *ngFor="let answer of answers" [id]="answer">
         <ion-label>{{ answer }}</ion-label>
         <ion-radio slot="start" [value]="answer"></ion-radio>

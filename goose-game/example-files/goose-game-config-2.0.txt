@@ -6,8 +6,8 @@
     {
       "title": "1",
       "question": {
-	"img-url" : "https://m.media-amazon.com/images/I/71bqA2Ee-lL._AC_SY450_.jpg",
-	"video-url" : "",
+	"img_url" : "https://m.media-amazon.com/images/I/71bqA2Ee-lL._AC_SY450_.jpg",
+	"video_url" : "",
         "q": "Cos'è l'oggetto in foto?",
 	"answers" : [ "Un hard disk", "Un mouse", "Un software"]
       }
@@ -15,8 +15,8 @@
     {
       "title": "2",
       "question": {
-	"img-url" : "",
-	"video-url" : "",
+	"img_url" : "",
+	"video_url" : "https://www.youtube.com/embed/3I4zl_8Ges4",
         "q": "Da quanti bit è composto un byte?",
 	"answers" : [ "8 bit", "2 bit", "10 bit", "4 bit", "6 bit", "12 bit"]
       }
@@ -24,10 +24,10 @@
     {
       "title": "3",
       "question": {
-	"img-url" : "",
-	"video-url" : "",
-        "q": "Quale tra le seguenti affermazioni è corretta?",
-	"answers" : [ 
+	    "img_url" : "",
+	    "video_url" : "https://www.youtube.com/embed/3I4zl_8Ges4",
+      "q": "Quale tra le seguenti affermazioni è corretta?",
+	    "answers" : [ 
 			"Un software è un applicativo eseguibile dal PC che permette di eseguire determinate operazioni",
 			"Un software è un tipo di virus altamente pericoloso che può compromettere il funzionamento di un PC",
 			"Un software è un tipo di sottomarino utilizzato prevalentemente per perlustrazioni dei fondali marini"]
