@@ -7,9 +7,10 @@ import { ErrorManagerService } from 'src/app/services/error-manager/error-manage
 import { HttpClient } from '@angular/common/http';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
+import { ToastCreatorService } from 'src/app/services/toast-creator/toast-creator.service';
 import { UiBuilderService } from './services/game-builder/ui-builder.service';
 import jwt_decode from 'jwt-decode';
 
@@ -42,7 +43,7 @@ export class GooseGamePage implements OnInit {
     private lobbyManager: LobbyManagerService,
     private timerService: TimerServiceService,
     private errorManager: ErrorManagerService,
-    private toastController: ToastController,
+    private toastCreator: ToastCreatorService,
     private router: Router,
     private http: HttpClient,
     private uiBuilder: UiBuilderService
@@ -224,7 +225,7 @@ export class GooseGamePage implements OnInit {
     var missingPlayers = localUsernames.filter(player => !updatedUsernames.includes(player));
 
     missingPlayers.forEach(username => {
-      this.presentToast(username + " ha abbandonato la partita.");
+      this.toastCreator.creaToast(username + " ha abbandonato la partita.", "top", 3500);
 
       this.gamePlayers.forEach(p => {
         if (p.username == username) {
@@ -287,7 +288,7 @@ export class GooseGamePage implements OnInit {
               for (let i = (mosseAggiornate.length - differenza); i < mosseAggiornate.length; i++) {
                 player.info.push(mosseAggiornate[i]);
                 if (mosseAggiornate[i] != 0) {
-                  this.presentToast(this.getToastMessage(player.username, mosseAggiornate[i]));
+                  this.toastCreator.creaToast(this.getToastMessage(player.username, mosseAggiornate[i]), "top", 3500);
                   this.muoviPedina(player.goose, mosseAggiornate[i]);
                 }
               }
@@ -302,23 +303,14 @@ export class GooseGamePage implements OnInit {
     });
   }
 
-  //TODO creare service
+  /**
+   * Ritorna il messaggio del toast.
+   * @param player Giocatore che ha lanciato il dado
+   * @param lancio Lancio del dado
+   * @returns il messaggio del toast
+   */
   getToastMessage(player, lancio) {
     return player + " ha lanciato il dado ed è uscito " + lancio + "!";
-  }
-
-  /**
-   * Mostra il toast con il messaggio passato in input
-   * @param message messaggio che deve essere mostrato nel toast
-   */
-  async presentToast(message) {
-    const toast = await this.toastController.create({
-      message: message,
-      position: 'top',
-      cssClass: 'toast',
-      duration: 3500
-    });
-    await toast.present();
   }
 
   /**
@@ -535,7 +527,7 @@ export class GooseGamePage implements OnInit {
       const lancio = data['data'];
 
       if (lancio) {
-        this.presentToast("Hai totalizzato " + lancio + "!")
+        this.toastCreator.creaToast("Hai totalizzato " + lancio + "!", "top", 3500);
         this.gamePlayers[this.localPlayerIndex].info.push(lancio);
         this.muoviPedina(this.gamePlayers[this.localPlayerIndex].goose, lancio);
       }
