@@ -1,17 +1,17 @@
-import { Component, OnInit } from '@angular/core';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
-import { LoginService } from 'src/app/services/login-service/login.service';
-import jwt_decode from 'jwt-decode';
-import { ModalController, ToastController } from '@ionic/angular';
 import { CellQuestionPage } from './modal/cell-question/cell-question.page';
 import { ClassificaPage } from '../../modal-pages/classifica/classifica.page';
-import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
-import { Router } from '@angular/router';
-import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
+import { Component, OnInit } from '@angular/core';
+import { DadiPage } from 'src/app/modal-pages/dadi/dadi.page';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { HttpClient } from '@angular/common/http';
-import { DadiPage } from 'src/app/modal-pages/dadi/dadi.page';
+import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
+import { LoginService } from 'src/app/services/login-service/login.service';
+import { ModalController, ToastController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
 import { UiBuilderService } from './services/game-builder/ui-builder.service';
+import jwt_decode from 'jwt-decode';
 
 @Component({
   selector: 'app-goose-game',
@@ -23,11 +23,14 @@ export class GooseGamePage implements OnInit {
   lobbyPlayers = [];
   gamePlayers = [];
   localPlayerIndex;
+
   myTurn = false;
   abilitaDado = false;
+  fineAggiornamento = true;
+
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
   lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
-  fineAggiornamento = true;
+
   private timerGiocatori;
   private timerPing;
   private timerInfoPartita;
@@ -54,6 +57,14 @@ export class GooseGamePage implements OnInit {
 
   async ngOnInit() { }
 
+  /**
+   * ------------------------------ CHIAMATE REST ------------------------------
+   */
+
+  /**
+   * Richiede al Server il JSON di configurazione del Gioco, necessario per la costruzione
+   * del tabellone.
+   */
   async getGameConfig() {
     const token_value = (await this.loginService.getToken()).value;
     const headers = { 'token': token_value };
@@ -73,12 +84,95 @@ export class GooseGamePage implements OnInit {
   }
 
   /**
+   * Recupera i dati della partita corrente.
+   * * Se il Giocatore Corrente corrisponde al Giocatore locale allora viene eseguito il
+   *   metodo *"iniziaTurno()"*.
+   */
+  async getInfoPartita() {
+    const token_value = (await this.loginService.getToken()).value;
+    const headers = { 'token': token_value };
+
+    this.http.get('/game/status', { headers }).subscribe(
+      async (res) => {
+        this.info_partita = res['results'][0];
+
+        if (this.info_partita && this.info_partita.info) {
+          if (this.gamePlayers.length == 1 && this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+            this.iniziaTurno();
+          else await this.aggiornaMosseAvversari();
+
+        } else if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
+          this.iniziaTurno();
+      },
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
+      }
+    );
+  }
+
+  /**
+   * Invia al Server lo storico dei risultati dei lanci del dado relativi al Giocatore locale.
+   * Inoltre se *"fineTurno"* è true conclude il turno del Giocatore.
+   * @param info Informazioni da salvare
+   * @param fineTurno true se il turno deve concludersi, false altrimenti
+   */
+  private async inviaDatiPartita(info, fineTurno) {
+    const tokenValue = (await this.loginService.getToken()).value;
+    const toSend = { 'token': tokenValue, 'info_giocatore': info }
+
+    this.http.put('/game/save', toSend).subscribe(
+      async (res) => {
+        if (fineTurno)
+          this.concludiTurno();
+      },
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
+      }
+    );
+  }
+
+  /**
+   * Conclude il turno del Giocatore locale.
+   */
+  async concludiTurno() {
+    this.myTurn = false;
+    const tokenValue = (await this.loginService.getToken()).value;
+    const toSend = { 'token': tokenValue }
+
+    this.http.put('/game/fine-turno', toSend).subscribe(
+      async (res) => { },
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
+      }
+    );
+  }
+
+  /**
+   * Fa terminare la partita e ferma gli opportuni timers.
+   */
+  private async terminaPartita() {
+    const tokenValue = (await this.loginService.getToken()).value;
+    const toSend = { 'token': tokenValue }
+
+    this.http.put('/partita/termina', toSend).subscribe(
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita);
+      },
+      async (res) => {
+        this.errorManager.stampaErrore(res, 'Terminazione partita fallita');
+      });
+  }
+
+  /**
    * Carica le Informazioni della Lobby.
    */
   private async loadInfoLobby() {
-    const tokenValue = (await this.loginService.getToken()).value;
-    const decodedToken: any = jwt_decode(tokenValue);
-
     (await this.lobbyManager.loadInfoLobby()).subscribe(
       async (res) => {
         this.lobby = res['results'][0];
@@ -107,6 +201,17 @@ export class GooseGamePage implements OnInit {
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Impossibile caricare i giocatori!');
       });
+  }
+
+  async ping() {
+    (await this.lobbyManager.ping()).subscribe(
+      async (res) => { },
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Ping fallito');
+      }
+    );
   }
 
   /**
@@ -162,32 +267,11 @@ export class GooseGamePage implements OnInit {
   }
 
   /**
-   * Recupera i dati della partita corrente //TODO
+   * Controlla che lo storico dei movimenti delle pedine in locale
+   * corrisponda a quello salvato sul Server.
+   * In caso contrario aggiorna la posizione delle pedine avversarie 
+   * secondo le informazioni recuperate dal Server.
    */
-  async getInfoPartita() {
-    const token_value = (await this.loginService.getToken()).value;
-    const headers = { 'token': token_value };
-
-    this.http.get('/game/status', { headers }).subscribe(
-      async (res) => {
-        this.info_partita = res['results'][0];
-
-        if (this.info_partita && this.info_partita.info) {
-          if (this.gamePlayers.length == 1 && this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
-            this.iniziaTurno();
-          else await this.aggiornaMosseAvversari();
-
-        } else if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
-          this.iniziaTurno();
-      },
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
-      }
-    );
-  }
-
   async aggiornaMosseAvversari() {
     var mosseAggiornate = [];
 
@@ -203,7 +287,7 @@ export class GooseGamePage implements OnInit {
               for (let i = (mosseAggiornate.length - differenza); i < mosseAggiornate.length; i++) {
                 player.info.push(mosseAggiornate[i]);
                 if (mosseAggiornate[i] != 0) {
-                  this.presentToast(this.getToastMessage(player.username, mosseAggiornate[i], i));
+                  this.presentToast(this.getToastMessage(player.username, mosseAggiornate[i]));
                   this.muoviPedina(player.goose, mosseAggiornate[i]);
                 }
               }
@@ -218,15 +302,13 @@ export class GooseGamePage implements OnInit {
     });
   }
 
-  getToastMessage(player, lancio, nMossa) {
-    //TODO
-    // if (nMossa == 0)
+  //TODO creare service
+  getToastMessage(player, lancio) {
     return player + " ha lanciato il dado ed è uscito " + lancio + "!";
-    // else return player + " ha risposto correttamente alla domanda, quindi ha ritirato il dado ed è uscito " + lancio + "!";
   }
 
   /**
-   * Mostra il toas con il messaggio passato in input
+   * Mostra il toast con il messaggio passato in input
    * @param message messaggio che deve essere mostrato nel toast
    */
   async presentToast(message) {
@@ -250,58 +332,15 @@ export class GooseGamePage implements OnInit {
     return parseInt(cellId.substr(1));
   }
 
-  async ping() {
-    (await this.lobbyManager.ping()).subscribe(
-      async (res) => { },
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Ping fallito');
-      }
-    );
-  }
-
   /**
    * Fa iniziare il turno ad un giocatore. 
    * Viene mostrato un Alert che comunica l'inizio del turno e viene abilitato il bottone per il lancio del dato.
-   * Inoltre la variabile "myTurn" viene impostata a true
+   * Inoltre la variabile *"myTurn"* viene impostata a true.
    */
   iniziaTurno() {
     this.alertCreator.createInfoAlert('Tocca a te!', 'È il tuo turno, tira il dado per procedere!');
     this.myTurn = true;
     this.abilitaDado = true;
-  }
-
-  private async inviaDatiPartita(info, fineTurno) {
-    const tokenValue = (await this.loginService.getToken()).value;
-    const toSend = { 'token': tokenValue, 'info_giocatore': info }
-
-    this.http.put('/game/save', toSend).subscribe(
-      async (res) => {
-        if (fineTurno)
-          this.concludiTurno();
-      },
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
-      }
-    );
-  }
-
-  async concludiTurno() {
-    this.myTurn = false;
-    const tokenValue = (await this.loginService.getToken()).value;
-    const toSend = { 'token': tokenValue }
-
-    this.http.put('/game/fine-turno', toSend).subscribe(
-      async (res) => { },
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
-      }
-    );
   }
 
   /**
@@ -369,7 +408,7 @@ export class GooseGamePage implements OnInit {
   }
 
   /**
-   * Mostra la modal contenente la classifica finale
+   * Mostra la modal contenente la classifica finale.
    * @returns presenta la modal
    */
   async mostraClassifica() {
@@ -403,22 +442,6 @@ export class GooseGamePage implements OnInit {
       if (giocatore.goose == goose)
         return giocatore;
     })[0];
-  }
-
-  /**
-   * Fa terminare la partita e ferma gli opportuni timers.
-   */
-  private async terminaPartita() {
-    const tokenValue = (await this.loginService.getToken()).value;
-    const toSend = { 'token': tokenValue }
-
-    this.http.put('/partita/termina', toSend).subscribe(
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita);
-      },
-      async (res) => {
-        this.errorManager.stampaErrore(res, 'Terminazione partita fallita');
-      });
   }
 
   /**
