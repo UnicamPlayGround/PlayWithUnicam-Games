@@ -524,8 +524,7 @@ export class GooseGamePage implements OnInit {
     });
 
     modal.onDidDismiss().then((data) => {
-      var lancio = data['data'];
-      lancio = 1;
+      const lancio = data['data'];
       if (lancio) {
         this.toastCreator.creaToast("Hai totalizzato " + lancio + "!", "top", 3500);
         this.gamePlayers[this.localPlayerIndex].info.push(lancio);
