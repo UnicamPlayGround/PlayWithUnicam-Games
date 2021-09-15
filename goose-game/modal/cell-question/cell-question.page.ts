@@ -6,8 +6,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({ name: 'safe' })
 export class SafePipe implements PipeTransform {
 
-  constructor(private sanitizer: DomSanitizer) {}
-  
+  constructor(private sanitizer: DomSanitizer) { }
+
   transform(url) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
@@ -22,6 +22,8 @@ export class CellQuestionPage implements OnInit {
   nCasella;
   question: any;
   answers = [];
+  rispostaSelezionata = false;
+  rispostaCorretta = false;
 
   constructor(
     private navParams: NavParams,
@@ -39,8 +41,8 @@ export class CellQuestionPage implements OnInit {
   /**
    * Inserisce le risposte di una determinata domanda all'interno dell'array 'answers'
    */
-  getAnswers(){
-    for (let index = 0; index <this.question.answers.length; index++)
+  getAnswers() {
+    for (let index = 0; index < this.question.answers.length; index++)
       this.answers.push(this.question.answers[index]);
   }
 
@@ -60,25 +62,29 @@ export class CellQuestionPage implements OnInit {
    * Fornisce la risposta giusta alla domanda presentata sulla modal caricando le opportune classi da css.
    * Se la risposta data dall'utente è corretta, sarà evidenziata in verde,
    * altrimenti verrà evidenziata in rosso mentre la risposta giusta verrà evidenziata in verde.
+   * Una volta che l'utente seleziona una riposta, il radio-group verrà disabilitato
    * @param event 
    */
   radioGroupChange(event) {
-    console.log("radioGroupChange", event.detail);
+
     if (event.detail.value === this.question.answers[0]) {
       document.getElementById(event.detail.value).classList.add("correct-answer");
-      this.modalController.dismiss(true);
+      this.rispostaSelezionata = true;
+      this.rispostaCorretta = true;
     }
     else {
       document.getElementById(event.detail.value).classList.add("wrong-answer");
       document.getElementById(this.question.answers[0]).classList.add("correct-answer");
-      this.modalController.dismiss(false);
+      this.rispostaSelezionata = true;
+      this.rispostaCorretta = false;
     }
   }
 
   /**
-   * Chiude la modal
+   * Chiude la modal passando true se l'utente ha risposto correttamente alla domanda, 
+   * false altrimenti.
    */
   closeModal() {
-    this.modalController.dismiss();
+    this.modalController.dismiss(this.rispostaCorretta);
   }
 }

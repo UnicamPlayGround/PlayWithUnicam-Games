@@ -33,9 +33,18 @@
       <br>
       <ion-item *ngFor="let answer of answers" [id]="answer">
         <ion-label>{{ answer }}</ion-label>
-        <ion-radio slot="start" [value]="answer"></ion-radio>
+        <ion-radio disabled="{{rispostaSelezionata}}" slot="start" [value]="answer"></ion-radio>
       </ion-item>
     </ion-radio-group>
   </ion-list>
 
 </ion-content>
+
+<ion-footer *ngIf="rispostaSelezionata">
+  <ion-toolbar color="danger">
+    <ion-button fill="clear" expand="block" color="light" (click)="closeModal()">
+      Chiudi
+      <ion-icon slot="end" name="close-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>
