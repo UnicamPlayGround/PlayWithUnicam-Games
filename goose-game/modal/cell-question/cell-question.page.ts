@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
-import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({ name: 'safe' })
 export class SafePipe implements PipeTransform {
+
   constructor(private sanitizer: DomSanitizer) {}
+  
   transform(url) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
-} 
+}
 
 @Component({
   selector: 'app-cell-question',
@@ -20,7 +22,6 @@ export class CellQuestionPage implements OnInit {
   nCasella;
   question: any;
   answers = [];
-  //trustedDashboardUrl : SafeUrl;
 
   constructor(
     private navParams: NavParams,
@@ -80,12 +81,4 @@ export class CellQuestionPage implements OnInit {
   closeModal() {
     this.modalController.dismiss();
   }
-
-  // photoURL() {
-  //   return this.transform(this.question.video_url);
-  // }
-
-  // transform(url) {
-  //   return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  // }
 }

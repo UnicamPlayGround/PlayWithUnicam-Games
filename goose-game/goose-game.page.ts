@@ -204,6 +204,9 @@ export class GooseGamePage implements OnInit {
       });
   }
 
+  /**
+   * Effettua l'operazione di ping richiamando il metodo opportuno.
+   */
   async ping() {
     (await this.lobbyManager.ping()).subscribe(
       async (res) => { },
@@ -463,6 +466,14 @@ export class GooseGamePage implements OnInit {
     } else return false;
   }
 
+  /**
+   * Fa spostare la pedina desiderata in base al lancio passato in input ed 
+   * effettua gli opportuni controlli per verificare se la partita è terminata oppure no.
+   * Al termine di ogni lancio, viene mostrata la domanda relativa alla casella di destinazione.
+   * Il metodo inoltre si occupa di gestire i turni degli utenti.
+   * @param goose la pedina da muovere
+   * @param lancio lo spostamento della pedina
+   */
   muoviPedina(goose, lancio) {
     var direzione = true;
 
