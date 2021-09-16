@@ -1,47 +1,59 @@
-<ion-header>
+<ion-header id="main-header">
   <ion-toolbar class="game-title">
     <ion-title>Gioco dell'Oca</ion-title>
-    <ion-button slot="end" (click)="abbandonaPartita()" fill="clear" color="light" shape="round"
-      class="ion-hide-md-down">
+    <ion-button slot="end" (click)="abbandonaPartita()" fill="clear" color="light" shape="round">
       <ion-label>Abbandona la partita</ion-label>
       <ion-icon slot="start" name="exit-outline"></ion-icon>
     </ion-button>
   </ion-toolbar>
 
   <ion-toolbar class="dieroll-toolbar">
-    <ion-item lines="none" style="--background: rgba(0,0,0,0);">
-
-      <ion-button slot="end" [class.button-disabled]="!abilitaDado" color="secondary" shape="round" expand="block"
-        (click)="lanciaDado()">
-        Lancia dado
-      </ion-button>
-
-      <ion-button slot="end" (click)="abbandonaPartita()" fill="clear" color="light" shape="round"
-        class="ion-hide-md-down">
-        <ion-icon slot="start" name="exit-outline"></ion-icon>
-      </ion-button>
-
-    </ion-item>
-
     <ion-item lines="none" class="players-legend">
       <div *ngFor="let player of gamePlayers" class="legend-item">
         <div class="{{player.goose}}-square"
           style="height: 20px; max-height: 35px; width: 20px; max-width: 35px; border: 1px solid #000;">0</div>
         <div class="legend-item-text">{{ player.username }}</div>
       </div>
+      <ion-button slot="end" (click)="abbandonaPartita()" fill="clear" color="light" shape="round">
+        <ion-icon slot="icon-only" name="exit-outline"></ion-icon>
+      </ion-button>
     </ion-item>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content id="main-content">
   <div class="dieroll-board">
     <ion-button [class.button-disabled]="!abilitaDado" color="secondary" size="large" shape="round"
-      (click)="lanciaDado()" style="position:absolute; right: 50px;">Lancia dado</ion-button>
+      (click)="lanciaDado()" style="position:absolute; right: 50px;">
+      <ion-icon slot="start" name="dice"></ion-icon>
+      Lancia dado
+    </ion-button>
+  </div>
+
+  <div id="die-button" style="height: 30px; line-height: 30px;">
+    <ion-button [class.button-disabled]="!abilitaDado" shape="round" color="secondary" (click)="lanciaDado()"
+      style="padding-bottom: 0px; float:right;">
+      <ion-icon slot="start" name="dice-sharp"></ion-icon>
+      Lancia dado
+    </ion-button>
   </div>
 
   <div class="board">
     <table id="table" style="margin:auto;">
       <tr id="row0" class="row"></tr>
     </table>
+  </div>
+</ion-content>
+
+<ion-content id="alert-ruota-schermo">
+  <div class="alert-div">
+    <ion-label style="text-align: center;">
+      <h2 style="color:#fff; font-size: 25px;">Ruota lo schermo</h2>
+      <p style="font-size: 20px; color: rgb(208, 255, 0);">per giocare!</p>
+      <h1 style="text-align: center;">
+        <br>
+        <ion-icon name="refresh-circle-outline" color="light" class="spinner"></ion-icon>
+      </h1>
+    </ion-label>
   </div>
 </ion-content>

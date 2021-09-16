@@ -342,7 +342,53 @@ ion-content{
     .dieroll-toolbar{
         display: none !important;
     }
+    #die-button{
+        display: none !important;
+    }
     .players-legend{
         display: none !important;
     }
+}
+
+@media only screen and (max-width: 639px) {
+    #main-content {
+        display:none;
+    }
+    #main-header {
+        display:none;
+    }
+}
+
+@media only screen and (min-width: 640px) {
+    #alert-ruota-schermo {
+        display:none;
+    }
+}
+
+.alert-div{
+    height: 100px;
+    line-height: 100px;
+    width: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -150px;
+    align-items: center;
+}
+
+.spinner{
+    font-size: 50px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+  
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
