@@ -545,4 +545,20 @@ export class GooseGamePage implements OnInit {
 
     return await modal.present();
   }
+
+  abbandonaPartita() {
+    this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
+      async () => {
+        this.timerService.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
+        (await this.lobbyManager.abbandonaLobby()).subscribe(
+          async (res) => {
+            this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          },
+          async (res) => {
+            this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+            this.errorManager.stampaErrore(res, 'Abbandono fallito');
+          }
+        );
+      })
+  }
 }
