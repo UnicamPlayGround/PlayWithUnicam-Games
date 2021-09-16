@@ -546,6 +546,9 @@ export class GooseGamePage implements OnInit {
     return await modal.present();
   }
 
+  /**
+   * Fa abbandonare la partita ad un giocatore
+   */
   abbandonaPartita() {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
       async () => {
