@@ -552,6 +552,8 @@ export class GooseGamePage implements OnInit {
   abbandonaPartita() {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
       async () => {
+        if (this.myTurn)
+          this.concludiTurno();
         this.timerService.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
         (await this.lobbyManager.abbandonaLobby()).subscribe(
           async (res) => {
