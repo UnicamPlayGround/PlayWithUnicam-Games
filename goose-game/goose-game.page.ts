@@ -126,7 +126,7 @@ export class GooseGamePage implements OnInit {
     this.http.put('/game/save', toSend).subscribe(
       async (res) => {
         if (fineTurno)
-          this.concludiTurno();
+          this.concludiTurno(null);
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
@@ -138,14 +138,15 @@ export class GooseGamePage implements OnInit {
 
   /**
    * Conclude il turno del Giocatore locale.
+   * @param cb Callback
    */
-  async concludiTurno() {
+  async concludiTurno(cb) {
     this.myTurn = false;
     const tokenValue = (await this.loginService.getToken()).value;
     const toSend = { 'token': tokenValue }
 
     this.http.put('/game/fine-turno', toSend).subscribe(
-      async (res) => { },
+      async (res) => { cb() },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
@@ -553,17 +554,18 @@ export class GooseGamePage implements OnInit {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
       async () => {
         if (this.myTurn)
-          this.concludiTurno();
-        this.timerService.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
-        (await this.lobbyManager.abbandonaLobby()).subscribe(
-          async (res) => {
-            this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-          },
-          async (res) => {
-            this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
-            this.errorManager.stampaErrore(res, 'Abbandono fallito');
-          }
-        );
+          this.concludiTurno(async () => {
+            this.timerService.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
+            (await this.lobbyManager.abbandonaLobby()).subscribe(
+              async (res) => {
+                this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+              },
+              async (res) => {
+                this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+                this.errorManager.stampaErrore(res, 'Abbandono fallito');
+              }
+            );
+          });
       })
   }
 }
