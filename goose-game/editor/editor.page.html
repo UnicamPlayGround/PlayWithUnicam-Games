@@ -1,0 +1,91 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Editor Gioco dell'Oca</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-toolbar style="padding: 10px;">
+  <ion-button slot="start" (click)="addCell()" shape="round">
+    <ion-icon slot="icon-only" name="add-outline" class="ion-hide-md-up"></ion-icon>
+    <ion-icon slot="start" name="add-outline" class="ion-hide-md-down"></ion-icon>
+    <ion-label class="ion-hide-md-down">Aggiungi casella</ion-label>
+  </ion-button>
+  <ion-button slot="start" (click)="toggleBulkEdit()" shape="round" [class.button-disabled]="cells.length == 0">
+    <ion-icon slot="icon-only" name="checkbox-outline" class="ion-hide-md-up"></ion-icon>
+    <ion-icon slot="start" name="checkbox-outline" class="ion-hide-md-down"></ion-icon>
+    <ion-label class="ion-hide-md-down">Abilita selezione</ion-label>
+  </ion-button>
+  <ion-button slot="end" (click)="bulkDelete()" color="danger" shape="round"
+    [class.button-disabled]="cells.length == 0">
+    <ion-icon slot="icon-only" name="trash-outline" class="ion-hide-md-up"></ion-icon>
+    <ion-icon slot="start" name="trash-outline" class="ion-hide-md-down"></ion-icon>
+    <ion-label *ngIf="!bulkEdit" class="ion-hide-md-down">Elimina tutto</ion-label>
+    <ion-label *ngIf="bulkEdit" class="ion-hide-md-down">Elimina selezionati</ion-label>
+  </ion-button>
+
+</ion-toolbar>
+
+<ion-content>
+
+  <ion-card-header>
+    <ion-card-title *ngIf="cells.length > 0">Il tabellone attualmente contiene le seguenti caselle:</ion-card-title>
+    <ion-card-title *ngIf="cells.length == 0">Attualmente il tabellone di gioco è vuoto!</ion-card-title>
+    <ion-card-subtitle *ngIf="cells.length == 0">Aggiungi nuove caselle per configurare il gioco!</ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-row>
+    <ion-col size-lg="4" size-md="6" size-sm="12" size="12" *ngFor="let cell of cells, let i = index;">
+      <ion-card class="cell-card">
+        <ion-list class="card-header">
+          <ion-item lines="none" button="true" (click)="expandCell(i)">
+            <ion-checkbox slot="start" *ngIf="bulkEdit" [(ngModel)]="edit[i]"></ion-checkbox>
+
+            <ion-title style="text-align: left !important;">Casella <strong>{{cell.title}}</strong></ion-title>
+            <ion-icon slot="end" color="light" name="chevron-forward-circle-outline"
+              *ngIf="expandedCell != i && !bulkEdit">
+            </ion-icon>
+            <ion-icon slot="end" color="light" name="chevron-down-circle-outline"
+              *ngIf="expandedCell == i && !bulkEdit"></ion-icon>
+          </ion-item>
+        </ion-list>
+
+        <div *ngIf="expandedCell == i && !bulkEdit">
+          <ion-list *ngIf="i != 0">
+            <ion-item>
+              <ion-label position="floating">Link immagine</ion-label>
+              <ion-input type="text" placeholder="Inserisci il link di un'immagine" [(ngModel)]="cell.question.img_url">
+              </ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Link video</ion-label>
+              <ion-input type="text" placeholder="Inserisci il link di un video" [(ngModel)]="cell.question.video_url">
+              </ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Domanda</ion-label>
+              <ion-input type="text" placeholder="Inserisci il testo della domanda" [(ngModel)]="cell.question.q">
+              </ion-input>
+            </ion-item>
+            <ion-list>
+              <ion-item *ngFor="let answer of cell.question.answers, let j = index;">
+                <ion-label position="floating">Risposta {{j + 1}}</ion-label>
+                <ion-input type="text" placeholder="Inserisci il testo della domanda" value="{{cell.question.answers[j]}}"
+                  (ionChange)="modificaDomanda(i,j,$event)">
+                </ion-input>
+              </ion-item>
+            </ion-list>
+          </ion-list>
+
+          <ion-item *ngIf="i == 0">
+            <ion-label text-wrap>
+              Questa è la prima casella del tabellone, ovvero la casella da cui partiranno le varie pedine!
+              <br>La sua presenza è necessaria e non contiene alcuna domanda.
+            </ion-label>
+          </ion-item>
+        </div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+
+
+</ion-content>
