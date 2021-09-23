@@ -52,7 +52,7 @@ export class GooseGamePage implements OnInit {
     this.ping();
     this.loadInfoLobby()
     this.timerGiocatori = timerService.getTimer(() => { this.loadPlayers() }, 3000);
-    this.timerInfoPartita = timerService.getTimer(() => { this.getInfoPartita() }, 1000);
+    this.timerInfoPartita = timerService.getTimer(() => { this.getInfoPartita() }, 2000);
     this.timerPing = timerService.getTimer(() => { this.ping() }, 4000);
   }
 
@@ -95,7 +95,7 @@ export class GooseGamePage implements OnInit {
 
     this.http.get('/game/status', { headers }).subscribe(
       async (res) => {
-        this.info_partita = res['results'][0];
+        this.info_partita = res['results'];
 
         if (this.info_partita && this.info_partita.info) {
           if (this.gamePlayers.length == 1 && this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
@@ -126,7 +126,7 @@ export class GooseGamePage implements OnInit {
     this.http.put('/game/save', toSend).subscribe(
       async (res) => {
         if (fineTurno)
-          this.concludiTurno(null);
+          this.concludiTurno(() => { });
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
@@ -146,7 +146,10 @@ export class GooseGamePage implements OnInit {
     const toSend = { 'token': tokenValue }
 
     this.http.put('/game/fine-turno', toSend).subscribe(
-      async (res) => { cb() },
+      async (res) => {
+        //TODO controllare
+        cb()
+      },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
