@@ -1,0 +1,18 @@
+.cell-card{
+    background: #2a87a3;
+    color: #fff;
+    border-radius: 20px;
+
+    .card-header{
+        background: rgba(0, 0, 0, 0);
+
+        ion-title{
+            color: #fff;
+            font-size: 18px;
+        }
+        ion-item{
+            color: #fff;
+            --background: rgba(0, 0, 0, 0);
+        }
+    }
+}
