@@ -147,8 +147,7 @@ export class GooseGamePage implements OnInit {
 
     this.http.put('/game/fine-turno', toSend).subscribe(
       async (res) => {
-        //TODO controllare
-        cb()
+        cb();
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
@@ -551,24 +550,34 @@ export class GooseGamePage implements OnInit {
   }
 
   /**
-   * Fa abbandonare la partita ad un giocatore
+   * Fa abbandonare la partita ad un giocatore.
    */
-  abbandonaPartita() {
+  private async abbandonaPartita() {
+    this.timerService.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
+    (await this.lobbyManager.abbandonaLobby()).subscribe(
+      async (res) => {
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+      },
+      async (res) => {
+        this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+        this.errorManager.stampaErrore(res, 'Abbandono fallito');
+      }
+    );
+  }
+
+  /**
+   * Apre una modal per confermare l'abbandono della partita.
+   * 
+   * Prima di effettuare l'abbandono della partita viene controllato se il giocatore che vuole
+   * abbandonare è il *giocatore corrente*, in caso positivo viene concluso il suo turno.
+   */
+  confermaAbbandonoPartita() {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
       async () => {
         if (this.myTurn)
-          this.concludiTurno(async () => {
-            this.timerService.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
-            (await this.lobbyManager.abbandonaLobby()).subscribe(
-              async (res) => {
-                this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-              },
-              async (res) => {
-                this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
-                this.errorManager.stampaErrore(res, 'Abbandono fallito');
-              }
-            );
-          });
+          this.concludiTurno(async () => { this.abbandonaPartita(); });
+        else
+          this.abbandonaPartita();
       })
   }
 }

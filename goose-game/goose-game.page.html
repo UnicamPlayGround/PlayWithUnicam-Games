@@ -1,7 +1,7 @@
 <ion-header id="main-header">
   <ion-toolbar class="game-title">
     <ion-title>Gioco dell'Oca</ion-title>
-    <ion-button slot="end" (click)="abbandonaPartita()" fill="clear" color="light" shape="round">
+    <ion-button slot="end" (click)="confermaAbbandonoPartita()" fill="clear" color="light" shape="round">
       <ion-label>Abbandona la partita</ion-label>
       <ion-icon slot="start" name="exit-outline"></ion-icon>
     </ion-button>
@@ -14,7 +14,7 @@
           style="height: 20px; max-height: 35px; width: 20px; max-width: 35px; border: 1px solid #000;">0</div>
         <div class="legend-item-text">{{ player.username }}</div>
       </div>
-      <ion-button slot="end" (click)="abbandonaPartita()" fill="clear" color="light" shape="round">
+      <ion-button slot="end" (click)="confermaAbbandonoPartita()" fill="clear" color="light" shape="round">
         <ion-icon slot="icon-only" name="exit-outline"></ion-icon>
       </ion-button>
     </ion-item>
