@@ -100,9 +100,9 @@ export class EditorPage implements OnInit {
   }
 
   /**
- * Crea una casella nera e la inserisce nel tabellone
- * @param i posizione della tabella da annerire
- */
+   * Crea una casella nera e la inserisce nel tabellone
+   * @param i posizione della tabella da annerire
+   */
   private createBlackCell(i) {
     const newCell = document.getElementById("c" + i);
     newCell.classList.add("black-cell");
@@ -126,20 +126,22 @@ export class EditorPage implements OnInit {
     modal.onDidDismiss().then((data) => {
       const datiParola = data['data'];
 
-      if (datiParola.parola.length > 1) {
+      if (datiParola && datiParola.parola.length > 1) {
         this.parolaCorrente = datiParola.parola;
         this.definizioneCorrente = datiParola.definizioneCorrente;
         this.orientamentoCorrente = datiParola.orientamento;
 
         if (this.orientamentoCorrente == "VERTICALE") {
           var riga = this.cells[i].row;
-          var caselleDisponibiliInOrizzontale = this.getCaselleDisponibiliInVerticale(riga, i, this.parolaCorrente);
+          var caselleDisponibiliInVerticale = this.getCaselleDisponibiliInVerticale(riga, i, this.parolaCorrente);
 
-          if (this.parolaCorrente.length <= caselleDisponibiliInOrizzontale) {
-            if (caselleDisponibiliInOrizzontale == this.dimensioni.value.altezza - this.cells[i].row)
+          if (this.parolaCorrente.length <= caselleDisponibiliInVerticale) {
+            if (caselleDisponibiliInVerticale == this.dimensioni.value.altezza - this.cells[i].row)
               this.insertVerticalWord(i, false);
             else {
-              if (this.parolaCorrente.length == caselleDisponibiliInOrizzontale && this.cells[i + (this.dimensioni.value.larghezza * this.parolaCorrente.length)].letter == "white")
+              if (this.parolaCorrente.length == caselleDisponibiliInVerticale && this.cells[i + (this.dimensioni.value.larghezza * this.parolaCorrente.length)].letter == "white")
+                this.insertVerticalWord(i, true);
+              else if (this.parolaCorrente.length < caselleDisponibiliInVerticale && this.cells[i + (this.dimensioni.value.larghezza * this.parolaCorrente.length)].letter == "white")
                 this.insertVerticalWord(i, true);
               else this.insertVerticalWord(i, false);
             }
@@ -154,7 +156,13 @@ export class EditorPage implements OnInit {
             if (caselleDisponibiliInOrizzontale == this.dimensioni.value.larghezza - this.cells[i].col)
               this.insertHorizontalWord(i, false);
             else {
+              //TODO
+              console.log(this.parolaCorrente.length < caselleDisponibiliInOrizzontale);
+              console.log(this.cells[i + this.parolaCorrente.length].letter == "white");
+
               if (this.parolaCorrente.length == caselleDisponibiliInOrizzontale && this.cells[i + this.parolaCorrente.length].letter == "white")
+                this.insertHorizontalWord(i, true);
+              else if (this.parolaCorrente.length < caselleDisponibiliInOrizzontale && this.cells[i + this.parolaCorrente.length].letter == "white")
                 this.insertHorizontalWord(i, true);
               else this.insertHorizontalWord(i, false);
             }
@@ -226,9 +234,12 @@ export class EditorPage implements OnInit {
     this.insertQuestionNumber(cellNumber);
     for (let index = 0; index < this.parolaCorrente.length; index++) {
       const cell = document.getElementById("c" + cellNumber);
-      const label = document.createElement("ion-label");
-      label.textContent = this.parolaCorrente[index];
-      cell.appendChild(label);
+
+      if (cell.getElementsByTagName("ion-label").length == 0) {
+        const label = document.createElement("ion-label");
+        label.textContent = this.parolaCorrente[index];
+        cell.appendChild(label);
+      }
 
       this.cells[cellNumber].letter = this.parolaCorrente[index];
       cellNumber++;
@@ -247,9 +258,12 @@ export class EditorPage implements OnInit {
     this.insertQuestionNumber(cellNumber);
     for (let index = 0; index < this.parolaCorrente.length; index++) {
       const cell = document.getElementById("c" + cellNumber);
-      const label = document.createElement("ion-label");
-      label.textContent = this.parolaCorrente[index];
-      cell.appendChild(label);
+
+      if (cell.getElementsByTagName("ion-label").length == 0) {
+        const label = document.createElement("ion-label");
+        label.textContent = this.parolaCorrente[index];
+        cell.appendChild(label);
+      }
 
       this.cells[cellNumber].letter = this.parolaCorrente[index];
       cellNumber += this.dimensioni.value.larghezza;
@@ -265,11 +279,14 @@ export class EditorPage implements OnInit {
    */
   private insertQuestionNumber(cellNumber) {
     const c = document.getElementById("c" + cellNumber);
-    const label = document.createElement("ion-label");
-    label.textContent = this.questionNumber.toString();
-    this.questionNumber++;
-    label.classList.add("question-number");
-    c.appendChild(label);
+
+    if (c.getElementsByTagName("p").length == 0) {
+      const label = document.createElement("p");
+      label.textContent = this.questionNumber.toString();
+      this.questionNumber++;
+      label.classList.add("question-number");
+      c.appendChild(label);
+    }
   }
 
   /**
