@@ -14,11 +14,12 @@ export class UiBuilderService {
    * @param cells L'array di caselle con cui costruire il tabellone.
    */
   createGameBoard(cells) {
+    var currentCellNumber = 0
     var currentRowNumber = 0;
     var direction = true;
 
     cells.forEach(cell => {
-      const newCell = this.createGameCell(cell.title);
+      const newCell = this.createGameCell(currentCellNumber++, cell.title);
       const currentRow = document.getElementById("row" + currentRowNumber);
 
       if (currentRow.childNodes.length < 8) {
@@ -58,7 +59,7 @@ export class UiBuilderService {
    * @param cellNumber Il numero della casella da creare.
    * @returns La nuova casella creata.
    */
-  private createGameCell(cellNumber) {
+  private createGameCell(cellNumber, title) {
     const newCell = document.createElement("td");
     newCell.id = "c" + cellNumber;
     newCell.classList.add("game-cell");

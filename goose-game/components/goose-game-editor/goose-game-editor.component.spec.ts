@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { EditorPage } from './editor.page';
+import { GooseGameEditorComponent } from './goose-game-editor.component';
 
-describe('EditorPage', () => {
-  let component: EditorPage;
-  let fixture: ComponentFixture<EditorPage>;
+describe('GooseGameEditorComponent', () => {
+  let component: GooseGameEditorComponent;
+  let fixture: ComponentFixture<GooseGameEditorComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditorPage ],
+      declarations: [ GooseGameEditorComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EditorPage);
+    fixture = TestBed.createComponent(GooseGameEditorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
