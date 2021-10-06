@@ -222,6 +222,22 @@ export class GooseGamePage implements OnInit {
   }
 
   /**
+   * Fa abbandonare la partita ad un giocatore.
+   */
+  private async abbandonaPartita() {
+    this.timerService.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
+    (await this.lobbyManager.abbandonaLobby()).subscribe(
+      async (res) => {
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+      },
+      async (res) => {
+        this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+        this.errorManager.stampaErrore(res, 'Abbandono fallito');
+      }
+    );
+  }
+
+  /**
    * Controlla se un giocatore abbandona la partita.
    * In quel caso verrà rimossa la pedina relativa al giocatore.
    */
@@ -547,22 +563,6 @@ export class GooseGamePage implements OnInit {
     });
 
     return await modal.present();
-  }
-
-  /**
-   * Fa abbandonare la partita ad un giocatore.
-   */
-  private async abbandonaPartita() {
-    this.timerService.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
-    (await this.lobbyManager.abbandonaLobby()).subscribe(
-      async (res) => {
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-      },
-      async (res) => {
-        this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
-        this.errorManager.stampaErrore(res, 'Abbandono fallito');
-      }
-    );
   }
 
   /**
