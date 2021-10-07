@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { GameEditorComponent } from 'src/app/components/game-editor/game-editor.component';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 
 @Component({
@@ -6,27 +7,45 @@ import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creato
   templateUrl: './goose-game-editor.component.html',
   styleUrls: ['./goose-game-editor.component.scss'],
 })
-export class GooseGameEditorComponent implements OnInit {
-  cells = [];
+export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
   expandedCell: Number;
   bulkEdit = false;
   edit = {};
 
+  /**
+   * Il valore della variabile config viene ottenuto dal component padre di questo editor.
+   */
   @Input('config') config = { cells: [] };
+
+  /**
+   * Questo EventEmitter consente a questo component di comunicare con il suo parent emettendo
+   * eventi contenenti determinati valori che saranno poi intercettati dal parent.
+   */
   @Output() updateConfigEvent = new EventEmitter<Object>();
 
-  constructor(private alertCreator: AlertCreatorService) {
-    //this.cells = this.config.cells;
-  }
+  constructor(private alertCreator: AlertCreatorService) { }
 
-  ngOnInit() {
-    //console.log("this.config", this.config);
-  }
+  ngOnInit() { }
 
+  /**
+   * Quando l'utente salva la configurazione del gioco tramite l'apposito button,
+   * emette un evento contenente il config del gioco aggiornato che verrà poi catturato dal
+   * componente parent.
+   */
   updateConfig() {
-    this.updateConfigEvent.emit(this.config);
+    if (this.config.cells.length > 0)
+      this.updateConfigEvent.emit(this.config);
+    else this.alertCreator.createInfoAlert("Errore", "Il tabellone non può essere lasciato vuoto!");
   }
 
+  /**
+   * Fa sì che gli <ion-input> corrispondenti alle domande/risposte di ogni casella non vengano
+   * renderizzate ad ogni nuova digitazione.
+   * 
+   * @param index L'indice della casella che si sta modificando.
+   * @param item 
+   * @returns 
+   */
   trackEditList(index, item) {
     return index;
   }
@@ -57,6 +76,12 @@ export class GooseGameEditorComponent implements OnInit {
     }
   }
 
+  /**
+   * Se la selezione caselle non è abilitata, elimina tutte le caselle dopo aver chiesto
+   * conferma tramite un alert.
+   * Se la selezione caselle è abilitata, elimina solo le caselle selezionate, se ve ne sono,
+   * altrimenti mostra un errore.
+   */
   bulkDelete() {
     if (this.bulkEdit) {
       if (this.edit && Object.keys(this.edit).length != 0 && this.edit.constructor === Object && this.checkSelectedCells())
@@ -68,7 +93,7 @@ export class GooseGameEditorComponent implements OnInit {
     }
     else {
       this.alertCreator.createConfirmationAlert("Sei sicuro di voler eliminare tutte le caselle?", () => {
-        this.config.cells = [];//this.cells = [];
+        this.config.cells = [];
       });
     }
   }
@@ -82,18 +107,33 @@ export class GooseGameEditorComponent implements OnInit {
     this.edit = {};
   }
 
+  /**
+   * Assegna alla variabile expandedCell il valore dell'indice della casella che l'utente
+   * ha selezionato.
+   * @param cell La casella selezionata.
+   */
   expandCell(cell) {
     if (this.expandedCell != cell)
       this.expandedCell = cell;
     else this.expandedCell = null;
   }
 
+  /**
+   * Aggiunge una nuova casella al tabellone.
+   * Se il tabellone è vuoto, viene prima aggiunta la casella 0, ovvero la casella
+   * di partenza delle pedine.
+   */
   addCell() {
     if (this.config.cells.length == 0)
       this.config.cells.push(this.getCellObject(0));
-    this.config.cells.push(this.getCellObject(this.cells.length));
+    this.config.cells.push(this.getCellObject(this.config.cells.length));
   }
 
+  /**
+   * Ritorna un nuovo oggetto casella.
+   * @param index L'indice della nuova casella creata.
+   * @returns L'oggetto creato.
+   */
   getCellObject(index) {
     return {
       title: index,
@@ -101,17 +141,21 @@ export class GooseGameEditorComponent implements OnInit {
     }
   }
 
+  /**
+   * Aggiunge una nuova risposta alla domanda della casella selezionata.
+   * @param cellIndex L'indice della casella selezionata.
+   */
   addAnswer(cellIndex) {
     this.config.cells[cellIndex].question.answers.push(null);
   }
 
+  /**
+   * Elimina una data risposta dalla casella selezionata.
+   * @param cellIndex L'indice della casella selezionata.
+   * @param answerIndex L'indice della risposta da eliminare.
+   */
   deleteAnswer(cellIndex, answerIndex) {
     this.config.cells[cellIndex].question.answers.splice(answerIndex, 1);
-  }
-
-  saveModifications() {
-    const newConfig = { cells: this.config.cells };
-    console.log(newConfig);
   }
 
 }

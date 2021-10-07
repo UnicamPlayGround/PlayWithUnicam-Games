@@ -1,5 +1,5 @@
 {
-  "editor_selector": "app-goose-game-editor",
+  "game": "goose-game",
   "cells": [
     {
       "title": "0"

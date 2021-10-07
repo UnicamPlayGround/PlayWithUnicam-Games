@@ -17,10 +17,11 @@
     <ion-label *ngIf="!bulkEdit" class="ion-hide-md-down">Elimina tutto</ion-label>
     <ion-label *ngIf="bulkEdit" class="ion-hide-md-down">Elimina selezionati</ion-label>
   </ion-button>
-  <ion-button slot="end" (click)="updateConfig()" color="secondary" shape="round">
+  <ion-button slot="end" (click)="updateConfig()" color="secondary" shape="round"
+    [class.button-disabled]="config.cells.length == 0">
     <ion-icon slot="icon-only" name="save-outline" class="ion-hide-md-up"></ion-icon>
     <ion-icon slot="start" name="save-outline" class="ion-hide-md-down"></ion-icon>
-    <ion-label class="ion-hide-md-down">Salva</ion-label>
+    <ion-label class="ion-hide-md-down">Salva tabellone</ion-label>
   </ion-button>
 </ion-toolbar>
 
