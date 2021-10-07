@@ -6,19 +6,19 @@
     <ion-icon slot="start" name="add-outline" class="ion-hide-md-down"></ion-icon>
     <ion-label class="ion-hide-md-down">Aggiungi casella</ion-label>
   </ion-button>
-  <ion-button slot="start" (click)="toggleBulkEdit()" shape="round" [class.button-disabled]="config.cells.length == 0">
+  <ion-button slot="start" (click)="toggleBulkEdit()" shape="round" [class.button-disabled]="cells.length == 0">
     <ion-icon slot="icon-only" name="checkbox-outline" class="ion-hide-md-up"></ion-icon>
     <ion-icon slot="start" name="checkbox-outline" class="ion-hide-md-down"></ion-icon>
     <ion-label class="ion-hide-md-down">Abilita selezione</ion-label>
   </ion-button>
-  <ion-button (click)="bulkDelete()" color="danger" shape="round" [class.button-disabled]="config.cells.length == 0">
+  <ion-button (click)="bulkDelete()" color="danger" shape="round" [class.button-disabled]="cells.length == 0">
     <ion-icon slot="icon-only" name="trash-outline" class="ion-hide-md-up"></ion-icon>
     <ion-icon slot="start" name="trash-outline" class="ion-hide-md-down"></ion-icon>
     <ion-label *ngIf="!bulkEdit" class="ion-hide-md-down">Elimina tutto</ion-label>
     <ion-label *ngIf="bulkEdit" class="ion-hide-md-down">Elimina selezionati</ion-label>
   </ion-button>
   <ion-button slot="end" (click)="updateConfig()" color="secondary" shape="round"
-    [class.button-disabled]="config.cells.length == 0">
+    [class.button-disabled]="cells.length == 0">
     <ion-icon slot="icon-only" name="save-outline" class="ion-hide-md-up"></ion-icon>
     <ion-icon slot="start" name="save-outline" class="ion-hide-md-down"></ion-icon>
     <ion-label class="ion-hide-md-down">Salva tabellone</ion-label>
@@ -28,15 +28,15 @@
 <ion-content>
 
   <ion-card-header>
-    <ion-card-title *ngIf="config.cells.length > 0">Il tabellone attualmente contiene le seguenti caselle:
+    <ion-card-title *ngIf="cells.length > 0">Il tabellone attualmente contiene le seguenti caselle:
     </ion-card-title>
-    <ion-card-title *ngIf="config.cells.length == 0">Attualmente il tabellone di gioco è vuoto!</ion-card-title>
-    <ion-card-subtitle *ngIf="config.cells.length == 0">Aggiungi nuove caselle per configurare il gioco!
+    <ion-card-title *ngIf="cells.length == 0">Attualmente il tabellone di gioco è vuoto!</ion-card-title>
+    <ion-card-subtitle *ngIf="cells.length == 0">Aggiungi nuove caselle per configurare il gioco!
     </ion-card-subtitle>
   </ion-card-header>
 
   <ion-row>
-    <ion-col size-lg="4" size-md="6" size-sm="12" size="12" *ngFor="let cell of config.cells, let i = index;">
+    <ion-col size-lg="4" size-md="6" size-sm="12" size="12" *ngFor="let cell of cells, let i = index;">
       <ion-card class="cell-card" [class.cell0]="i == 0">
         <ion-list class="card-header">
           <ion-item lines="none" button="true" (click)="expandCell(i)">
