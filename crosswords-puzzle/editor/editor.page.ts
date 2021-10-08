@@ -36,9 +36,6 @@ export class EditorPage implements OnInit {
   cells = [];
 
   dimensioni: FormGroup;
-  parolaCorrente;
-  definizioneCorrente;
-  orientamentoCorrente;
   questionNumber = 1;
 
 
@@ -127,55 +124,57 @@ export class EditorPage implements OnInit {
       const datiParola = data['data'];
 
       if (datiParola && datiParola.parola.length > 1) {
-        this.parolaCorrente = datiParola.parola;
-        this.definizioneCorrente = datiParola.definizioneCorrente;
-        this.orientamentoCorrente = datiParola.orientamento;
+        var parolaCorrente = String(datiParola.parola).toUpperCase();
+        var definizioneCorrente = datiParola.definizioneCorrente;
+        var orientamentoCorrente = datiParola.orientamento;
 
-        if (this.orientamentoCorrente == "VERTICALE") {
-          var riga = this.cells[i].row;
-          var caselleDisponibiliInVerticale = this.getCaselleDisponibiliInVerticale(riga, i, this.parolaCorrente);
-
-          if (this.parolaCorrente.length <= caselleDisponibiliInVerticale) {
-            if (caselleDisponibiliInVerticale == this.dimensioni.value.altezza - this.cells[i].row)
-              this.insertVerticalWord(i, false);
-            else {
-              if (this.parolaCorrente.length == caselleDisponibiliInVerticale && this.cells[i + (this.dimensioni.value.larghezza * this.parolaCorrente.length)].letter == "white")
-                this.insertVerticalWord(i, true);
-              else if (this.parolaCorrente.length < caselleDisponibiliInVerticale && this.cells[i + (this.dimensioni.value.larghezza * this.parolaCorrente.length)].letter == "white")
-                this.insertVerticalWord(i, true);
-              else this.insertVerticalWord(i, false);
-            }
-          } else this.alertCreator.createInfoAlert("ERRORE", "Non ci sono abbastanza caselle disponibili");
-        }
-
-        if (this.orientamentoCorrente == "ORIZZONTALE") {
-          var col = this.cells[i].col;
-          var caselleDisponibiliInOrizzontale = this.getCaselleDisponibiliInOrizzontale(col, i, this.parolaCorrente);
-
-          if (this.parolaCorrente.length <= caselleDisponibiliInOrizzontale) {
-            if (caselleDisponibiliInOrizzontale == this.dimensioni.value.larghezza - this.cells[i].col)
-              this.insertHorizontalWord(i, false);
-            else {
-              //TODO
-              console.log(this.parolaCorrente.length < caselleDisponibiliInOrizzontale);
-              console.log(this.cells[i + this.parolaCorrente.length].letter == "white");
-
-              if (this.parolaCorrente.length == caselleDisponibiliInOrizzontale && this.cells[i + this.parolaCorrente.length].letter == "white")
-                this.insertHorizontalWord(i, true);
-              else if (this.parolaCorrente.length < caselleDisponibiliInOrizzontale && this.cells[i + this.parolaCorrente.length].letter == "white")
-                this.insertHorizontalWord(i, true);
-              else this.insertHorizontalWord(i, false);
-            }
-          } else this.alertCreator.createInfoAlert("ERRORE", "Non ci sono abbastanza caselle disponibili");
-
-        }
-
+        if (orientamentoCorrente == "VERTICALE")
+          this.verticalInsert(parolaCorrente, i);
+        else if (orientamentoCorrente == "ORIZZONTALE")
+          this.horizontalInsert(parolaCorrente, i);
 
       } else this.alertCreator.createInfoAlert("ERRORE!", "La parola deve contenere almeno due lettere!")
     });
-
     return await modal.present();
   }
+
+
+
+  private verticalInsert(parolaCorrente, i) {
+    var riga = this.cells[i].row;
+    var caselleDisponibiliInVerticale = this.getCaselleDisponibiliInVerticale(riga, i, parolaCorrente);
+
+    if (parolaCorrente.length <= caselleDisponibiliInVerticale) {
+      if (caselleDisponibiliInVerticale == this.dimensioni.value.altezza - this.cells[i].row && parolaCorrente.length == caselleDisponibiliInVerticale)
+        this.insertWord("VERTICALE", parolaCorrente, i, false);
+      else {
+        if (parolaCorrente.length == caselleDisponibiliInVerticale && this.cells[i + (this.dimensioni.value.larghezza * parolaCorrente.length)].letter == "white")
+          this.insertWord("VERTICALE", parolaCorrente, i, true);
+        else if (parolaCorrente.length < caselleDisponibiliInVerticale && this.cells[i + (this.dimensioni.value.larghezza * parolaCorrente.length)].letter == "white")
+          this.insertWord("VERTICALE", parolaCorrente, i, true);
+        else this.insertWord("VERTICALE", parolaCorrente, i, false);
+      }
+    } else this.alertCreator.createInfoAlert("ERRORE", "Non ci sono abbastanza caselle disponibili");
+  }
+
+  private horizontalInsert(parolaCorrente, i) {
+    var col = this.cells[i].col;
+    var caselleDisponibiliInOrizzontale = this.getCaselleDisponibiliInOrizzontale(col, i, parolaCorrente);
+
+    if (parolaCorrente.length <= caselleDisponibiliInOrizzontale) {
+      if (caselleDisponibiliInOrizzontale == this.dimensioni.value.larghezza - this.cells[i].col && parolaCorrente.length == caselleDisponibiliInOrizzontale)
+        this.insertWord("ORIZZONTALE", parolaCorrente, i, false);
+      else {
+        if (parolaCorrente.length == caselleDisponibiliInOrizzontale && this.cells[i + parolaCorrente.length].letter == "white")
+          this.insertWord("ORIZZONTALE", parolaCorrente, i, true);
+        else if (parolaCorrente.length < caselleDisponibiliInOrizzontale && this.cells[i + parolaCorrente.length].letter == "white")
+          this.insertWord("ORIZZONTALE", parolaCorrente, i, true);
+        else this.insertWord("ORIZZONTALE", parolaCorrente, i, false);
+      }
+    } else this.alertCreator.createInfoAlert("ERRORE", "Non ci sono abbastanza caselle disponibili");
+  }
+
+
 
   private getCaselleDisponibiliInVerticale(row, cellNumber, word) {
     var caselleDisponibili = 0;
@@ -224,52 +223,40 @@ export class EditorPage implements OnInit {
     return caselleDisponibili;
   }
 
-  /**
-   * Inserisce la parola desiderata nel tabellone.
-   * La parola verrà inserita in orizzontale
-   * @param cellNumber posizione iniziale della parola
-   * @param blackCell true se deve essere aggiunta una casella nera, false altrimenti
-   */
-  private insertHorizontalWord(cellNumber, blackCell) {
-    this.insertQuestionNumber(cellNumber);
-    for (let index = 0; index < this.parolaCorrente.length; index++) {
-      const cell = document.getElementById("c" + cellNumber);
 
-      if (cell.getElementsByTagName("ion-label").length == 0) {
-        const label = document.createElement("ion-label");
-        label.textContent = this.parolaCorrente[index];
-        cell.appendChild(label);
+  private insertWord(orientamento, parolaCorrente, cellNumber, blackCell) {
+    if (orientamento == "VERTICALE") {
+      this.insertQuestionNumber(cellNumber);
+      for (let index = 0; index < parolaCorrente.length; index++) {
+        const cell = document.getElementById("c" + cellNumber);
+
+        if (cell.getElementsByTagName("ion-label").length == 0) {
+          const label = document.createElement("ion-label");
+          label.textContent = parolaCorrente[index];
+          cell.appendChild(label);
+        }
+        this.cells[cellNumber].letter = parolaCorrente[index];
+        cellNumber += this.dimensioni.value.larghezza;
       }
+      if (blackCell)
+        this.createBlackCell(cellNumber);
 
-      this.cells[cellNumber].letter = this.parolaCorrente[index];
-      cellNumber++;
-    }
-    if (blackCell)
-      this.createBlackCell(cellNumber);
-  }
+    } else if (orientamento == "ORIZZONTALE") {
+      this.insertQuestionNumber(cellNumber);
+      for (let index = 0; index < parolaCorrente.length; index++) {
+        const cell = document.getElementById("c" + cellNumber);
 
-  /**
-   * Inserisce la parola desiderata nel tabellone.
-   * La parola verrà inserita in verticale
-   * @param cellNumber posizione iniziale della parola
-   * @param blackCell true se deve essere aggiunta una casella nera, false altrimenti
-   */
-  private insertVerticalWord(cellNumber, blackCell) {
-    this.insertQuestionNumber(cellNumber);
-    for (let index = 0; index < this.parolaCorrente.length; index++) {
-      const cell = document.getElementById("c" + cellNumber);
-
-      if (cell.getElementsByTagName("ion-label").length == 0) {
-        const label = document.createElement("ion-label");
-        label.textContent = this.parolaCorrente[index];
-        cell.appendChild(label);
+        if (cell.getElementsByTagName("ion-label").length == 0) {
+          const label = document.createElement("ion-label");
+          label.textContent = parolaCorrente[index];
+          cell.appendChild(label);
+        }
+        this.cells[cellNumber].letter = parolaCorrente[index];
+        cellNumber++;
       }
-
-      this.cells[cellNumber].letter = this.parolaCorrente[index];
-      cellNumber += this.dimensioni.value.larghezza;
+      if (blackCell)
+        this.createBlackCell(cellNumber);
     }
-    if (blackCell)
-      this.createBlackCell(cellNumber);
   }
 
   /**
@@ -300,9 +287,4 @@ export class EditorPage implements OnInit {
     document.getElementById("table").appendChild(newRow);
     return newRow;
   }
-
-
-
-
-
 }
