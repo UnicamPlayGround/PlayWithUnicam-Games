@@ -376,9 +376,9 @@ export class GooseGamePage implements OnInit {
     modal.onDidDismiss().then((data) => {
       const rispostaCorretta = data['data'];
 
-      if (rispostaCorretta) {
+      if (rispostaCorretta)
         this.iniziaTurno();
-      } else
+      else
         this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
     });
     return await modal.present();
@@ -509,7 +509,10 @@ export class GooseGamePage implements OnInit {
         if (!this.controllaFinePartita(posizione, goose)) {
           if (goose == this.gamePlayers[this.localPlayerIndex].goose) {
             this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, false);
-            this.presentaDomanda();
+            if (posizione != 0)
+              this.presentaDomanda();
+            else
+              this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
           }
 
           if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
@@ -533,7 +536,7 @@ export class GooseGamePage implements OnInit {
   effettuaSpostamento(goose, posizione, direzione) {
     if (direzione)
       document.getElementById('c' + (++posizione)).appendChild(document.getElementById(goose));
-    else
+    else if (posizione > 0)
       document.getElementById('c' + (--posizione)).appendChild(document.getElementById(goose));
   }
 
