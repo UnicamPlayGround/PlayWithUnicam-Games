@@ -34,6 +34,7 @@ export class EditorPage implements OnInit {
   }
 
   cells = [];
+  words = [];
 
   dimensioni: FormGroup;
   questionNumber = 1;
@@ -60,6 +61,9 @@ export class EditorPage implements OnInit {
    * 
    */
   creaTabellone() {
+    if(!this.dimensioni.value.larghezza || !this.dimensioni.value.altezza)
+      this.alertCreator.createInfoAlert("ERRORE", "Inserire delle dimensioni valide!");
+    
     var currentRowNumber = 0;
     var nCasella = 0;
 
@@ -77,7 +81,6 @@ export class EditorPage implements OnInit {
       }
       this.createNewRow(++currentRowNumber);
     }
-    console.log(this.cells)
   }
 
   /**
@@ -139,7 +142,11 @@ export class EditorPage implements OnInit {
   }
 
 
-
+/**
+ * Inserisce la parola desiderata in verticale
+ * @param parolaCorrente parola da inserire
+ * @param i casella iniziale della parola
+ */
   private verticalInsert(parolaCorrente, i) {
     var riga = this.cells[i].row;
     var caselleDisponibiliInVerticale = this.getCaselleDisponibiliInVerticale(riga, i, parolaCorrente);
@@ -157,6 +164,11 @@ export class EditorPage implements OnInit {
     } else this.alertCreator.createInfoAlert("ERRORE", "Non ci sono abbastanza caselle disponibili");
   }
 
+  /**
+ * Inserisce la parola desiderata in orizzontale
+ * @param parolaCorrente parola da inserire
+ * @param i casella iniziale della parola
+ */
   private horizontalInsert(parolaCorrente, i) {
     var col = this.cells[i].col;
     var caselleDisponibiliInOrizzontale = this.getCaselleDisponibiliInOrizzontale(col, i, parolaCorrente);
@@ -173,8 +185,6 @@ export class EditorPage implements OnInit {
       }
     } else this.alertCreator.createInfoAlert("ERRORE", "Non ci sono abbastanza caselle disponibili");
   }
-
-
 
   private getCaselleDisponibiliInVerticale(row, cellNumber, word) {
     var caselleDisponibili = 0;
@@ -251,12 +261,25 @@ export class EditorPage implements OnInit {
           label.textContent = parolaCorrente[index];
           cell.appendChild(label);
         }
+
         this.cells[cellNumber].letter = parolaCorrente[index];
         cellNumber++;
       }
       if (blackCell)
         this.createBlackCell(cellNumber);
     }
+    //inserisce la parola l'array word
+    var position = [];
+    for (let index = 0; index < parolaCorrente.length; index++) {
+      position.push[cellNumber];
+      cellNumber++;
+    }
+    this.words.push({
+      'word': parolaCorrente,
+      'position': position
+    });
+    console.log(this.words)
+    console.log(this.cells)
   }
 
   /**
