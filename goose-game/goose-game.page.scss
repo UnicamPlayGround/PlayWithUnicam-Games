@@ -1,22 +1,13 @@
-ion-content{
-    --background: linear-gradient(#045164, #2460a5, #39a3fa);
+#main-content{
+    --background: url('../../../assets/images/goose_game_background.jpg') no-repeat center center / cover;
 }
 
-.game-title{
-    --background: linear-gradient(#337fa1, #2460a5, #39a3fa);
-
-    ion-title{
-        text-align: center;
-        font-family: "Andale Mono", monospace;
-        font-weight: bold;
-        font-size: 30px;
-        color: #fff;
-        text-shadow: 3px 2px #2460a5;
-    }
+#alert-ruota-schermo {
+    --background: var(--ion-color-unicamblue);
 }
 
 .dieroll-toolbar{
-    --background: linear-gradient(#337fa1, #2460a5, #39a3fa);
+    --background: var(--ion-color-unicamblue);
 }
 
 .dieroll-board{
@@ -64,20 +55,59 @@ ion-content{
 }
 
 ::ng-deep.game-cell{
+    border-radius: 20px;
     padding:10px;
-    background-color: rgb(90, 170, 190);
-    border: 1px solid rgb(28, 68, 78);
+    background: rgb(255,238,205);
+    background: radial-gradient(circle, rgba(255,238,205,1) 0%, rgba(255,219,190,1) 100%);
+    border: 1px solid #fff;
     width: 170px;
     height: 170px;
     text-align: center;
 
     ion-label{
-        font-size: 20px;
+        font-size: 17px;
         font-weight: bold;
+        font-family: "MV Boli";
+    }
+}
+
+::ng-deep.start-cell{
+    background: url('../../../assets/images/start.jpg') no-repeat center center / cover !important;
+}
+
+::ng-deep.finish-cell{
+    background: url('../../../assets/images/finish.jpg') no-repeat center center / cover !important;
+}
+
+::ng-deep.blue-cell{
+    background: rgb(83,126,142);
+    background: radial-gradient(circle, rgba(83,126,142,1) 0%, rgba(79,104,126,1) 100%);
+
+    ion-label{
+        color:#fff;
+    }
+}
+
+::ng-deep.red-cell{
+    background: rgb(173,89,102);
+    background: radial-gradient(circle, rgba(173,89,102,1) 0%, rgba(153,68,77,1) 100%);
+
+    ion-label{
+        color:#fff;
+    }
+}
+
+::ng-deep.green-cell{
+    background: rgb(120,172,121);
+    background: radial-gradient(circle, rgba(120,172,121,1) 0%, rgba(75,150,109,1) 100%);
+
+    ion-label{
+        color:#fff;
     }
 }
 
 ::ng-deep.goose{
+    //transition: 0.6s ease;
     position:absolute;
     max-width:64px;
     max-height:64px;
@@ -324,7 +354,7 @@ ion-content{
 
 // Per nascondere alcuni elementi e mostrarne altri
 @media only screen and (max-width: 1020px){
-    .game-title{
+    #game-title{
         display: none !important;
     }
     .dieroll-board{

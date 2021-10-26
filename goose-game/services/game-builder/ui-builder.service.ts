@@ -4,7 +4,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class UiBuilderService {
-
+  colorIndex = 0;
+  cells = [];
   constructor() { }
 
   /**
@@ -14,13 +15,15 @@ export class UiBuilderService {
    * @param cells L'array di caselle con cui costruire il tabellone.
    */
   createGameBoard(cells) {
+    this.cells = cells;
     var currentCellNumber = 0
     var currentRowNumber = 0;
     var direction = true;
 
     cells.forEach(cell => {
-      const newCell = this.createGameCell(currentCellNumber++, cell.title);
       const currentRow = document.getElementById("row" + currentRowNumber);
+      const newCell = this.createGameCell(currentCellNumber++);
+
 
       if (currentRow.childNodes.length < 8) {
         if (currentRowNumber % 2 == 0) this.appendChildByDirection(currentRow, newCell, direction);
@@ -59,14 +62,43 @@ export class UiBuilderService {
    * @param cellNumber Il numero della casella da creare.
    * @returns La nuova casella creata.
    */
-  private createGameCell(cellNumber, title) {
+  private createGameCell(cellNumber) {
     const newCell = document.createElement("td");
     newCell.id = "c" + cellNumber;
     newCell.classList.add("game-cell");
-    const label = document.createElement("ion-label");
-    label.textContent = cellNumber;
-    newCell.appendChild(label);
+
+    if (cellNumber == 0) {
+      newCell.classList.add("start-cell");
+    } else if (cellNumber == (this.cells.length - 1)) {
+      newCell.classList.add("finish-cell");
+    } else {
+      this.applyColor(newCell);
+      const label = document.createElement("ion-label");
+      label.textContent = cellNumber;
+      newCell.appendChild(label);
+    }
+
     return newCell;
+  }
+
+  applyColor(newCell) {
+    switch (this.colorIndex) {
+      case 1:
+        newCell.classList.add("blue-cell");
+        this.colorIndex++;
+        break;
+      case 2:
+        newCell.classList.add("red-cell");
+        this.colorIndex++;
+        break;
+      case 3:
+        newCell.classList.add("green-cell");
+        this.colorIndex = 0;
+        break;
+      default:
+        this.colorIndex++;
+        break;
+    }
   }
 
   /**
