@@ -1,0 +1,21 @@
+::ng-deep.card{
+    width: 150px;
+    height: 230px;
+    //background-image: url("../../../assets/unicam-logo2.png");
+    //background-color: rgba(27,43,74,255);
+    background-color: red;
+    border-radius: 10px;
+    border: 5px solid rgba(27,43,74,255);
+}
+::ng-deep.space{
+    width: 10px;
+    height: 300px;
+}
+.grid{
+    position: absolute;
+    margin-left: 200px;
+    margin-top: 50px;
+    height: 1000px;
+    width: 1000px;
+    background-color: yellow;
+}
