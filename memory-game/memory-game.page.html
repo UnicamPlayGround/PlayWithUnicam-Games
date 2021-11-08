@@ -1,6 +1,10 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>memoryGame</ion-title>
+  <ion-toolbar id="game-title" color="unicamblue">
+    <ion-title color="light">Memory Game</ion-title>
+    <ion-button slot="end" (click)="confermaAbbandonoPartita()" fill="clear" color="light" shape="round">
+      <ion-label>Abbandona la partita</ion-label>
+      <ion-icon slot="start" name="exit-outline"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
@@ -15,11 +19,11 @@
       <p><strong> {{display}} </strong></p>
     </ion-card-content>
   </ion-card>
-  
+
   <div class="grid" id="grid">
     <ion-row id="row1"> </ion-row>
   </div>
 
-  <ion-button (click)="start()">GIOCA ORA</ion-button>
+  <!-- <ion-button (click)="start()">GIOCA ORA</ion-button> -->
 
 </ion-content>

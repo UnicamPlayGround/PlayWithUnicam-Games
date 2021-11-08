@@ -11,6 +11,7 @@ export class MemoryGamePage implements OnInit {
   constructor(private alertCreator: AlertCreatorService) { }
 
   ngOnInit() {
+    this.start();
   }
 
   time: number = 0;
@@ -21,7 +22,7 @@ export class MemoryGamePage implements OnInit {
   carteScoperte = [];
   arrayFigure = ['../../../assets/images/headphones.png', '../../../assets/images/headphones.png',
     '../../../assets/images/pc.png', '../../../assets/images/pc.png',
-    '../../../assets/images/cpu.png', '../../../assets/images/cpu.png'];
+    '../../../assets/images/cpu.png', '../../../assets/images/cpu.png', '../../../assets/images/printer.png', '../../../assets/images/printer.png'];
 
   //TODO: 
   private start() {
@@ -33,7 +34,7 @@ export class MemoryGamePage implements OnInit {
     var currentRow = row1;
 
     for (let i = 0; i < this.arrayFigure.length; i++) {
-      if (i == 3) {
+      if (i == this.arrayFigure.length / 2) {
         var row2 = document.createElement("ion-row");
         grid.appendChild(row2);
         currentRow = row2;
@@ -145,16 +146,16 @@ export class MemoryGamePage implements OnInit {
     card.id = "card" + i;
     card.classList.add("card");
     card.onclick = () => {
-      
-      if(this.carteSelezionate.length!=2){
+
+      if (this.carteSelezionate.length != 2) {
         this.scopriCarta(i);
         this.carteSelezionate.push(i);
-  
+
         setTimeout(() => {
           this.controllaCarteSelezionate();
         }, 1000);
       }
-      
+
     };
 
     var back = document.createElement("img");
