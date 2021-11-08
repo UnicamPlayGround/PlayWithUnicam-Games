@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
+import { HttpClient } from '@angular/common/http';
+import { LoginService } from 'src/app/services/login-service/login.service';
+import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
+
 
 @Component({
   selector: 'app-memory-game',
@@ -8,33 +12,73 @@ import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creato
 })
 export class MemoryGamePage implements OnInit {
 
-  constructor(private alertCreator: AlertCreatorService) { }
+  constructor(private alertCreator: AlertCreatorService,
+    private loginService: LoginService,
+    private http: HttpClient,
+    private errorManager: ErrorManagerService) { }
 
   ngOnInit() {
+    // this.getGameConfig();
     this.start();
   }
 
-  time: number = 0;
+  figure2 = {
+    game: "/memory-game",
+    cards: [
+      {
+        nome: "cpu",
+        link: "../../../assets/images/cpu.png",
+        definizione: "Elabora informazioni"
+      },
+      {
+        nome: "monitor",
+        link: "../../../assets/images/pc.png",
+        definizione: "Riproduce segnale video"
+      },
+      {
+        nome: "cuffie",
+        link: '../../../assets/images/headphones.png',
+        definizione: "riproduce audio"
+      },
+      {
+        nome: "stampante",
+        link: "../../../assets/images/printer.png",
+        definizione: "stampa"
+      }
+    ]
+  };
+
+  figure = this.figure2;
+
+
+
+  time = 0;
   display;
   interval;
 
   carteSelezionate = [];
   carteScoperte = [];
-  arrayFigure = ['../../../assets/images/headphones.png', '../../../assets/images/headphones.png',
-    '../../../assets/images/pc.png', '../../../assets/images/pc.png',
-    '../../../assets/images/cpu.png', '../../../assets/images/cpu.png', '../../../assets/images/printer.png', '../../../assets/images/printer.png'];
+
+
+  private raddoppiaCarte() {
+    var tmp = this.figure2.cards.length;
+    for (let index = 0; index < tmp; index++) {
+      this.figure2.cards.push(this.figure2.cards[index]);
+    }
+  }
 
   //TODO: 
   private start() {
-    this.mescolaCarte(this.arrayFigure);
+    this.raddoppiaCarte();
+    this.mescolaCarte();
     this.startTimer();
 
     var grid = document.getElementById("grid");
     var row1 = document.getElementById("row1");
     var currentRow = row1;
 
-    for (let i = 0; i < this.arrayFigure.length; i++) {
-      if (i == this.arrayFigure.length / 2) {
+    for (let i = 0; i < this.figure2.cards.length; i++) {
+      if (i == this.figure2.cards.length / 2) {
         var row2 = document.createElement("ion-row");
         grid.appendChild(row2);
         currentRow = row2;
@@ -47,7 +91,9 @@ export class MemoryGamePage implements OnInit {
     }
   }
 
-  //TODO: 
+  /**
+   * Fa partire il timer del gioco.
+   */
   startTimer() {
     this.interval = setInterval(() => {
       if (this.time === 0) {
@@ -59,33 +105,46 @@ export class MemoryGamePage implements OnInit {
     }, 1000);
   }
 
-  //TODO: 
-  private transform(value: number): string {
+  /**
+   * Trasforma il contatore dei secondi passati in input.
+   * Esso ritornerà infatti il tempo seguendo il formato:
+   * * *"minuti:secondi"* *
+   * @param value la stringa relativa al conteggio passato in input
+   * @returns 
+   */
+  private transform(value) {
     const minutes: number = Math.floor(value / 60);
     return minutes + ':' + (value - minutes * 60);
   }
 
-  //TODO: 
+  /**
+   * Ferma il timer
+   */
   private stopTimer() {
     clearInterval(this.interval);
   }
 
-  //TODO: 
-  private mescolaCarte(a) {
-    var currentIndex = a.length;
+  /**
+   * Mescola l'array delle carte
+   * @param a array da mescolare
+   */
+  private mescolaCarte() {
+    var currentIndex = this.figure2.cards.length;
     var temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
-      temporaryValue = a[currentIndex];
-      a[currentIndex] = a[randomIndex];
-      a[randomIndex] = temporaryValue;
+      temporaryValue = this.figure2.cards[currentIndex];
+      this.figure2.cards[currentIndex] = this.figure2.cards[randomIndex];
+      this.figure2.cards[randomIndex] = temporaryValue;
     }
-    this.arrayFigure = a;
   }
 
-  //TODO: 
+  /**
+   * Scopre la carta relativa al numero passato in input
+   * @param i numero finale dell'id della carta da scoprire
+   */
   private scopriCarta(i) {
     var back = document.getElementById("back-img" + i);
     var card = document.getElementById("card" + i);
@@ -97,7 +156,10 @@ export class MemoryGamePage implements OnInit {
     front.style.display = "inline";
   }
 
-  //TODO: 
+  /**
+   * Copre la carta relativa al numero passato in input
+   * @param i numero finale dell'id della carta da scoprire
+   */
   private copriCarta(i) {
     var front = document.getElementById("front-img" + i);
     var card = document.getElementById("card" + i);
@@ -115,11 +177,15 @@ export class MemoryGamePage implements OnInit {
     return space;
   }
 
-  //TODO: 
+  /**
+   * Controlla se le carte selezionate sono uguali oppure no.
+   * Se sono uguali, le carte rimarranno scoperte e verranno inserite nell'array "carteScoperte", 
+   * altrimenti verranno coperte di nuovo.
+   */
   private controllaCarteSelezionate() {
     if (this.carteSelezionate.length == 2) {
 
-      if (this.arrayFigure[this.carteSelezionate[0]] == this.arrayFigure[this.carteSelezionate[1]]) {
+      if (this.figure2.cards[this.carteSelezionate[0]] == this.figure2.cards[this.carteSelezionate[1]]) {
         this.carteScoperte.push(this.carteSelezionate[0]);
         this.carteScoperte.push(this.carteSelezionate[1]);
 
@@ -132,7 +198,7 @@ export class MemoryGamePage implements OnInit {
           this.copriCarta(this.carteSelezionate[index]);
         }
       }
-      if (this.carteScoperte.length == this.arrayFigure.length) {
+      if (this.carteScoperte.length == this.figure2.cards.length) {
         this.stopTimer();
         this.alertCreator.createInfoAlert("HAI VINTO!", "Hai concluso il gioco in: " + this.display)
       }
@@ -140,7 +206,11 @@ export class MemoryGamePage implements OnInit {
     }
   }
 
-  //TODO: 
+  /**
+   * Crea le carte necessarie per il tabellone
+   * @param i numero finale dell'id relativo alla carta creata
+   * @returns la carta
+   */
   private creaCarta(i) {
     var card = document.createElement("div");
     card.id = "card" + i;
@@ -167,9 +237,29 @@ export class MemoryGamePage implements OnInit {
 
     var front = document.createElement("img");
     front.id = "front-img" + i;
-    front.src = this.arrayFigure[i];
+    front.src = this.figure2.cards[i].link;
     card.appendChild(front);
     front.style.display = 'none';
     return card;
   }
+
+  // async getGameConfig() {
+  //   const token_value = (await this.loginService.getToken()).value;
+  //   const headers = { 'token': token_value };
+
+  //   this.http.get('/game/config', { headers }).subscribe(
+  //     async (res) => {
+  //       // console.log("config: "+res['results'][0].config)
+  //       this.figure = res['results'][0].config;
+  //       // this.uiBuilder.createGameBoard(this.cells);
+  //       // this.loadPlayers();
+  //     },
+  //     async (res) => {
+  //       // this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+  //       // this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+  //       this.errorManager.stampaErrore(res, 'File di configurazione mancante');
+  //     }
+  //   );
+    
+  // }
 }
