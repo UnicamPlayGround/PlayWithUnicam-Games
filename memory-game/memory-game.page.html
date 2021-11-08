@@ -5,15 +5,21 @@
 </ion-header>
 
 <ion-content>
+
+  <ion-card class="time">
+    <ion-card-header>
+      <ion-card-title><strong>TEMPO</strong></ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p><strong> {{display}} </strong></p>
+    </ion-card-content>
+  </ion-card>
+  
   <div class="grid" id="grid">
     <ion-row id="row1"> </ion-row>
   </div>
 
   <ion-button (click)="start()">GIOCA ORA</ion-button>
-<br>
-<p style="margin-left: 5px;">Time : {{display }}</p> 
-
-
-
 
 </ion-content>

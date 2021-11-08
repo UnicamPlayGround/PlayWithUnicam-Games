@@ -88,6 +88,7 @@ export class MemoryGamePage implements OnInit {
   private scopriCarta(i) {
     var back = document.getElementById("back-img" + i);
     var card = document.getElementById("card" + i);
+    // card.style.backgroundColor = "white"
     var front = document.getElementById("front-img" + i);
 
     back.style.display = 'none';
@@ -100,6 +101,7 @@ export class MemoryGamePage implements OnInit {
     var front = document.getElementById("front-img" + i);
     var card = document.getElementById("card" + i);
     var back = document.getElementById("back-img" + i);
+    // card.style.backgroundColor= "white";
 
     front.style.display = 'none';
     back.style.display = "inline"
@@ -143,12 +145,16 @@ export class MemoryGamePage implements OnInit {
     card.id = "card" + i;
     card.classList.add("card");
     card.onclick = () => {
-      this.scopriCarta(i);
-      this.carteSelezionate.push(i);
-
-      setTimeout(() => {
-        this.controllaCarteSelezionate();
-      }, 1000);
+      
+      if(this.carteSelezionate.length!=2){
+        this.scopriCarta(i);
+        this.carteSelezionate.push(i);
+  
+        setTimeout(() => {
+          this.controllaCarteSelezionate();
+        }, 1000);
+      }
+      
     };
 
     var back = document.createElement("img");
