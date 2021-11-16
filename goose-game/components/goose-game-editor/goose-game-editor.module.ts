@@ -5,12 +5,12 @@ import { IonicModule } from '@ionic/angular';
 import { GooseGameEditorComponent } from './goose-game-editor.component';
 
 @NgModule({
-    declarations: [GooseGameEditorComponent],
     imports: [
         IonicModule,
         CommonModule,
         FormsModule
     ],
-    exports:[GooseGameEditorComponent]
+    exports: [GooseGameEditorComponent],
+    declarations: [GooseGameEditorComponent]
 })
 export class GooseGameEditorComponentModule { }

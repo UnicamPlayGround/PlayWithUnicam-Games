@@ -1,0 +1,75 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen="true">
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Impostazioni</ion-card-subtitle>
+      <ion-card-title>Modalità</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Seleziona una modalità di gioco per la partita da disputare
+
+      <ion-row>
+        <ion-col size-sm="12" size-md="6" size-lg="6" size-xl="6" size="12">
+          <ion-card id="tempoModeCard" button="true" (click)="setGameMode('tempo')"
+            [class.mode-selected]="dataKeeper.getGameMode() == 'tempo'">
+            <ion-card-header style="display: flex;">
+              <ion-icon name="hourglass" size="large"></ion-icon>
+              <ion-card-title style="margin-left: 10px;">Tempo</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-label text-wrap>Scegli tu la durata della partita e,
+                allo scadere del tempo, sarà decretato vincitore chi
+                avrà indovinato più coppie di carte.</ion-label>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size-sm="12" size-md="6" size-lg="6" size-xl="6" size="12">
+          <ion-card id="normalModeCard" button="true" (click)="setGameMode('normal')"
+            [class.mode-selected]="dataKeeper.getGameMode() == 'normal'">
+            <ion-card-header style="display: flex;">
+              <ion-icon name="ribbon" size="large"></ion-icon>
+              <ion-card-title style="margin-left: 10px;">Normale</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-label text-wrap>Gioca finché non finiscono le carte.
+                Sarà decretato vincitore chi avrà indovinato più coppie di carte.
+              </ion-label>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <div *ngIf="dataKeeper.getGameMode() == 'tempo'">
+        Seleziona la durata della partita da disputare (minimo 1 minuto)
+        <ion-item>
+          <ion-label text-wrap>Durata</ion-label>
+          <ion-datetime displayFormat="mm:ss" minuteValues="1,2,3,4,5,6,7,8,9,10" [(ngModel)]="gameTime"
+            placeholder="Scegli la durata della partita"></ion-datetime>
+        </ion-item>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label text-wrap>Prima di poter iniziare, aggiungi dei nuovi giocatori!</ion-label>
+    </ion-list-header>
+
+    <ion-button (click)="startGame()" size="large" shape="round"
+      [class.button-disabled]="!dataKeeper.checkData()">
+      <ion-label>Avvia partita!</ion-label>
+      <ion-icon slot="end" name="play"></ion-icon>
+    </ion-button>
+  </ion-list>
+
+</ion-content>

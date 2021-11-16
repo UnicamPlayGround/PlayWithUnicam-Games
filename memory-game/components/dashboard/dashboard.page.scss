@@ -1,0 +1,12 @@
+ion-card{
+    border-radius: 20px;
+}
+
+.mode-selected{
+    --background: rgb(121,7,30);
+    --background: linear-gradient(90deg, rgba(121,7,30,1) 35%, rgba(185,7,43,1) 100%);
+    --color:var(--ion-color-light);
+    ion-card-title{
+        --color:var(--ion-color-light);
+    }
+}

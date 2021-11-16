@@ -1,0 +1,55 @@
+<ion-split-pane contentId="content">
+  <ion-menu contentId="content">
+
+    <ion-content fullscreen="true">
+
+      <div style="padding:20px; display:flex">
+        <h1 style="font-family:Papyrus; font-size: 40px; color: var(--ion-color-light);">Memory</h1>
+        <img src="game-assets/memory-game/game-assets/card-hand.png" alt=""
+          style="margin-left:5px; max-width:100px;max-height: 100px;">
+      </div>
+
+
+      <div style="padding:20px; color:var(--ion-color-light)">
+        <h2>Giocatori</h2>
+        <ion-item *ngFor="let player of players">
+          <ion-avatar slot="start">
+            <img src="../../../../../assets/icon/lobby-player.png" alt="Giocatore {{ player.nickname }}">
+          </ion-avatar>
+          <ion-label>{{ player.nickname }}</ion-label>
+        </ion-item>
+
+        <ion-button routerLink="/memory/players" expand="block" color="unicamblue">
+          <ion-icon slot="end" name="add"></ion-icon>
+          <ion-label>Aggiungi</ion-label>
+        </ion-button>
+      </div>
+
+      <div style="padding:20px; color:var(--ion-color-light)">
+        <h2>Classifica</h2>
+
+        <ion-item *ngFor="let player of players; let i = index">
+          <ion-avatar slot="start">
+            <img src="../../../../../assets/icon/lobby-player.png" alt="Giocatore {{ player.nickname }}">
+          </ion-avatar>
+
+          <ion-label>{{ player.nickname }}</ion-label>
+          <ion-badge color="unicamblue"> {{ player.guessedCards.length }} </ion-badge>
+        </ion-item>
+      </div>
+    </ion-content>
+
+    <ion-footer>
+      <ion-toolbar>
+        <ion-button expand="block" fill="clear" color="light">
+          <ion-icon slot="end" name="exit"></ion-icon>
+          <ion-label>Torna alla lobby</ion-label>
+        </ion-button>
+      </ion-toolbar>
+    </ion-footer>
+
+  </ion-menu>
+
+  <ion-router-outlet id="content" main></ion-router-outlet>
+
+</ion-split-pane>

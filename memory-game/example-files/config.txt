@@ -1,0 +1,9 @@
+{
+	"game":"memory-game",
+	"cards":[
+	{"nome":"cpu", "link": "../../../assets/images/cpu.png","definizione":"elabora informazioni"},
+	{"nome":"stampante", "link": "../../../assets/images/printer.png","definizione":"stampa"},
+	{"nome":"monitor", "link": "../../../assets/images/pc.png","definizione":"segnale video"},
+	{"nome":"cuffie", "link": "../../../assets/images/headphones.png","definizione":"segnale audio"}
+	]
+}
