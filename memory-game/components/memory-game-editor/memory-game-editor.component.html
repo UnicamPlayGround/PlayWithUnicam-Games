@@ -16,7 +16,7 @@
     <ion-row>
       <ion-col size-xs="6" size-sm="6" size-md="3" size-lg="3" size="12" *ngFor="let card of config.cards;"
         style="display:flex; justify-content:center; align-items:center;">
-        <app-memory-card [id]="card + i" [card]="card"></app-memory-card>
+        <app-memory-card [card]="card"></app-memory-card>
       </ion-col>
     </ion-row>
   </ion-grid>

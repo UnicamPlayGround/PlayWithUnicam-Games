@@ -11,8 +11,8 @@ import { MemoryPlayer } from '../memory-player';
   styleUrls: ['./players.page.scss'],
 })
 export class PlayersPage implements OnInit {
-  private players: MemoryPlayer[];
-  private newPlayer: FormGroup;
+  players: MemoryPlayer[];
+  newPlayer: FormGroup;
 
   constructor(
     private dataKeeper: MemoryDataKeeperService,

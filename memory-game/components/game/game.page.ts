@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
+import { MemoryPlayer } from '../memory-player';
 
 @Component({
   selector: 'app-game',
@@ -8,6 +9,7 @@ import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.
   styleUrls: ['./game.page.scss'],
 })
 export class GamePage implements OnInit {
+  players: MemoryPlayer[];
 
   constructor(
     private dataKeeper: MemoryDataKeeperService,
@@ -15,9 +17,7 @@ export class GamePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.dataKeeper.getPlayers);
-    console.log(this.dataKeeper.getGameMode);
-    console.log(this.dataKeeper.getGameTime());
+    this.players = this.dataKeeper.getPlayers();
   }
 
   startCountdown() {

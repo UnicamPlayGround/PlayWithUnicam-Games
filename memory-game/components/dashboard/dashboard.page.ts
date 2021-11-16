@@ -8,13 +8,18 @@ import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.
   styleUrls: ['./dashboard.page.scss'],
 })
 export class DashboardPage implements OnInit, OnDestroy {
-  private gameTime: string = new Date("2012-12-12T00:01:00").toISOString();
+  gameTime: string = new Date("2012-12-12T00:01:00").toISOString();
+  gameMode: String;
+  checkData: boolean;
 
   constructor(
     private dataKeeper: MemoryDataKeeperService,
     private router: Router) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.gameMode = this.dataKeeper.getGameMode();
+    this.checkData = this.dataKeeper.checkData();
+  }
 
   ngOnDestroy() {
     if (this.dataKeeper.getGameMode() == 'tempo') {
@@ -24,6 +29,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   setGameMode(mode) {
+    this.gameMode=mode;
     this.dataKeeper.setGameMode(mode);
   }
 

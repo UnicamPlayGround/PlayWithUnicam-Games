@@ -7,7 +7,7 @@ import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.
   styleUrls: ['./menu.page.scss'],
 })
 export class MemoryMenuPage implements OnInit {
-  private players = [];
+  players = [];
 
   constructor(private dataKeeper: MemoryDataKeeperService) { }
 
