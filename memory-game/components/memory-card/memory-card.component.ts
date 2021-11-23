@@ -7,8 +7,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class MemoryCardComponent implements OnInit {
   /**
-     * Il valore della variabile config viene ottenuto dal component padre di questo editor.
-     */
+   * Il valore della variabile config viene ottenuto dal component padre di questo editor.
+   */
   @Input('card') card = { link: "", nome: "", descrizione: "" };
   /**
    * Questo EventEmitter consente a questo component di comunicare con il suo parent emettendo

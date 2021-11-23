@@ -65,8 +65,7 @@
       <ion-label text-wrap>Prima di poter iniziare, aggiungi dei nuovi giocatori!</ion-label>
     </ion-list-header>
 
-    <ion-button (click)="startGame()" size="large" shape="round"
-      [class.button-disabled]="!checkData">
+    <ion-button (click)="startGame()" size="large" shape="round" [class.button-disabled]="!checkData">
       <ion-label>Avvia partita!</ion-label>
       <ion-icon slot="end" name="play"></ion-icon>
     </ion-button>

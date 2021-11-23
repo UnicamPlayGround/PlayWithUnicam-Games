@@ -13,7 +13,7 @@ export class MemoryDataKeeperService {
   constructor(private alertCreator: AlertCreatorService) { }
 
   checkData() {
-    return (this.players.length > 0) && (this.gameMode != undefined);
+    return ((this.players.length > 0) && (this.gameMode != undefined));
   }
 
   getPlayers() {
@@ -29,7 +29,7 @@ export class MemoryDataKeeperService {
   }
 
   getGameTime() {
-    return this.gameTime
+    return this.gameTime;
   }
 
   setGameTime(minutes: Number, seconds: Number) {

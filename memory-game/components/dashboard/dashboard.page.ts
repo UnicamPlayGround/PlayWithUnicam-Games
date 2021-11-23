@@ -29,8 +29,9 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   setGameMode(mode) {
-    this.gameMode=mode;
+    this.gameMode = mode;
     this.dataKeeper.setGameMode(mode);
+    this.checkData = this.dataKeeper.checkData();
   }
 
   startGame() {
