@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
-import { MemoryPlayer } from '../memory-player';
+import { UiBuilderService } from '../../services/game-builder/ui-builder.service';
+import { GameLogicService } from '../../services/game-logic/game-logic.service';
+import { MemoryCard } from '../memory-card';
 
 @Component({
   selector: 'app-game',
@@ -9,54 +11,66 @@ import { MemoryPlayer } from '../memory-player';
   styleUrls: ['./game.page.scss'],
 })
 export class GamePage implements OnInit {
-  players: MemoryPlayer[];
-
-  cards = [
-    { title: "carta1", text: "aaaaaaaaaaaaaaa", url: "https://www.street-price.it/data/image/product/big/DT01ACA100-zKeJ.jpg" },
-    { title: "carta2", text: "bbbbbbbbbbbbbbb", url: "https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg" },
-    { title: "carta3", text: "ccccccccccccccc", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg" }
-  ]
+  selectedCards: MemoryCard[] = [];
 
   constructor(
+    private gameLogic: GameLogicService,
     private dataKeeper: MemoryDataKeeperService,
+    private uiBuilder: UiBuilderService,
     private router: Router
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.gameLogic.ngOnInit();
+    console.log("è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
+  }
 
-  startCountdown() {
-    var gameTime: { minutes, seconds } = this.dataKeeper.getGameTime();
-    var duration = (gameTime.minutes * 60) + gameTime.seconds;
-    var start = Date.now(),
-      diff,
-      minutes,
-      seconds;
-    function timer() {
-      // get the number of seconds that have elapsed since 
-      // startTimer() was called
-      diff = duration - (((Date.now() - start) / 1000) | 0);
+  getCards() {
+    return this.gameLogic.getCards();
+  }
 
-      // does the same job as parseInt truncates the float
-      minutes = (diff / 60) | 0;
-      seconds = (diff % 60) | 0;
+  endTurn() {
+    this.gameLogic.endCurrentPlayerTurn();
+    console.log("Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
+  }
 
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      seconds = seconds < 10 ? "0" + seconds : seconds;
+  selectCard(card: MemoryCard) {
+    if (this.gameLogic.flippableCards) {
+      card.enabled = false;
 
-      document.getElementById('countdownLabel').textContent = minutes + ":" + seconds;
+      if (this.selectedCards.length < 2)
+        this.selectedCards.push(card);
+      console.log(this.selectedCards);
 
-      if (diff <= 0) {
-        // add one second so that the count down starts at the full duration
-        // example 05:00 not 04:59
-        start = Date.now() + 1000;
+      if (this.selectedCards.length == 2) {
+        this.gameLogic.flippableCards = false;
+
+        this.compareCards();
+        // setTimeout(() => {
+        //   this.controllaCarteSelezionate();
+        // }, 2000);
       }
-    };
-    // we don't want to wait a full second before the timer starts
-    timer();
-    setInterval(timer, 1000);
+    }
   }
 
-  ziocane(){
-    this.dataKeeper.setTurn(!this.dataKeeper.getTurn());
+  compareCards() {
+    if (this.selectedCards[0] == this.selectedCards[1]) {
+      console.log("SONO UGUALI");
+      this.gameLogic.getCurrentPlayer().guessedCards.push(this.selectedCards[0]);
+      console.log(this.gameLogic.getCurrentPlayer().nickname + " ha indovinato ");
+      console.log(this.gameLogic.getCurrentPlayer().guessedCards);
+
+    }
+    else {
+      console.log("SONO DIVERSE");
+
+      this.selectedCards[0].enabled = true;
+      this.selectedCards[1].enabled = true;
+      this.gameLogic.endCurrentPlayerTurn();
+    }
+    this.selectedCards = [];
+    this.gameLogic.flippableCards = true;
   }
+
+
 }

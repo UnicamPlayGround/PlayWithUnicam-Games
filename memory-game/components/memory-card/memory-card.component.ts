@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
+import { GameLogicService } from '../../services/game-logic/game-logic.service';
+import { MemoryCard } from '../memory-card';
 
 @Component({
   selector: 'app-memory-card',
@@ -10,39 +12,35 @@ export class MemoryCardComponent implements OnInit, AfterViewInit {
   /**
    * Il valore della variabile config viene ottenuto dal component padre di questo editor.
    */
-  @Input('card') card = { title: "", text: "", url: "" };
+  @Input('card') card: MemoryCard;
   /**
    * Questo EventEmitter consente a questo component di comunicare con il suo parent emettendo
    * eventi contenenti determinati valori che saranno poi intercettati dal parent.
    */
   @Output() updateConfigEvent = new EventEmitter<Object>();
-
-  covered = true;
-
-  @ViewChild('flippetefloppete', { static: false }) flippetefloppete: ElementRef;
+  @ViewChild('flipcard', { static: false }) flipcard: ElementRef;
   @ViewChild('inner') inner: ElementRef;
 
-  constructor(private dataKeeper: MemoryDataKeeperService) { }
+  isCovered = true;
+
+  constructor(private gameLogic: GameLogicService) { }
 
   ngAfterViewInit(): void {
-    this.flippetefloppete.nativeElement.addEventListener('click', () => { this.flipCard() });
-    console.log(this.card);
-
+    this.flipcard.nativeElement.addEventListener('click', () => { this.flipCard() });
   }
 
   ngOnInit() { }
 
   flipCard() {
-    if (this.dataKeeper.getTurn()) {
-      if (this.covered) {
+    if (this.card.enabled && this.gameLogic.flippableCards) {
+      if (this.isCovered) {
         this.inner.nativeElement.style.transform = "rotateY(180deg)";
-        this.covered = !this.covered;
-        console.log(this.covered);
+        this.isCovered = !this.isCovered;
       } else {
         this.inner.nativeElement.style.transform = "rotateY(0deg)";
-        this.covered = !this.covered;
-        console.log(this.covered);
+        this.isCovered = !this.isCovered;
       }
     }
+    this.card.enabled = false;
   }
 }

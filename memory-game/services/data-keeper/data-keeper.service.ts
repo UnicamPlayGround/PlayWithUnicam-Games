@@ -9,7 +9,6 @@ export class MemoryDataKeeperService {
   private players: MemoryPlayer[] = [];
   private gameMode: String;
   private gameTime;
-  private turn: boolean = false;
 
   constructor(private alertCreator: AlertCreatorService) { }
 
@@ -50,14 +49,5 @@ export class MemoryDataKeeperService {
   deletePlayer(index) {
     this.players.splice(index, 1);
   }
-
-  getTurn(){
-    return this.turn;
-  }
-
-  setTurn(turn: boolean) {
-    this.turn = turn;
-  }
-
 
 }

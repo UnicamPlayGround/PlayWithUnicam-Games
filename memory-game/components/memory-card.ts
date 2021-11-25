@@ -1,11 +1,12 @@
 export class MemoryCard {
-    name: String;
-    description: String;
-    img: String;
+    title: String;
+    text: String;
+    url: String;
+    enabled = true;
 
-    constructor(name: String, description: String, img: String) {
-        this.name = name;
-        this.description = description;
-        this.img = img;
+    constructor(title: String, text: String, url: String) {
+        this.title = title;
+        this.text = text;
+        this.url = url;
     }
 }

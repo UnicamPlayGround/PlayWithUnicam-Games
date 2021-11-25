@@ -180,7 +180,7 @@ private rendiCliccabiliCarte(){
 
         this.raddoppiaCarte();
         this.mescolaCarte();
-        this.uiBuilder.createGameBoard(this.cards);
+        // this.uiBuilder.createGameBoard(this.cards);
         this.startTimer();
         this.rendiCliccabiliCarte();
         // this.loadPlayers();
