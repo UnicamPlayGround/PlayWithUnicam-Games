@@ -1,35 +1,48 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
 
 @Component({
   selector: 'app-memory-card',
   templateUrl: './memory-card.component.html',
   styleUrls: ['./memory-card.component.scss'],
 })
-export class MemoryCardComponent implements OnInit {
+export class MemoryCardComponent implements OnInit, AfterViewInit {
   /**
    * Il valore della variabile config viene ottenuto dal component padre di questo editor.
    */
-  @Input('card') card = { link: "", nome: "", descrizione: "" };
+  @Input('card') card = { title: "", text: "", url: "" };
   /**
    * Questo EventEmitter consente a questo component di comunicare con il suo parent emettendo
    * eventi contenenti determinati valori che saranno poi intercettati dal parent.
    */
   @Output() updateConfigEvent = new EventEmitter<Object>();
 
-  constructor() { }
+  covered = true;
 
-  ngOnInit() {
-    const flipCard = <HTMLElement>document.getElementsByClassName("flip-card")[0];
-    flipCard.addEventListener('click', () => {
-      flipCard.style.transform = "rotateY(180deg);";
-      let cardInner = <HTMLElement>document.getElementsByClassName('flip-card-inner')[0];
-      cardInner.style.transform = "rotateY(180deg)";
-    });
+  @ViewChild('flippetefloppete', { static: false }) flippetefloppete: ElementRef;
+  @ViewChild('inner') inner: ElementRef;
+
+  constructor(private dataKeeper: MemoryDataKeeperService) { }
+
+  ngAfterViewInit(): void {
+    this.flippetefloppete.nativeElement.addEventListener('click', () => { this.flipCard() });
+    console.log(this.card);
+
   }
+
+  ngOnInit() { }
 
   flipCard() {
-    // document.getElementById('flip-card').style.transform = "rotateY(180deg);";
-    // document.getElementById('flip-card-inner').style.transform = "rotateY(180deg)";
+    if (this.dataKeeper.getTurn()) {
+      if (this.covered) {
+        this.inner.nativeElement.style.transform = "rotateY(180deg)";
+        this.covered = !this.covered;
+        console.log(this.covered);
+      } else {
+        this.inner.nativeElement.style.transform = "rotateY(0deg)";
+        this.covered = !this.covered;
+        console.log(this.covered);
+      }
+    }
   }
-
 }

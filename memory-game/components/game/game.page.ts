@@ -11,14 +11,18 @@ import { MemoryPlayer } from '../memory-player';
 export class GamePage implements OnInit {
   players: MemoryPlayer[];
 
+  cards = [
+    { title: "carta1", text: "aaaaaaaaaaaaaaa", url: "https://www.street-price.it/data/image/product/big/DT01ACA100-zKeJ.jpg" },
+    { title: "carta2", text: "bbbbbbbbbbbbbbb", url: "https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg" },
+    { title: "carta3", text: "ccccccccccccccc", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg" }
+  ]
+
   constructor(
     private dataKeeper: MemoryDataKeeperService,
     private router: Router
   ) { }
 
-  ngOnInit() {
-    this.players = this.dataKeeper.getPlayers();
-  }
+  ngOnInit() { }
 
   startCountdown() {
     var gameTime: { minutes, seconds } = this.dataKeeper.getGameTime();
@@ -52,4 +56,7 @@ export class GamePage implements OnInit {
     setInterval(timer, 1000);
   }
 
+  ziocane(){
+    this.dataKeeper.setTurn(!this.dataKeeper.getTurn());
+  }
 }

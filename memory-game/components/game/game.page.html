@@ -10,8 +10,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-button (click)="startCountdown()">Start</ion-button>
+<ion-content id="content">
+  <ion-button (click)="ziocane()">Start</ion-button>
   <ion-card *ngFor="let player of players">
     <ion-card-header>
       <ion-card-subtitle>Awesome Subtitle</ion-card-subtitle>
@@ -21,4 +21,6 @@
       Awesome content
     </ion-card-content>
   </ion-card>
+
+  <app-memory-card *ngFor="let card of cards" [card]="card"></app-memory-card>
 </ion-content>
