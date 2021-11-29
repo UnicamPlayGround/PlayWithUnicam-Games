@@ -1,7 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Domanda casella #{{ nCasella }}</ion-title>
+    <ion-label>Timer: {{timer}}</ion-label>
   </ion-toolbar>
+  <ion-progress-bar id="progress-bar" value="0" color="warning" reversed="true"></ion-progress-bar>
 </ion-header>
 
 <ion-content>
@@ -14,13 +16,18 @@
       </p>
     </ion-item>
     <div *ngIf="question.video_url">
-      <p><ion-label style="display: block; text-align: center;">Guarda il video e rispondi alla domanda!</ion-label></p>
+      <p>
+        <ion-label style="display: block; text-align: center;">Guarda il video e rispondi alla domanda!</ion-label>
+      </p>
       <br>
       <br>
       <div style="display: flex; justify-content: center;">
-        <iframe style="display: block; text-align: center;" width="560" height="315" [src]="question.video_url | safe" title="video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe style="display: block; text-align: center;" width="560" height="315" [src]="question.video_url | safe"
+          title="video player" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
       </div>
-      
+
     </div>
     <ion-radio-group value="" (ionChange)="radioGroupChange($event)">
       <ion-list-header>

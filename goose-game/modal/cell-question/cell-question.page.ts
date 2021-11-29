@@ -24,11 +24,12 @@ export class CellQuestionPage implements OnInit {
   answers = [];
   rispostaSelezionata = false;
   rispostaCorretta = false;
+  timer = 10;
+  progressBarIncrease = 1 / this.timer;
 
   constructor(
     private navParams: NavParams,
-    private modalController: ModalController,
-    private sanitizer: DomSanitizer
+    private modalController: ModalController
   ) { }
 
   ngOnInit() {
@@ -36,6 +37,28 @@ export class CellQuestionPage implements OnInit {
     this.question = this.navParams.get('question');
     this.getAnswers();
     this.shuffleAnswers();
+    this.startTimer(0);
+  }
+/**
+ * Fa partire il timer per la modal contenente la domanda
+ * @param now valore corrente della barra di progresso relativa al timer
+ */
+  startTimer(now) {
+    if (!this.rispostaSelezionata) {
+      setTimeout(() => {
+        this.timer--;
+        now += this.progressBarIncrease;
+        var bar = document.getElementById("progress-bar");
+        bar.setAttribute("value", now.toString());
+        console.log("now: " + now);
+
+
+        if (this.timer != 0) {
+          this.startTimer(now);
+        } else this.modalController.dismiss(false);
+      }, 1000);
+    }
+
   }
 
   /**
