@@ -35,38 +35,46 @@ export class GamePage implements OnInit {
   }
 
   selectCard(card: MemoryCard) {
-    if (this.gameLogic.flippableCards) {
-      card.enabled = false;
+    if (card.enabled && this.gameLogic.flippableCards && !this.selectedCards.includes(card)) {
 
-      if (this.selectedCards.length < 2)
+      if (this.selectedCards.length < 2) {
+        card.memory_card.revealCard();
         this.selectedCards.push(card);
+      }
+
       console.log(this.selectedCards);
 
       if (this.selectedCards.length == 2) {
         this.gameLogic.flippableCards = false;
 
-        this.compareCards();
-        // setTimeout(() => {
-        //   this.controllaCarteSelezionate();
-        // }, 2000);
+        setTimeout(() => {
+          this.compareCards();
+        }, 1000);
       }
     }
   }
 
   compareCards() {
-    if (this.selectedCards[0] == this.selectedCards[1]) {
+    if (this.selectedCards[0].title == this.selectedCards[1].title) {
       console.log("SONO UGUALI");
       this.gameLogic.getCurrentPlayer().guessedCards.push(this.selectedCards[0]);
+
+      this.selectedCards[0].enabled = false;
+      this.selectedCards[1].enabled = false;
+
       console.log(this.gameLogic.getCurrentPlayer().nickname + " ha indovinato ");
       console.log(this.gameLogic.getCurrentPlayer().guessedCards);
-
     }
     else {
       console.log("SONO DIVERSE");
 
       this.selectedCards[0].enabled = true;
       this.selectedCards[1].enabled = true;
-      this.gameLogic.endCurrentPlayerTurn();
+
+      this.selectedCards[0].memory_card.coverCard();
+      this.selectedCards[1].memory_card.coverCard();
+
+      // this.gameLogic.endCurrentPlayerTurn();
     }
     this.selectedCards = [];
     this.gameLogic.flippableCards = true;

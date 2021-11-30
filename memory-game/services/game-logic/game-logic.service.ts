@@ -18,7 +18,7 @@ export class GameLogicService implements OnInit {
   cards: MemoryCard[] = [];
   players: MemoryPlayer[] = [];
   currentPlayer: MemoryPlayer;
-  flippableCards = false;
+  flippableCards: boolean;
 
   constructor(private dataKeeper: MemoryDataKeeperService) { }
 
@@ -78,17 +78,9 @@ export class GameLogicService implements OnInit {
   private setCards() {
     this.config.cards.forEach(card => {
       this.cards.push(new MemoryCard(card.title, card.text, card.url));
+      this.cards.push(new MemoryCard(card.title, card.text, card.url));
     });
-
-    this.doubleCards();
     this.shuffleCards();
-  }
-
-  private doubleCards() {
-    var tmp = this.cards.length;
-    for (let index = 0; index < tmp; index++) {
-      this.cards.push(this.cards[index]);
-    }
   }
 
   private shuffleCards() {
