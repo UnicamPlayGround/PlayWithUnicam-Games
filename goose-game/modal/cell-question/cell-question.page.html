@@ -1,9 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Domanda casella #{{ nCasella }}</ion-title>
-    <ion-label>Timer: {{timer}}</ion-label>
+    <ion-label>Timer: {{timer.timerTime}}</ion-label>
   </ion-toolbar>
-  <ion-progress-bar id="progress-bar" value="0" color="warning" reversed="true"></ion-progress-bar>
+  <app-timer [timer]="timer"></app-timer>
 </ion-header>
 
 <ion-content>

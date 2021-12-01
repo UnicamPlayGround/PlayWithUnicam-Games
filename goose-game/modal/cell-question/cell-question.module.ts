@@ -8,6 +8,7 @@ import { CellQuestionPageRoutingModule } from './cell-question-routing.module';
 
 import { CellQuestionPage } from './cell-question.page';
 import { SafePipe } from './cell-question.page';
+import { TimerComponent } from 'src/app/components/timer/timer.component';
 
 @NgModule({
   imports: [
@@ -16,6 +17,6 @@ import { SafePipe } from './cell-question.page';
     IonicModule,
     CellQuestionPageRoutingModule
   ],
-  declarations: [CellQuestionPage, SafePipe]
+  declarations: [CellQuestionPage, SafePipe, TimerComponent]
 })
-export class CellQuestionPageModule {}
+export class CellQuestionPageModule { }

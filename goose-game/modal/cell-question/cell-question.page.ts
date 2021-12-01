@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Pipe, PipeTransform } from '@angular/core';
+import { Timer } from 'src/app/components/timer/timer';
 
 @Pipe({ name: 'safe' })
 export class SafePipe implements PipeTransform {
@@ -24,8 +25,7 @@ export class CellQuestionPage implements OnInit {
   answers = [];
   rispostaSelezionata = false;
   rispostaCorretta = false;
-  timer = 10;
-  progressBarIncrease = 1 / this.timer;
+  timer = new Timer(10, () => { this.closeModal() }, true);
 
   constructor(
     private navParams: NavParams,
@@ -37,28 +37,6 @@ export class CellQuestionPage implements OnInit {
     this.question = this.navParams.get('question');
     this.getAnswers();
     this.shuffleAnswers();
-    this.startTimer(0);
-  }
-/**
- * Fa partire il timer per la modal contenente la domanda
- * @param now valore corrente della barra di progresso relativa al timer
- */
-  startTimer(now) {
-    if (!this.rispostaSelezionata) {
-      setTimeout(() => {
-        this.timer--;
-        now += this.progressBarIncrease;
-        var bar = document.getElementById("progress-bar");
-        bar.setAttribute("value", now.toString());
-        console.log("now: " + now);
-
-
-        if (this.timer != 0) {
-          this.startTimer(now);
-        } else this.modalController.dismiss(false);
-      }, 1000);
-    }
-
   }
 
   /**
@@ -89,17 +67,18 @@ export class CellQuestionPage implements OnInit {
    * @param event 
    */
   radioGroupChange(event) {
-
     if (event.detail.value === this.question.answers[0]) {
       document.getElementById(event.detail.value).classList.add("correct-answer");
       this.rispostaSelezionata = true;
       this.rispostaCorretta = true;
+      this.timer.enabled = false;
     }
     else {
       document.getElementById(event.detail.value).classList.add("wrong-answer");
       document.getElementById(this.question.answers[0]).classList.add("correct-answer");
       this.rispostaSelezionata = true;
       this.rispostaCorretta = false;
+      this.timer.enabled = false;
     }
   }
 
@@ -108,6 +87,7 @@ export class CellQuestionPage implements OnInit {
    * false altrimenti.
    */
   closeModal() {
+    this.timer.enabled = false;
     this.modalController.dismiss(this.rispostaCorretta);
   }
 }
