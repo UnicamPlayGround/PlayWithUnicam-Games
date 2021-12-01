@@ -7,7 +7,7 @@ import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manage
 import { LoginService } from 'src/app/services/login-service/login.service';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
+import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { ToastCreatorService } from 'src/app/services/toast-creator/toast-creator.service';
 import jwt_decode from 'jwt-decode';
 
@@ -45,7 +45,7 @@ export class GameBuilderService {
     private loginService: LoginService,
     private modalController: ModalController,
     private lobbyManager: LobbyManagerService,
-    private timerService: TimerServiceService,
+    private timerService: TimerController,
     private errorManager: ErrorManagerService,
     private toastCreator: ToastCreatorService,
     private router: Router,
