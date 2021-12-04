@@ -1,51 +1,65 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col size="12">
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
 
-    <ion-title>Giocatori</ion-title>
+          <ion-title>Giocatori</ion-title>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content fullscreen="true">
-  <ion-list>
-    <ion-list-header>
-      <ion-label text-wrap>Aggiungi un nuovo giocatore</ion-label>
-    </ion-list-header>
 
-    <form (ngSubmit)="addPlayer()" [formGroup]="newPlayer">
-      <ion-item lines="full">
-        <ion-input type="nickname" name="nickname" formControlName="nickname" placeholder="Inserisci un nickname"
-          required style="font-size: 18px;">
-        </ion-input>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="12">
+        <ion-list>
+          <ion-list-header>
+            <ion-label text-wrap>Aggiungi un nuovo giocatore</ion-label>
+          </ion-list-header>
 
-        <ion-buttons slot="end">
-          <ion-button (click)="addPlayer()" title="Aggiungi">
-            <ion-icon slot="icon-only" name="add"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-item>
-    </form>
+          <form (ngSubmit)="addPlayer()" [formGroup]="newPlayer">
+            <ion-item lines="full">
+              <ion-input type="nickname" name="nickname" formControlName="nickname" placeholder="Inserisci un nickname"
+                required style="font-size: 18px;">
+              </ion-input>
 
-    <ion-list-header>
-      <ion-label text-wrap>Elenco giocatori</ion-label>
-    </ion-list-header>
+              <ion-buttons slot="end">
+                <ion-button (click)="addPlayer()" title="Aggiungi">
+                  <ion-icon slot="icon-only" name="add"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-item>
+          </form>
 
-    <ion-item *ngFor="let player of players; let i = index;">
-      <ion-avatar slot="start">
-        <img src=".../../../../../../../assets/icon/lobby-player.png">
-      </ion-avatar>
-      <ion-label>{{ player.nickname }}</ion-label>
+          <ion-list-header>
+            <h2>Elenco giocatori</h2>
+          </ion-list-header>
 
-      <ion-buttons slot="end">
-        <ion-button (click)="changePlayerNickname()" title="Modifica">
-          <ion-icon slot="icon-only" name="pencil"></ion-icon>
-        </ion-button>
-        <ion-button (click)="deletePlayer(i)" title="Elimina">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-item>
-  </ion-list>
+          <ion-item *ngFor="let player of players; let i = index;">
+            <ion-avatar slot="start">
+              <img src=".../../../../../../../assets/icon/lobby-player.png">
+            </ion-avatar>
+            <ion-label>{{ player.nickname }}</ion-label>
+
+            <ion-buttons slot="end">
+              <ion-button (click)="changePlayerNickname()" title="Modifica">
+                <ion-icon slot="icon-only" name="pencil"></ion-icon>
+              </ion-button>
+              <ion-button (click)="deletePlayer(i)" title="Elimina">
+                <ion-icon slot="icon-only" name="trash"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

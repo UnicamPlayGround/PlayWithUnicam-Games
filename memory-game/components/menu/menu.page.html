@@ -19,10 +19,12 @@
           <ion-label>{{ player.nickname }}</ion-label>
         </ion-item>
 
-        <ion-button routerLink="/memory/players" expand="block" color="unicamblue">
-          <ion-icon slot="end" name="add"></ion-icon>
-          <ion-label>Aggiungi</ion-label>
-        </ion-button>
+        <ion-menu-toggle auto-hide="false">
+          <ion-button routerLink="/memory/players" routerDirection="root" expand="block" color="unicamblue">
+            <ion-icon slot="end" name="add"></ion-icon>
+            <ion-label>Aggiungi</ion-label>
+          </ion-button>
+        </ion-menu-toggle>
       </div>
 
       <div style="padding:20px; color:var(--ion-color-light)">
