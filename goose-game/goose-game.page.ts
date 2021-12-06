@@ -20,150 +20,6 @@ import jwt_decode from 'jwt-decode';
   styleUrls: ['./goose-game.page.scss'],
 })
 export class GooseGamePage implements OnInit {
-  // cells = [
-  //   {
-  //     title: 0
-  //   },
-  //   {
-  //     title: 1,
-  //     question: {
-  //       img_url: "https://m.media-amazon.com/images/I/71bqA2Ee-lL._AC_SY450_.jpg",
-  //       video_url: "",
-  //       q: "Cos'è l'oggetto in foto?",
-  //       answers: ["Un hard disk", "Un mouse", "Un software"]
-  //     }
-  //   },
-  //   {
-  //     title: 2,
-  //     question: {
-  //       img_url: "",
-  //       video_url: "",
-  //       q: "Da quanti bit è composto un byte?",
-  //       answers: ["8 bit", "2 bit", "10 bit", "4 bit", "6 bit", "12 bit"]
-  //     }
-  //   },
-  //   {
-  //     title: 3,
-  //     question: {
-  //       img_url: "",
-  //       video_url: "",
-  //       q: "Quale tra le seguenti affermazioni è corretta?",
-  //       answers: [
-  //         "Un software è un applicativo eseguibile dal PC che permette di eseguire determinate operazioni",
-  //         "Un software è un tipo di virus altamente pericoloso che può compromettere il funzionamento di un PC",
-  //         "Un software è un tipo di sottomarino utilizzato prevalentemente per perlustrazioni dei fondali marini"]
-  //     }
-  //   },
-  //   {
-  //     title: 4,
-  //     question: {
-  //       img_url: "https://gzsecutel.it/1449-large_default/chiavetta-usb-wifi-professionale-per-xvr-e-nvr-gizeta.jpg",
-  //       video_url: "",
-  //       q: "Cos'è l'oggetto in foto?",
-  //       answers: ["Una chiavetta USB", "Un mouse bluetooth", "Un software"]
-  //     }
-  //   },
-  //   {
-  //     title: 5,
-  //     question: {
-  //       img_url: "",
-  //       video_url: "",
-  //       q: "Quale componente tra quelli elencati non è indispensabile per il funzionamento di un PC?",
-  //       answers: ["Stampante", "Hard disk", "RAM", "CPU"]
-  //     }
-  //   },
-  //   {
-  //     title: 6,
-  //     question: {
-  //       img_url: "https://www.aranzulla.it/wp-content/contenuti/2017/03/bose20.jpg",
-  //       video_url: "",
-  //       q: "A cosa serve l'oggetto in foto?",
-  //       answers: ["Per sentire l'audio del computer", "Per raffreddare il computer", "Per spegnere il computer"]
-  //     }
-  //   },
-  //   {
-  //     title: 7,
-  //     question: {
-  //       img_url: "",
-  //       video_url: "",
-  //       q: "A cosa servono le ventole nel computer?",
-  //       answers: ["Raffreddare il pc", "Riscaldare il pc", "Ad accendere il pc"]
-  //     }
-  //   },
-  //   {
-  //     title: 8,
-  //     question: {
-  //       img_url: "",
-  //       video_url: "",
-  //       q: "Qual è l'unità di misura della capacità di un Hard Disk?",
-  //       answers: ["GigaByte/TeraByte", "Pollici", "Centimetri quadrati"]
-  //     }
-  //   },
-  //   {
-  //     title: 9,
-  //     question: {
-  //       img_url: "http://4.bp.blogspot.com/_cwEVvc2cBf0/TNPuLees6MI/AAAAAAAAAiY/oA9V195YY8A/s1600/Un+CD+visto+dal+lato+su+cui+avviene+la+lettura+e+scrittura.jpg",
-  //       video_url: "",
-  //       q: "Cos'è l'oggetto in foto?",
-  //       answers: ["Un CD", "Un mouse", "Una tastiera"]
-  //     }
-  //   },
-  //   {
-  //     title: 10,
-  //     question: {
-  //       img_url: "",
-  //       video_url: "",
-  //       q: "Quale dei seguenti software non è un sistema operativo?",
-  //       answers: ["Internet Explorer", "Windows", "Apple MAC OS", "Linux"]
-  //     }
-  //   },
-  //   {
-  //     title: 11,
-  //     question: {
-  //       img_url: "",
-  //       video_url: "",
-  //       q: "Cos'è Google?",
-  //       answers: ["Un motore di ricerca", "Un software", "Un monitor"]
-  //     }
-  //   },
-  //   {
-  //     title: 12,
-  //     question: {
-  //       img_url: "https://www.logitech.com/content/dam/logitech/en/products/mice/m171/gallery/m171-gallery-blue-1.png",
-  //       video_url: "",
-  //       q: "Cos'è l'oggetto in foto?",
-  //       answers: ["Un mouse", "Una stampante", "Una CPU"]
-  //     }
-  //   },
-  //   {
-  //     title: 13,
-  //     question: {
-  //       img_url: "",
-  //       video_url: "https://www.youtube.com/embed/lElXAgd1hGA",
-  //       q: "Di che università si tratta?",
-  //       answers: ["UNICAM", "UNIMC", "UNIVPN"]
-  //     }
-  //   },
-  //   {
-  //     title: 14,
-  //     question: {
-  //       img_url: "https://images.eprice.it/nobrand/0/hres/860/202436860/DAM202436860-11-ac4e5840-604d-41c4-8694-e5b670e2aee1.jpg",
-  //       video_url: "",
-  //       q: "Cos'è l'oggetto in foto?",
-  //       answers: ["Una stampante", "Un dispositivo di archiviazione esterno", "Una tastiera"]
-  //     }
-  //   },
-  //   {
-  //     title: 15,
-  //     question: {
-  //       img_url: "",
-  //       video_url: "",
-  //       q: "Cosa significa P.C.?",
-  //       answers: ["Personal computer", "Professional computer", "Personal counter"]
-  //     }
-  //   }
-  // ];
-
   cells = [];
   lobbyPlayers = [];
   gamePlayers = [];
@@ -172,9 +28,12 @@ export class GooseGamePage implements OnInit {
   myTurn = false;
   abilitaDado = false;
   fineAggiornamento = true;
+  alertFineDomande = true;
 
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
   lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
+
+  caselleDaVisitare = [];
 
   private timerGiocatori;
   private timerPing;
@@ -191,16 +50,16 @@ export class GooseGamePage implements OnInit {
     private router: Router,
     private http: HttpClient,
     private uiBuilder: UiBuilderService
-  ) {
+  ) { }
+
+  async ngOnInit() {
     this.getGameConfig();
     this.ping();
     this.loadInfoLobby()
-    this.timerGiocatori = timerService.getTimer(() => { this.loadPlayers() }, 3000);
-    this.timerInfoPartita = timerService.getTimer(() => { this.getInfoPartita() }, 2000);
-    this.timerPing = timerService.getTimer(() => { this.ping() }, 4000);
+    this.timerGiocatori = this.timerService.getTimer(() => { this.loadPlayers() }, 3000);
+    this.timerInfoPartita = this.timerService.getTimer(() => { this.getInfoPartita() }, 2000);
+    this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
   }
-
-  async ngOnInit() { }
 
   /**
    * ------------------------------ CHIAMATE REST ------------------------------
@@ -218,6 +77,9 @@ export class GooseGamePage implements OnInit {
       async (res) => {
         this.cells = res['results'][0].config.cells;
         this.uiBuilder.createGameBoard(this.cells);
+        this.caselleDaVisitare = this.caselleDaVisitare.concat(this.cells);
+        this.caselleDaVisitare.shift();
+        this.caselleDaVisitare.pop();
         this.loadPlayers();
       },
       async (res) => {
@@ -508,14 +370,43 @@ export class GooseGamePage implements OnInit {
    * Dopo lo spostamento della pedina, presenta una Modal in cui sarà contenuta una domanda.
    * Se l'utente risponde correttamente alla domanda, può continuare a lanciare il dado,
    * altrimenti il turno passa al prossimo avversario. 
+   * 
+   * Se l'utente ha già risposto alla domanda di una casella,
+   * gli verrà presentata la domanda di una casella in cui non è stato, 
+   * questo finché l'utente non ha risposto a tutte le domande.
    * @returns presenta la Modal.
    */
   async presentaDomanda() {
+    const numeroCasella = this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].title;
+
+    if (this.caselleDaVisitare.length > 0) {
+      if (this.caselleDaVisitare.includes(this.cells[numeroCasella])) {
+        this.creaModalDomanda(numeroCasella, this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].question);
+        this.caselleDaVisitare.splice(numeroCasella - 1, 1);
+      } else {
+        this.creaModalDomanda(this.caselleDaVisitare[0].title, this.caselleDaVisitare[0].question);
+        this.caselleDaVisitare.splice(0, 1);
+      }
+    } else {
+      if (this.alertFineDomande) {
+        this.alertCreator.createInfoAlert('Complimenti', "Hai risposto a tutte le domande, attendi che finisca il turno l'avversario!");
+        this.alertFineDomande = false;
+      }
+      this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
+    }
+  }
+
+  /**
+   * Crea la Modal per presentare la domanda.
+   * @param numeroCasella Numero casella dove si trova la pedina del giocatore
+   * @param domanda Domanda da presentare
+   */
+  private async creaModalDomanda(numeroCasella, domanda) {
     const modal = await this.modalController.create({
       component: CellQuestionPage,
       componentProps: {
-        nCasella: this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].title,
-        question: this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].question
+        nCasella: numeroCasella,
+        question: domanda
       },
       cssClass: 'fullscreen'
     });
@@ -528,7 +419,8 @@ export class GooseGamePage implements OnInit {
       else
         this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
     });
-    return await modal.present();
+
+    await modal.present();
   }
 
   /**
