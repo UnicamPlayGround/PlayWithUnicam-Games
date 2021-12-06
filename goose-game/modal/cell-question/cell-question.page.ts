@@ -38,7 +38,7 @@ export class CellQuestionPage implements OnInit {
     this.getAnswers();
     this.shuffleAnswers();
   }
-
+  
   /**
    * Inserisce le risposte di una determinata domanda all'interno dell'array 'answers'
    */

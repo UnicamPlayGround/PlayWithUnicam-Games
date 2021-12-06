@@ -3,7 +3,15 @@ import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creato
 import { HttpClient } from '@angular/common/http';
 import { LoginService } from 'src/app/services/login-service/login.service';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
-import { UiBuilderService } from './services/game-builder/ui-builder.service';
+import { GameLogicService } from './services/game-logic/game-logic.service';
+import { MemoryCard } from './components/memory-card';
+import { ModalController } from '@ionic/angular';
+import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
+import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
+import { Router } from '@angular/router';
+import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
+import { MemoryPlayer } from './components/memory-player';
+import jwt_decode from 'jwt-decode';
 
 
 @Component({
@@ -12,52 +20,62 @@ import { UiBuilderService } from './services/game-builder/ui-builder.service';
   styleUrls: ['./memory-game.page.scss'],
 })
 export class MemoryGamePage implements OnInit {
-  
+
+  time = 0;
+  display;
+  interval;
+
+  localPlayerUsername: String;
+  localPlayer: MemoryPlayer;
+
+  info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
+  lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
+
+  private timerInfoPartita;
+
+  selectedCards = [];
+
   constructor(
     private alertCreator: AlertCreatorService,
     private loginService: LoginService,
     private http: HttpClient,
     private errorManager: ErrorManagerService,
-    private uiBuilder: UiBuilderService
-  ) { this.getGameConfig(); }
+    private gameLogic: GameLogicService,
+    private modalController: ModalController,
+    private timerService: TimerServiceService,
+    private router: Router,
+    private lobbyManager: LobbyManagerService
+  ) {
+    this.gameLogic.ping();
+    this.loadInfoLobby();
+    this.timerInfoPartita = timerService.getTimer(() => { this.getInfoPartita() }, 2000);
+    // this.setLocalPlayer();
 
-  ngOnInit() { }
-  
-  time = 0;
-  display;
-  interval;
-
-  cards = [];
-  carteSelezionate = [];
-  carteScoperte = [];
-  
-
-private rendiCliccabiliCarte(){
-  for (let index = 0; index < this.cards.length; index++) {
-    var card = document.getElementById("card"+index);
-    card.onclick = () => {
-
-      if (this.carteSelezionate.length != 2) {
-        this.scopriCarta(index);
-        this.carteSelezionate.push(index);
-  
-        setTimeout(() => {
-          this.controllaCarteSelezionate();
-        }, 1000);
-      }
-  
-    };
   }
-}
 
-//TODO:
-  private raddoppiaCarte() {
-    var tmp = this.cards.length;
-    for (let index = 0; index < tmp; index++) {
-      this.cards.push(this.cards[index]);
-    }
+  async ngOnInit() {
+    this.gameLogic.ngOnInit()
+      .then(_ => {
+        this.setLocalPlayer();
+        this.startTimer();
+      })
   }
-  
+
+
+  private async setLocalPlayer() {
+    const token = (await this.loginService.getToken()).value;
+    const decodedToken: any = jwt_decode(token);
+    this.localPlayerUsername = decodedToken.username;
+    console.log("local: " + this.localPlayerUsername);
+    this.gameLogic.players.forEach(player => {
+      if (player.nickname == decodedToken.username) this.localPlayer = new MemoryPlayer(decodedToken.username);
+    });
+  }
+
+  getCards() {
+    return this.gameLogic.getCards()
+  }
+
   /**
    * Fa partire il timer del gioco.
    */
@@ -68,7 +86,7 @@ private rendiCliccabiliCarte(){
       } else {
         this.time++;
       }
-      this.display = this.transform(this.time)
+      this.display = this.transform(this.time);
     }, 1000);
   }
 
@@ -91,106 +109,181 @@ private rendiCliccabiliCarte(){
     clearInterval(this.interval);
   }
 
-  /**
-   * Mescola l'array delle carte
-   * @param a array da mescolare
-   */
-  private mescolaCarte() {
-    var currentIndex = this.cards.length;
-    var temporaryValue, randomIndex;
+  endTurn() {
+    this.gameLogic.endCurrentPlayerTurn();
+    console.log("Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
+  }
 
-    while (currentIndex !== 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-      temporaryValue = this.cards[currentIndex];
-      this.cards[currentIndex] = this.cards[randomIndex];
-      this.cards[randomIndex] = temporaryValue;
+  selectCard(card: MemoryCard) {
+    if (card.enabled && this.gameLogic.flippableCards && !this.selectedCards.includes(card)) {
+
+      if (this.selectedCards.length < 2) {
+        card.memory_card.revealCard();
+        this.selectedCards.push(card);
+      }
+
+      console.log(this.selectedCards);
+
+      if (this.selectedCards.length == 2) {
+        this.gameLogic.flippableCards = false;
+
+        setTimeout(() => {
+          this.compareCards();
+        }, 1000);
+      }
     }
   }
 
-  /**
-   * Scopre la carta relativa al numero passato in input
-   * @param i numero finale dell'id della carta da scoprire
-   */
-  private scopriCarta(i) {
-    var back = document.getElementById("back-img" + i);
-    var card = document.getElementById("card" + i);
-    // card.style.backgroundColor = "white"
-    var front = document.getElementById("front-img" + i);
 
-    back.style.display = 'none';
-    front.style.marginTop = "35px";
-    front.style.display = "inline";
+  private compareCards() {
+    if (this.selectedCards[0].title == this.selectedCards[1].title) {
+      console.log("SONO UGUALI");
+      this.localPlayer.guessedCards.push(this.selectedCards[0]);
+
+      this.inviaDatiPartita(this.localPlayer.guessedCards.length);
+      this.controllaFinePartita();
+
+      this.selectedCards[0].enabled = false;
+      this.selectedCards[1].enabled = false;
+    }
+    else {
+      console.log("SONO DIVERSE");
+
+      this.selectedCards[0].enabled = true;
+      this.selectedCards[1].enabled = true;
+
+      this.selectedCards[0].memory_card.coverCard();
+      this.selectedCards[1].memory_card.coverCard();
+    }
+
+    this.selectedCards = [];
+    this.gameLogic.flippableCards = true;
   }
 
-  /**
-   * Copre la carta relativa al numero passato in input
-   * @param i numero finale dell'id della carta da scoprire
-   */
-  private copriCarta(i) {
-    var front = document.getElementById("front-img" + i);
-    var card = document.getElementById("card" + i);
-    var back = document.getElementById("back-img" + i);
-    // card.style.backgroundColor= "white";
-
-    front.style.display = 'none';
-    back.style.display = "inline"
+  private controllaFinePartita() {
+    var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
+    if (this.localPlayer.guessedCards.length == this.gameLogic.cards.length) {
+      this.inviaDatiPartita(this.localPlayer.guessedCards.length);
+      
+      this.gameLogic.terminaPartita();
+      this.alertCreator.createAlert("HAI VINTO!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
+      this.timerService.stopTimers(this.timerInfoPartita, this.gameLogic.timerGiocatori);
+      this.stopTimer();
+    }
   }
 
-  /**
-   * Controlla se le carte selezionate sono uguali oppure no.
-   * Se sono uguali, le carte rimarranno scoperte e verranno inserite nell'array "carteScoperte", 
-   * altrimenti verranno coperte di nuovo.
-   */
-  private controllaCarteSelezionate() {
-    if (this.carteSelezionate.length == 2) {
+  private async loadInfoLobby() {
+    (await this.lobbyManager.loadInfoLobby()).subscribe(
+      async (res) => {
+        this.lobby = res['results'][0];
+      },
+      async (res) => {
+        this.timerService.stopTimers(this.gameLogic.timerGiocatori, this.timerInfoPartita, this.gameLogic.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
+      });
+  }
 
-      if (this.cards[this.carteSelezionate[0]] == this.cards[this.carteSelezionate[1]]) {
-        this.carteScoperte.push(this.carteSelezionate[0]);
-        this.carteScoperte.push(this.carteSelezionate[1]);
+  private async inviaDatiPartita(info) {
+    const tokenValue = (await this.loginService.getToken()).value;
+    const toSend = { 'token': tokenValue, 'info_giocatore': info }
 
-        var card1 = document.getElementById("card" + this.carteSelezionate[0]);
-        card1.onclick = () => { };
-        var card2 = document.getElementById("card" + this.carteSelezionate[1]);
-        card2.onclick = () => { };
-      } else {
-        for (let index = 0; index < 2; index++) {
-          this.copriCarta(this.carteSelezionate[index]);
+    this.http.put('/game/save', toSend).subscribe(
+      async (res) => { },
+      async (res) => {
+        this.timerService.stopTimers(this.gameLogic.timerGiocatori, this.timerInfoPartita, this.gameLogic.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
+      }
+    )
+  }
+
+  async mostraClassifica() {
+    const modal = await this.modalController.create({
+      component: ClassificaPage,
+      componentProps: {
+        classifica: this.calculateRanking()
+      },
+      cssClass: 'fullheight'
+    });
+
+    modal.onDidDismiss().then(async () => {
+      this.timerService.stopTimers(this.gameLogic.timerPing);
+      if (this.gameLogic.currentPlayer.nickname == this.lobby.admin_lobby)
+        this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
+      else
+        this.router.navigateByUrl('/lobby-guest', { replaceUrl: true });
+    });
+
+    return await modal.present();
+  }
+
+  private calculateRanking() {
+    var classifica = [];
+    var usernames = [];
+    this.info_partita.info.giocatori.forEach(p => {
+      if (p.username == this.localPlayer.nickname) {
+        var toSave = { "username": this.localPlayer.nickname, "punteggio": this.gameLogic.cards.length }
+        classifica.push(toSave);
+        usernames.push(toSave.username);
+      }else{
+        toSave = { "username": p.username, "punteggio": p.info_giocatore }
+        classifica.push(toSave);
+        usernames.push(toSave.username);
+      }
+      
+    });
+    if (classifica.length < this.gameLogic.players.length) {
+      for (let index = 0; index < this.gameLogic.players.length; index++) {
+        if (!(usernames.includes(this.gameLogic.players[index].nickname))) {
+          var toSave = { "username": this.gameLogic.players[index].nickname, "punteggio": 0 }
+          classifica.push(toSave);
+          usernames.push(toSave.username);
         }
       }
-      if (this.carteScoperte.length == this.cards.length) {
-        this.stopTimer();
-        this.alertCreator.createInfoAlert("HAI VINTO!", "Hai concluso il gioco in: " + this.display)
-      }
-      this.carteSelezionate = [];
     }
+    
+    return this.sortRanking(classifica);
   }
 
+  private sortRanking(classifica) {
+    classifica.sort(function (a, b) {
+      return b.punteggio - a.punteggio;
+    });
+    return classifica;
+  }
 
-  /**
-   * ------------------------------ CHIAMATE REST ------------------------------
-   */
-  async getGameConfig() {
+  async getInfoPartita() {
+    var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
     const token_value = (await this.loginService.getToken()).value;
     const headers = { 'token': token_value };
 
-    this.http.get('/game/config', { headers }).subscribe(
+    this.http.get('/game/status', { headers }).subscribe(
       async (res) => {
-        this.cards = res['results'][0].config.cards;
+        this.info_partita = res['results'];
+        console.log("this.info_partita " + JSON.stringify(res['results']));
 
-        this.raddoppiaCarte();
-        this.mescolaCarte();
-        // this.uiBuilder.createGameBoard(this.cards);
-        this.startTimer();
-        this.rendiCliccabiliCarte();
-        // this.loadPlayers();
+        if (this.info_partita.info != null) {
+          console.log("DOPO");
+
+          this.info_partita.info.giocatori.forEach(p => {
+
+            if (p.info_giocatore == this.gameLogic.cards.length) {
+              if (p.username != this.localPlayer.nickname) {
+                this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
+                this.timerService.stopTimers(this.timerInfoPartita);
+                this.stopTimer();
+              }
+            }
+          });
+        }
       },
       async (res) => {
-        // this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        // this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'File di configurazione mancante');
+        this.timerService.stopTimers(this.gameLogic.timerGiocatori, this.timerInfoPartita, this.gameLogic.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
       }
     );
   }
-
+  
 }

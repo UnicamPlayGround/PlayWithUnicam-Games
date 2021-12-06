@@ -20,8 +20,12 @@
     </ion-card-content>
   </ion-card>
 
-  <div class="grid" id="grid">
-    <ion-row id="row1"> </ion-row>
-  </div>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col *ngFor="let card of getCards()">
+        <app-memory-card [card]="card" (click)="selectCard(card)"></app-memory-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
 </ion-content>

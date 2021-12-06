@@ -1,4 +1,13 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ModalController } from '@ionic/angular';
+import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
+import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
+import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
+import { LoginService } from 'src/app/services/login-service/login.service';
+import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
+import { ToastCreatorService } from 'src/app/services/toast-creator/toast-creator.service';
 import { MemoryCard } from '../../components/memory-card';
 import { MemoryPlayer } from '../../components/memory-player';
 import { MemoryDataKeeperService } from '../data-keeper/data-keeper.service';
@@ -7,44 +16,115 @@ import { MemoryDataKeeperService } from '../data-keeper/data-keeper.service';
   providedIn: 'root'
 })
 export class GameLogicService implements OnInit {
-  config = {
-    version: "single",
-    cards: [
-      { title: "hard disk", text: "aaaaaaaaaaaaaaa", url: "https://www.street-price.it/data/image/product/big/DT01ACA100-zKeJ.jpg" },
-      { title: "mouse", text: "bbbbbbbbbbbbbbb", url: "https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg" },
-      { title: "monitor", text: "ccccccccccccccc", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg" }
-    ]
-  };
-  cards: MemoryCard[] = [];
+  // config = {
+  //   version: "multi",
+  //   cards: [
+  //     { title: "hard disk", text: "aaaaaaaaaaaaaaa", url: "https://www.street-price.it/data/image/product/big/DT01ACA100-zKeJ.jpg" },
+  //     { title: "mouse", text: "bbbbbbbbbbbbbbb", url: "https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg" },
+  //     { title: "monitor", text: "ccccccccccccccc", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg" }
+  //   ]
+  // };
+  config;
+  cards = [];
+  memoryCards: MemoryCard[] = [];
+  lobbyPlayers = [];
   players: MemoryPlayer[] = [];
   currentPlayer: MemoryPlayer;
   flippableCards: boolean;
+  timerGiocatori;
+  timerPing;
 
-  constructor(private dataKeeper: MemoryDataKeeperService) { }
 
-  ngOnInit(): void {
-    /**
-     * getGameConfig()
-     * fa partire timer per ping()
-     * 
-     */
+  constructor(
+    private dataKeeper: MemoryDataKeeperService,
+    private lobbyManager: LobbyManagerService,
+    private timerService: TimerServiceService,
+    private router: Router,
+    private errorManager: ErrorManagerService,
+    private loginService: LoginService,
+    private http: HttpClient,
+    private toastCreator: ToastCreatorService,
+    private alertCreator: AlertCreatorService) {
+    this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+    // this.timerGiocatori = this.timerService.getTimer(() => { this.updatePlayers() }, 3000);
 
-    this.getGameConfig();
-    this.setPlayers();
-    this.setCards();
-    this.flippableCards = true;
   }
 
-  ping() {
-    //REST
+  ngOnInit() {
+    return new Promise((resolve, reject) => {
+      this.getGameConfig()
+        .then(_ => {
+          this.flippableCards = true;
+          return resolve(true);
+        })
+        .catch(error => reject(error))
+    });
+  }
+
+  async ping() {
+    (await this.lobbyManager.ping()).subscribe(
+      async (res) => { },
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori, /*this.timerInfoPartita,*/ this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Ping fallito');
+      }
+    );
   }
 
   getGameConfig() {
-    //REST
+    return new Promise(async (resolve, reject) => {
+      const token_value = (await this.loginService.getToken()).value;
+      const headers = { 'token': token_value };
+
+      this.http.get('/game/config', { headers }).subscribe(
+        async (res) => {
+          this.config = res['results'][0].config;
+          this.cards = res['results'][0].config.cards;
+          this.setCards();
+          this.setPlayers()
+            .then(_ => { return resolve(true); })
+            .catch(error => { return reject(error) });
+        },
+        async (res) => {
+          reject();
+          this.timerService.stopTimers(this.timerGiocatori, /*this.timerInfoPartita,*/ this.timerPing);
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.errorManager.stampaErrore(res, 'File di configurazione mancante');
+        }
+      );
+    });
   }
 
-  updatePlayers() {
-    //REST
+  async updatePlayers() {
+    return new Promise(async (resolve, reject) => {
+      (await this.lobbyManager.getPartecipanti()).subscribe(
+        async (res) => {
+          this.lobbyPlayers = res['results'];
+          console.log("PLAYERS: " + this.lobbyPlayers);
+
+          if (this.players.length == 0) this.setGamePlayers(); console.log("lunghezza su updatePlayers: " + this.players.length);
+          return resolve(true);
+
+          // if (this.players.length > this.lobbyPlayers.length) this.rimuoviGiocatore();
+        },
+        async (res) => {
+          reject();
+          this.timerService.stopTimers(this.timerGiocatori, /*this.timerInfoPartita,*/ this.timerPing);
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.errorManager.stampaErrore(res, 'Impossibile caricare i giocatori!');
+        });
+    });
+
+  }
+
+  setGamePlayers() {
+    this.lobbyPlayers.forEach(player => {
+      const memoryPlayer = new MemoryPlayer(player.username)
+      this.players.push(memoryPlayer);
+    });
+    this.currentPlayer = this.players[0];
+    console.log("current: " + this.currentPlayer.nickname);
   }
 
   getCurrentPlayer() {
@@ -61,39 +141,64 @@ export class GameLogicService implements OnInit {
 
   private setPlayers() {
     if (this.config.version == "single") {
+      let promise = new Promise((resolve) => { return resolve(true); });
       this.players = this.dataKeeper.getPlayers();
+      this.currentPlayer = this.players[0];
+      return promise;
     }
     else {
-      this.updatePlayers();
-      //avvio il timer per updatePlayers()
+      return this.updatePlayers();
     }
-    this.currentPlayer = this.players[0];
-    console.log("currentPlayer: ", this.currentPlayer);
   }
 
   getCards() {
-    return this.cards;
+    return this.memoryCards;
   }
 
   private setCards() {
     this.config.cards.forEach(card => {
-      this.cards.push(new MemoryCard(card.title, card.text, card.url));
-      this.cards.push(new MemoryCard(card.title, card.text, card.url));
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url));
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url));
     });
     this.shuffleCards();
   }
 
   private shuffleCards() {
-    var currentIndex = this.cards.length;
+    var currentIndex = this.memoryCards.length;
     var temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
-      temporaryValue = this.cards[currentIndex];
-      this.cards[currentIndex] = this.cards[randomIndex];
-      this.cards[randomIndex] = temporaryValue;
+      temporaryValue = this.memoryCards[currentIndex];
+      this.memoryCards[currentIndex] = this.memoryCards[randomIndex];
+      this.memoryCards[randomIndex] = temporaryValue;
     }
   }
 
+  async terminaPartita() {
+    const tokenValue = (await this.loginService.getToken()).value;
+    const toSend = { 'token': tokenValue }
+
+    this.http.put('/partita/termina', toSend).subscribe(
+      async (res) => {
+        this.timerService.stopTimers(this.timerGiocatori/*, this.timerInfoPartita*/);
+      },
+      async (res) => {
+        this.errorManager.stampaErrore(res, 'Terminazione partita fallita');
+      });
+  }
+
+  // async leaveMatch() {
+  //   this.timerService.stopTimers(this.timerPing, this.timerGiocatori, /*this.timerInfoPartita*/);
+  //   (await this.lobbyManager.abbandonaLobby()).subscribe(
+  //     async (res) => {
+  //       this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+  //     },
+  //     async (res) => {
+  //       this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+  //       this.errorManager.stampaErrore(res, 'Abbandono fallito');
+  //     }
+  //   );
+  // }
 }

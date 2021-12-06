@@ -20,6 +20,7 @@ import jwt_decode from 'jwt-decode';
   styleUrls: ['./goose-game.page.scss'],
 })
 export class GooseGamePage implements OnInit {
+  
   cells = [];
   lobbyPlayers = [];
   gamePlayers = [];
@@ -441,10 +442,9 @@ export class GooseGamePage implements OnInit {
         }
       });
 
-      var toSave = { "username": player.username, "posizione": posizione }
+      var toSave = { "username": player.username, "punteggio": posizione }
       classifica.push(toSave);
     });
-
     return this.ordinaClassifica(classifica);
   }
 
