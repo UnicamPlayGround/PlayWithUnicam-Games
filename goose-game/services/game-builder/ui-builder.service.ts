@@ -24,7 +24,6 @@ export class UiBuilderService {
       const currentRow = document.getElementById("row" + currentRowNumber);
       const newCell = this.createGameCell(currentCellNumber++);
 
-
       if (currentRow.childNodes.length < 8) {
         if (currentRowNumber % 2 == 0) this.appendChildByDirection(currentRow, newCell, direction);
         else {
