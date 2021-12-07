@@ -220,7 +220,7 @@ export class MemoryGamePage implements OnInit {
     var usernames = [];
     this.info_partita.info.giocatori.forEach(p => {
       if (p.username == this.localPlayer.nickname) {
-        var toSave = { "username": this.localPlayer.nickname, "punteggio": this.gameLogic.cards.length }
+        var toSave = { "username": this.localPlayer.nickname, "punteggio": this.localPlayer.guessedCards.length }
         classifica.push(toSave);
         usernames.push(toSave.username);
       } else {
