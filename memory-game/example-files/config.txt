@@ -1,9 +1,7 @@
 {
-	"game":"memory-game",
-	"cards":[
-	{"nome":"cpu", "link": "../../../assets/images/cpu.png","definizione":"elabora informazioni"},
-	{"nome":"stampante", "link": "../../../assets/images/printer.png","definizione":"stampa"},
-	{"nome":"monitor", "link": "../../../assets/images/pc.png","definizione":"segnale video"},
-	{"nome":"cuffie", "link": "../../../assets/images/headphones.png","definizione":"segnale audio"}
-	]
-}
+"game":"memory-game",
+"version":"multi",
+"cards": [{"title":"hard disk", "text":"aaaa", "url":"https://www.street-price.it/data/image/product/big/DT01ACA100-zKeJ.jpg"},
+{"title":"mouse", "text":"bbbb", "url":"https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg"},
+{"title":"monitor", "text":"cccc", "url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg"}
+]}
