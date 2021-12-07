@@ -107,7 +107,7 @@ export class MemoryGamePage implements OnInit {
     clearInterval(this.interval);
   }
 
-  endTurn() {
+  private endTurn() {
     this.gameLogic.endCurrentPlayerTurn();
     console.log("Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
   }
@@ -207,7 +207,7 @@ export class MemoryGamePage implements OnInit {
 
     modal.onDidDismiss().then(async () => {
       this.timerService.stopTimers(this.gameLogic.timerPing);
-      if (this.gameLogic.currentPlayer.nickname == this.lobby.admin_lobby)
+      if (this.localPlayer.nickname == this.lobby.admin_lobby)
         this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
       else
         this.router.navigateByUrl('/lobby-guest', { replaceUrl: true });
@@ -262,10 +262,7 @@ export class MemoryGamePage implements OnInit {
         console.log("this.info_partita " + JSON.stringify(res['results']));
 
         if (this.info_partita.info != null) {
-          console.log("DOPO");
-
           this.info_partita.info.giocatori.forEach(p => {
-
             if (p.info_giocatore == this.gameLogic.cards.length) {
               if (p.username != this.localPlayer.nickname) {
                 this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
