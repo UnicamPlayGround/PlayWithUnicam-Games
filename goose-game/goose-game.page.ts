@@ -20,7 +20,7 @@ import jwt_decode from 'jwt-decode';
   styleUrls: ['./goose-game.page.scss'],
 })
 export class GooseGamePage implements OnInit {
-  
+
   cells = [];
   lobbyPlayers = [];
   gamePlayers = [];
@@ -34,7 +34,7 @@ export class GooseGamePage implements OnInit {
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
   lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
 
-  caselleDaVisitare = [];
+  domandeDisponibili = [];
 
   private timerGiocatori;
   private timerPing;
@@ -78,9 +78,9 @@ export class GooseGamePage implements OnInit {
       async (res) => {
         this.cells = res['results'][0].config.cells;
         this.uiBuilder.createGameBoard(this.cells);
-        this.caselleDaVisitare = this.caselleDaVisitare.concat(this.cells);
-        this.caselleDaVisitare.shift();
-        this.caselleDaVisitare.pop();
+        this.domandeDisponibili = this.domandeDisponibili.concat(this.cells);
+        this.domandeDisponibili.shift();
+        this.domandeDisponibili.pop();
         this.loadPlayers();
       },
       async (res) => {
@@ -368,6 +368,15 @@ export class GooseGamePage implements OnInit {
   }
 
   /**
+   * Elimina la domanda appena effettuata dal giocatore locale.
+   * @param numeroCasella Numero della casella corrispondente alla domanda
+   */
+  private eliminaDomanda(numeroCasella) {
+    var index = this.domandeDisponibili.findIndex((casella) => { return casella.title == numeroCasella });
+    this.domandeDisponibili.splice(index, 1);
+  }
+
+  /**
    * Dopo lo spostamento della pedina, presenta una Modal in cui sarà contenuta una domanda.
    * Se l'utente risponde correttamente alla domanda, può continuare a lanciare il dado,
    * altrimenti il turno passa al prossimo avversario. 
@@ -380,13 +389,13 @@ export class GooseGamePage implements OnInit {
   async presentaDomanda() {
     const numeroCasella = this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].title;
 
-    if (this.caselleDaVisitare.length > 0) {
-      if (this.caselleDaVisitare.includes(this.cells[numeroCasella])) {
+    if (this.domandeDisponibili.length > 0) {
+      if (this.domandeDisponibili.includes(this.cells[numeroCasella])) {
         this.creaModalDomanda(numeroCasella, this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].question);
-        this.caselleDaVisitare.splice(numeroCasella - 1, 1);
+        this.eliminaDomanda(numeroCasella);
       } else {
-        this.creaModalDomanda(this.caselleDaVisitare[0].title, this.caselleDaVisitare[0].question);
-        this.caselleDaVisitare.splice(0, 1);
+        this.creaModalDomanda(this.domandeDisponibili[0].title, this.domandeDisponibili[0].question);
+        this.domandeDisponibili.splice(0, 1);
       }
     } else {
       if (this.alertFineDomande) {
