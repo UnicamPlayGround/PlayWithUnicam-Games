@@ -47,10 +47,12 @@ export class GameLogicService implements OnInit {
     private alertCreator: AlertCreatorService) {
     this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
     // this.timerGiocatori = this.timerService.getTimer(() => { this.updatePlayers() }, 3000);
+    
 
   }
 
   ngOnInit() {
+    this.memoryCards = [];
     return new Promise((resolve, reject) => {
       this.getGameConfig()
         .then(_ => {
