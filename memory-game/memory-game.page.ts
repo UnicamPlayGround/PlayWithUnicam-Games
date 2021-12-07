@@ -25,7 +25,6 @@ export class MemoryGamePage implements OnInit {
   display;
   interval;
 
-  localPlayerUsername: String;
   localPlayer: MemoryPlayer;
 
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
@@ -59,16 +58,23 @@ export class MemoryGamePage implements OnInit {
       })
   }
 
+  /**
+   * Prende il giocatore locale tramite il token e imposta la variabile 'localPlayer'.
+   */
   private async setLocalPlayer() {
+    let localPlayerUsername : String;
     const token = (await this.loginService.getToken()).value;
     const decodedToken: any = jwt_decode(token);
-    this.localPlayerUsername = decodedToken.username;
-    console.log("local: " + this.localPlayerUsername);
+    localPlayerUsername = decodedToken.username;
     this.gameLogic.players.forEach(player => {
       if (player.nickname == decodedToken.username) this.localPlayer = new MemoryPlayer(decodedToken.username);
     });
   }
 
+  /**
+   * Ritorna la lista delle carte, prendendole dal service 'gameLogic'
+   * @returns la lista delle carte utilizzate in partita
+   */
   getCards() {
     return this.gameLogic.getCards()
   }
@@ -92,7 +98,7 @@ export class MemoryGamePage implements OnInit {
    * Esso ritornerà infatti il tempo seguendo il formato:
    * * *"minuti:secondi"* *
    * @param value la stringa relativa al conteggio passato in input
-   * @returns 
+   * @returns la stringa del tempo in formato 'min:sec'
    */
   private transform(value) {
     const minutes: number = Math.floor(value / 60);
@@ -106,20 +112,16 @@ export class MemoryGamePage implements OnInit {
     clearInterval(this.interval);
   }
 
-  private endTurn() {
-    this.gameLogic.endCurrentPlayerTurn();
-    console.log("Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
-  }
-
+  /**
+   * Esegue l'animazione per coprire e scoprire le carte quando vengono premute.
+   * @param card la carta con cui l'utente ha interagito
+   */
   selectCard(card: MemoryCard) {
     if (card.enabled && this.gameLogic.flippableCards && !this.selectedCards.includes(card)) {
-
       if (this.selectedCards.length < 2) {
         card.memory_card.revealCard();
         this.selectedCards.push(card);
       }
-
-      console.log(this.selectedCards);
 
       if (this.selectedCards.length == 2) {
         this.gameLogic.flippableCards = false;
@@ -131,21 +133,22 @@ export class MemoryGamePage implements OnInit {
     }
   }
 
-
+  /**
+   * Confronta le due carte selezionate dall'utente.
+   * Se sono uguali viene richiamato il metodo per controllare se la partita è terminata,
+   * altrimenti le carte selezionate vengono rigirate.
+   */
   private compareCards() {
     if (this.selectedCards[0].title == this.selectedCards[1].title) {
-      console.log("SONO UGUALI");
       this.localPlayer.guessedCards.push(this.selectedCards[0]);
 
-      this.inviaDatiPartita(this.localPlayer.guessedCards.length);
-      this.controllaFinePartita();
+      this.sendMatchData(this.localPlayer.guessedCards.length);
+      this.checkEndMatch();
 
       this.selectedCards[0].enabled = false;
       this.selectedCards[1].enabled = false;
     }
     else {
-      console.log("SONO DIVERSE");
-
       this.selectedCards[0].enabled = true;
       this.selectedCards[1].enabled = true;
 
@@ -157,18 +160,26 @@ export class MemoryGamePage implements OnInit {
     this.gameLogic.flippableCards = true;
   }
 
-  private controllaFinePartita() {
-    var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
+  /**
+   * Controlla se l'utente ha indovinato tutte le carte oppure no.
+   * In caso positivo, viene mostrato un alert di fine partita e, successivamente,
+   * la classifica finale.
+   */
+  private checkEndMatch() {
+    var button = [{ text: 'Vai alla classifica', handler: () => { this.showRanking(); } }];
     if (this.localPlayer.guessedCards.length == this.gameLogic.cards.length) {
-      this.inviaDatiPartita(this.localPlayer.guessedCards.length);
-
+      this.sendMatchData(this.localPlayer.guessedCards.length);
       this.gameLogic.terminaPartita();
+      
       this.alertCreator.createAlert("HAI VINTO!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
       this.timerService.stopTimers(this.timerInfoPartita, this.gameLogic.timerGiocatori);
       this.stopTimer();
     }
   }
 
+  /**
+   * Carica le informazioni della lobby.
+   */
   private async loadInfoLobby() {
     (await this.lobbyManager.loadInfoLobby()).subscribe(
       async (res) => {
@@ -181,7 +192,11 @@ export class MemoryGamePage implements OnInit {
       });
   }
 
-  private async inviaDatiPartita(info) {
+  /**
+   * Effettua la chiamata REST per aggiornare il database con le informazioni passate in input.
+   * @param info 
+   */
+  private async sendMatchData(info) {
     const tokenValue = (await this.loginService.getToken()).value;
     const toSend = { 'token': tokenValue, 'info_giocatore': info }
 
@@ -195,7 +210,11 @@ export class MemoryGamePage implements OnInit {
     )
   }
 
-  async mostraClassifica() {
+  /**
+   * Mostra la classifica finale della partita.
+   * @returns presenta la modal
+   */
+  private async showRanking() {
     const modal = await this.modalController.create({
       component: ClassificaPage,
       componentProps: {
@@ -215,6 +234,10 @@ export class MemoryGamePage implements OnInit {
     return await modal.present();
   }
 
+  /**
+   * Inserisce all'interno di una lista tutti i giocatori con il relativo punteggio.
+   * @returns la lista ordinata ottenuta richiamando il metodo 'sortRanking'
+   */
   private calculateRanking() {
     var classifica = [];
     var usernames = [];
@@ -243,6 +266,11 @@ export class MemoryGamePage implements OnInit {
     return this.sortRanking(classifica);
   }
 
+  /**
+   * Ordina la classifica passata in input.
+   * @param classifica 
+   * @returns 
+   */
   private sortRanking(classifica) {
     classifica.sort(function (a, b) {
       return b.punteggio - a.punteggio;
@@ -250,15 +278,17 @@ export class MemoryGamePage implements OnInit {
     return classifica;
   }
 
-  async getInfoPartita() {
-    var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
+  /**
+   * Effettua la chiamata REST per ottenere le informazioni della partita di tutti i giocatori.
+   */
+  private async getInfoPartita() {
+    var button = [{ text: 'Vai alla classifica', handler: () => { this.showRanking(); } }];
     const token_value = (await this.loginService.getToken()).value;
     const headers = { 'token': token_value };
 
     this.http.get('/game/status', { headers }).subscribe(
       async (res) => {
         this.info_partita = res['results'];
-        console.log("this.info_partita " + JSON.stringify(res['results']));
 
         if (this.info_partita.info != null) {
           this.info_partita.info.giocatori.forEach(p => {
