@@ -59,7 +59,6 @@ export class MemoryGamePage implements OnInit {
       })
   }
 
-
   private async setLocalPlayer() {
     const token = (await this.loginService.getToken()).value;
     const decodedToken: any = jwt_decode(token);

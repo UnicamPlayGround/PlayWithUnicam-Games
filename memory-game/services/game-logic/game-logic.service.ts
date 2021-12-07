@@ -32,12 +32,11 @@ export class GameLogicService implements OnInit {
     private loginService: LoginService,
     private http: HttpClient) { }
 
-  ngOnInit() {
-    this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
-  }
+  ngOnInit() { }
 
   initialization() {
     this.memoryCards = [];
+    this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
     return new Promise((resolve, reject) => {
       this.getGameConfig()
         .then(_ => {
