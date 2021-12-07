@@ -7,7 +7,7 @@ import { GameLogicService } from './services/game-logic/game-logic.service';
 import { MemoryCard } from './components/memory-card';
 import { ModalController } from '@ionic/angular';
 import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
-import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
+import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { Router } from '@angular/router';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { MemoryPlayer } from './components/memory-player';
@@ -42,15 +42,13 @@ export class MemoryGamePage implements OnInit {
     private errorManager: ErrorManagerService,
     private gameLogic: GameLogicService,
     private modalController: ModalController,
-    private timerService: TimerServiceService,
+    private timerService: TimerController,
     private router: Router,
     private lobbyManager: LobbyManagerService
   ) {
     this.gameLogic.ping();
     this.loadInfoLobby();
     this.timerInfoPartita = timerService.getTimer(() => { this.getInfoPartita() }, 2000);
-    // this.setLocalPlayer();
-
   }
 
   async ngOnInit() {
@@ -164,7 +162,7 @@ export class MemoryGamePage implements OnInit {
     var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
     if (this.localPlayer.guessedCards.length == this.gameLogic.cards.length) {
       this.inviaDatiPartita(this.localPlayer.guessedCards.length);
-      
+
       this.gameLogic.terminaPartita();
       this.alertCreator.createAlert("HAI VINTO!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
       this.timerService.stopTimers(this.timerInfoPartita, this.gameLogic.timerGiocatori);
@@ -226,12 +224,12 @@ export class MemoryGamePage implements OnInit {
         var toSave = { "username": this.localPlayer.nickname, "punteggio": this.gameLogic.cards.length }
         classifica.push(toSave);
         usernames.push(toSave.username);
-      }else{
+      } else {
         toSave = { "username": p.username, "punteggio": p.info_giocatore }
         classifica.push(toSave);
         usernames.push(toSave.username);
       }
-      
+
     });
     if (classifica.length < this.gameLogic.players.length) {
       for (let index = 0; index < this.gameLogic.players.length; index++) {
@@ -242,7 +240,7 @@ export class MemoryGamePage implements OnInit {
         }
       }
     }
-    
+
     return this.sortRanking(classifica);
   }
 
@@ -285,5 +283,5 @@ export class MemoryGamePage implements OnInit {
       }
     );
   }
-  
+
 }

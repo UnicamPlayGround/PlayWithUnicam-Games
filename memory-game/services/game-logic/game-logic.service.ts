@@ -6,7 +6,7 @@ import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creato
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
-import { TimerServiceService } from 'src/app/services/timer-service/timer-service.service';
+import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { ToastCreatorService } from 'src/app/services/toast-creator/toast-creator.service';
 import { MemoryCard } from '../../components/memory-card';
 import { MemoryPlayer } from '../../components/memory-player';
@@ -38,7 +38,7 @@ export class GameLogicService implements OnInit {
   constructor(
     private dataKeeper: MemoryDataKeeperService,
     private lobbyManager: LobbyManagerService,
-    private timerService: TimerServiceService,
+    private timerService: TimerController,
     private router: Router,
     private errorManager: ErrorManagerService,
     private loginService: LoginService,
