@@ -45,14 +45,14 @@ export class MemoryGamePage implements OnInit {
     private timerService: TimerController,
     private router: Router,
     private lobbyManager: LobbyManagerService
-  ) {
-    this.gameLogic.ping();
-    this.loadInfoLobby();
-    this.timerInfoPartita = timerService.getTimer(() => { this.getInfoPartita() }, 2000);
-  }
+  ) { }
 
   async ngOnInit() {
-    this.gameLogic.ngOnInit()
+    this.gameLogic.ping();
+    this.loadInfoLobby();
+    this.timerInfoPartita = this.timerService.getTimer(() => { this.getInfoPartita() }, 2000);
+
+    this.gameLogic.initialization()
       .then(_ => {
         this.setLocalPlayer();
         this.startTimer();

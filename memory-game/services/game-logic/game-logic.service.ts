@@ -1,13 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
-import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
-import { ToastCreatorService } from 'src/app/services/toast-creator/toast-creator.service';
 import { MemoryCard } from '../../components/memory-card';
 import { MemoryPlayer } from '../../components/memory-player';
 import { MemoryDataKeeperService } from '../data-keeper/data-keeper.service';
@@ -16,14 +13,6 @@ import { MemoryDataKeeperService } from '../data-keeper/data-keeper.service';
   providedIn: 'root'
 })
 export class GameLogicService implements OnInit {
-  // config = {
-  //   version: "multi",
-  //   cards: [
-  //     { title: "hard disk", text: "aaaaaaaaaaaaaaa", url: "https://www.street-price.it/data/image/product/big/DT01ACA100-zKeJ.jpg" },
-  //     { title: "mouse", text: "bbbbbbbbbbbbbbb", url: "https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg" },
-  //     { title: "monitor", text: "ccccccccccccccc", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg" }
-  //   ]
-  // };
   config;
   cards = [];
   memoryCards: MemoryCard[] = [];
@@ -34,7 +23,6 @@ export class GameLogicService implements OnInit {
   timerGiocatori;
   timerPing;
 
-
   constructor(
     private dataKeeper: MemoryDataKeeperService,
     private lobbyManager: LobbyManagerService,
@@ -42,16 +30,13 @@ export class GameLogicService implements OnInit {
     private router: Router,
     private errorManager: ErrorManagerService,
     private loginService: LoginService,
-    private http: HttpClient,
-    private toastCreator: ToastCreatorService,
-    private alertCreator: AlertCreatorService) {
-    this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
-    // this.timerGiocatori = this.timerService.getTimer(() => { this.updatePlayers() }, 3000);
-    
-
-  }
+    private http: HttpClient) { }
 
   ngOnInit() {
+    this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+  }
+
+  initialization() {
     this.memoryCards = [];
     return new Promise((resolve, reject) => {
       this.getGameConfig()
