@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
+import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
 import { UiBuilderService } from '../../services/game-builder/ui-builder.service';
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
 import { MemoryCard } from '../memory-card';
+import { MemoryPlayer } from '../memory-player';
 
 @Component({
   selector: 'app-game',
@@ -12,17 +15,21 @@ import { MemoryCard } from '../memory-card';
 })
 export class GamePage implements OnInit {
   selectedCards: MemoryCard[] = [];
+  players: MemoryPlayer[] = [];
+  carteScoperte = 0;
 
   constructor(
     private gameLogic: GameLogicService,
     private dataKeeper: MemoryDataKeeperService,
     private uiBuilder: UiBuilderService,
-    private router: Router
+    private router: Router,
+    private alertCreator: AlertCreatorService,
+    private timerService: TimerController
   ) { }
 
   ngOnInit() {
-    this.gameLogic.ngOnInit();
-    console.log("è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
+    this.gameLogic.initialization();
+    this
   }
 
   getCards() {
@@ -58,6 +65,16 @@ export class GamePage implements OnInit {
     if (this.selectedCards[0].title == this.selectedCards[1].title) {
       console.log("SONO UGUALI");
       this.gameLogic.getCurrentPlayer().guessedCards.push(this.selectedCards[0]);
+      this.carteScoperte += 1;
+      if (this.carteScoperte == this.gameLogic.cards.length) {
+        var button = [{
+          text: 'TORNA AL MENU', handler: () => {
+            this.timerService.stopTimers(this.gameLogic.timerPing);
+            this.router.navigateByUrl('/memory', { replaceUrl: true });
+          }
+        }];
+        this.alertCreator.createAlert("PARTITA TERMINATA", "Il giocatore " + this.getWinner() + " ha vinto la partita", button);
+      }
 
       this.selectedCards[0].enabled = false;
       this.selectedCards[1].enabled = false;
@@ -74,10 +91,18 @@ export class GamePage implements OnInit {
       this.selectedCards[0].memory_card.coverCard();
       this.selectedCards[1].memory_card.coverCard();
 
-      // this.gameLogic.endCurrentPlayerTurn();
+      this.gameLogic.endCurrentPlayerTurn();
     }
     this.selectedCards = [];
     this.gameLogic.flippableCards = true;
+  }
+
+  private getWinner() {
+    return this.gameLogic.players.reduce((a: MemoryPlayer, b: MemoryPlayer) => {
+      if (a.guessedCards.length > b.guessedCards.length) {
+        return a;
+      } else return b;
+    }).nickname;
   }
 
 

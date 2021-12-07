@@ -87,7 +87,6 @@ export class GameLogicService implements OnInit {
       (await this.lobbyManager.getPartecipanti()).subscribe(
         async (res) => {
           this.lobbyPlayers = res['results'];
-          console.log("PLAYERS: " + this.lobbyPlayers);
 
           if (this.players.length == 0) this.setGamePlayers(); console.log("lunghezza su updatePlayers: " + this.players.length);
           return resolve(true);
@@ -110,7 +109,6 @@ export class GameLogicService implements OnInit {
       this.players.push(memoryPlayer);
     });
     this.currentPlayer = this.players[0];
-    console.log("current: " + this.currentPlayer.nickname);
   }
 
   getCurrentPlayer() {
@@ -132,9 +130,7 @@ export class GameLogicService implements OnInit {
       this.currentPlayer = this.players[0];
       return promise;
     }
-    else {
-      return this.updatePlayers();
-    }
+    else { return this.updatePlayers(); }
   }
 
   getCards() {
@@ -174,17 +170,5 @@ export class GameLogicService implements OnInit {
         this.errorManager.stampaErrore(res, 'Terminazione partita fallita');
       });
   }
-
-  // async leaveMatch() {
-  //   this.timerService.stopTimers(this.timerPing, this.timerGiocatori, /*this.timerInfoPartita*/);
-  //   (await this.lobbyManager.abbandonaLobby()).subscribe(
-  //     async (res) => {
-  //       this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-  //     },
-  //     async (res) => {
-  //       this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
-  //       this.errorManager.stampaErrore(res, 'Abbandono fallito');
-  //     }
-  //   );
-  // }
+  
 }

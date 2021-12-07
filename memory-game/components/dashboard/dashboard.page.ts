@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
+import { GameLogicService } from '../../services/game-logic/game-logic.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,14 +13,18 @@ export class DashboardPage implements OnInit, OnDestroy {
   gameTime: string = new Date("2012-12-12T00:01:00").toISOString();
   gameMode: String;
   checkData: boolean;
+  timerPing;
 
   constructor(
     private dataKeeper: MemoryDataKeeperService,
-    private router: Router) { }
+    private router: Router,
+    private timerService: TimerController,
+    private gameLogic: GameLogicService) { }
 
   ngOnInit() {
     this.gameMode = this.dataKeeper.getGameMode();
     this.checkData = this.dataKeeper.checkData();
+    this.timerPing = this.timerService.getTimer(() => { this.gameLogic.ping() }, 4000);
   }
 
   ngOnDestroy() {
@@ -35,6 +41,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   startGame() {
+    this.timerService.stopTimers(this.timerPing);
     this.router.navigateByUrl('/memory/game', { replaceUrl: true });
   }
 
