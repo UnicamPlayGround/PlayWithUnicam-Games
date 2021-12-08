@@ -20,6 +20,7 @@ export class GameLogicService implements OnInit {
   players: MemoryPlayer[] = [];
   currentPlayer: MemoryPlayer;
   flippableCards: boolean;
+
   timerGiocatori;
   timerPing;
 
@@ -36,7 +37,7 @@ export class GameLogicService implements OnInit {
 
   initialization() {
     this.memoryCards = [];
-    this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+    this.startTimers();
     return new Promise((resolve, reject) => {
       this.getGameConfig()
         .then(_ => {
@@ -51,7 +52,7 @@ export class GameLogicService implements OnInit {
     (await this.lobbyManager.ping()).subscribe(
       async (res) => { },
       async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, /*this.timerInfoPartita,*/ this.timerPing);
+        this.stopTimers();
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Ping fallito');
       }
@@ -74,7 +75,7 @@ export class GameLogicService implements OnInit {
         },
         async (res) => {
           reject();
-          this.timerService.stopTimers(this.timerGiocatori, /*this.timerInfoPartita,*/ this.timerPing);
+          this.stopTimers();
           this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
           this.errorManager.stampaErrore(res, 'File di configurazione mancante');
         }
@@ -90,12 +91,10 @@ export class GameLogicService implements OnInit {
 
           if (this.players.length == 0) this.setGamePlayers(); console.log("lunghezza su updatePlayers: " + this.players.length);
           return resolve(true);
-
-          // if (this.players.length > this.lobbyPlayers.length) this.rimuoviGiocatore();
         },
         async (res) => {
           reject();
-          this.timerService.stopTimers(this.timerGiocatori, /*this.timerInfoPartita,*/ this.timerPing);
+          this.stopTimers();
           this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
           this.errorManager.stampaErrore(res, 'Impossibile caricare i giocatori!');
         });
@@ -164,11 +163,22 @@ export class GameLogicService implements OnInit {
 
     this.http.put('/partita/termina', toSend).subscribe(
       async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori/*, this.timerInfoPartita*/);
+        this.timerService.stopTimers(this.timerGiocatori, this.timerPing);
       },
       async (res) => {
         this.errorManager.stampaErrore(res, 'Terminazione partita fallita');
       });
   }
-  
+
+  //TODO commentare
+  startTimers() {
+    this.ping();
+    this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+    //TODO aggiungere o eliminare timerGiocatori
+  }
+
+  stopTimers() {
+    this.timerService.stopTimers(this.timerGiocatori, this.timerPing);
+  }
+
 }

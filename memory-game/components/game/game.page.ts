@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
-import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
-import { UiBuilderService } from '../../services/game-builder/ui-builder.service';
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
 import { MemoryCard } from '../memory-card';
 import { MemoryPlayer } from '../memory-player';
@@ -13,15 +11,13 @@ import { MemoryPlayer } from '../memory-player';
   templateUrl: './game.page.html',
   styleUrls: ['./game.page.scss'],
 })
-export class GamePage implements OnInit {
+export class GamePage implements OnInit, OnDestroy {
   selectedCards: MemoryCard[] = [];
   players: MemoryPlayer[] = [];
   carteScoperte = 0;
 
   constructor(
     private gameLogic: GameLogicService,
-    private dataKeeper: MemoryDataKeeperService,
-    private uiBuilder: UiBuilderService,
     private router: Router,
     private alertCreator: AlertCreatorService,
     private timerService: TimerController
@@ -29,7 +25,10 @@ export class GamePage implements OnInit {
 
   ngOnInit() {
     this.gameLogic.initialization();
-    this
+  }
+
+  ngOnDestroy() {
+    this.gameLogic.stopTimers();
   }
 
   getCards() {
@@ -66,10 +65,11 @@ export class GamePage implements OnInit {
       console.log("SONO UGUALI");
       this.gameLogic.getCurrentPlayer().guessedCards.push(this.selectedCards[0]);
       this.carteScoperte += 1;
+
       if (this.carteScoperte == this.gameLogic.cards.length) {
         var button = [{
           text: 'TORNA AL MENU', handler: () => {
-            this.timerService.stopTimers(this.gameLogic.timerPing);
+            this.gameLogic.stopTimers();
             this.router.navigateByUrl('/memory', { replaceUrl: true });
           }
         }];

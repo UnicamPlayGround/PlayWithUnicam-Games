@@ -24,6 +24,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.gameMode = this.dataKeeper.getGameMode();
     this.checkData = this.dataKeeper.checkData();
+    this.gameLogic.ping();
     this.timerPing = this.timerService.getTimer(() => { this.gameLogic.ping() }, 4000);
   }
 
@@ -32,6 +33,7 @@ export class DashboardPage implements OnInit, OnDestroy {
       var date = new Date(this.gameTime);
       this.dataKeeper.setGameTime(date.getMinutes(), date.getSeconds());
     }
+    this.timerService.stopTimers(this.timerPing);
   }
 
   setGameMode(mode) {
