@@ -1,17 +1,24 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
+
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-
-    <ion-item lines="none" slot="end">
-      <ion-label id="countdownLabel">Awesome Label</ion-label>
-    </ion-item>
+    
   </ion-toolbar>
 </ion-header>
 
 <ion-content id="content">
-  <ion-button (click)="endTurn()">Start</ion-button>
+
+  <ion-card class="time" *ngIf="timeMode">
+    <ion-card-header>
+      <ion-card-title><strong>TIMER</strong></ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p><strong> {{minutes}} : {{seconds}}</strong></p>
+    </ion-card-content>
+  </ion-card>
 
   <ion-grid fixed>
     <ion-row>

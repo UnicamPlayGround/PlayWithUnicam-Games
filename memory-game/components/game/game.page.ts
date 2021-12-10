@@ -19,6 +19,11 @@ export class GamePage implements OnInit, OnDestroy {
   players: MemoryPlayer[] = [];
   carteScoperte = 0;
 
+  timeMode = false;
+  interval;
+  minutes;
+  seconds;
+
   constructor(
     private gameLogic: GameLogicService,
     private router: Router,
@@ -31,7 +36,29 @@ export class GamePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.gameLogic.initialization();
-    //se gamemode è a tempo prendi il tempo e gestisci il countdown  (normal/tempo)
+
+    if (this.dataKeeper.getGameMode() == "tempo")
+      this.setTimer();
+  }
+
+  private setTimer() {
+    this.timeMode = true;
+    this.minutes = this.dataKeeper.getGameTime().minutes;
+    this.seconds = this.dataKeeper.getGameTime().seconds;
+    this.startTimer();
+  }
+
+  private startTimer() {
+    this.interval = setInterval(() => {
+      if (this.seconds == 0) {
+        this.minutes -= 1;
+        this.seconds = 59;
+      }
+      this.seconds -= 1;
+      if (this.seconds == 0 && this.minutes == 0)
+        this.terminaPartita();
+
+    }, 1000);
   }
 
   ngOnDestroy() {
@@ -107,35 +134,44 @@ export class GamePage implements OnInit, OnDestroy {
       if (rispostaCorretta) {
         this.carteScoperte += 1;
         this.gameLogic.getCurrentPlayer().guessedCards.push(this.selectedCards[0]);
+        this.controllaVittoria();
       }
       else {
-        this.selectedCards[0].enabled = true;
-        this.selectedCards[1].enabled = true;
-
-        this.selectedCards[0].memory_card.coverCard();
-        this.selectedCards[1].memory_card.coverCard();
-
+        this.coverSelectedCards();
         this.endTurn();
       }
       this.selectedCards = [];
       this.gameLogic.flippableCards = true;
-
-      this.controllaVittoria();
     });
 
     await modal.present();
   }
 
+  private coverSelectedCards() {
+    this.selectedCards[0].enabled = true;
+    this.selectedCards[1].enabled = true;
+
+    this.selectedCards[0].memory_card.coverCard();
+    this.selectedCards[1].memory_card.coverCard();
+  }
+
   controllaVittoria() {
-    if (this.carteScoperte == this.gameLogic.cards.length) {
-      var button = [{
-        text: 'TORNA AL MENU', handler: () => {
-          this.gameLogic.stopTimers();
-          this.router.navigateByUrl('/memory', { replaceUrl: true });
-        }
-      }];
-      this.alertCreator.createAlert("PARTITA TERMINATA", "Il giocatore " + this.getWinner() + " ha vinto la partita", button);
-    }
+    if (this.carteScoperte == this.gameLogic.cards.length)
+      this.terminaPartita();
+  }
+
+  private terminaPartita() {
+    var button = [{
+      text: 'TORNA AL MENU', handler: () => {
+        this.gameLogic.stopTimers();
+        this.router.navigateByUrl('/memory', { replaceUrl: true });
+      }
+    }];
+    this.alertCreator.createAlert("PARTITA TERMINATA", "Il giocatore " + this.getWinner() + " ha vinto la partita", button);
+    this.dataKeeper.getPlayers().forEach(player => {
+      player.guessedCards = [];
+    });
+    if (this.timeMode) clearInterval(this.interval);
   }
 
 
