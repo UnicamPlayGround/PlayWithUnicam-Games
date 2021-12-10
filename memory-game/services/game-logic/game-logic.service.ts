@@ -138,8 +138,9 @@ export class GameLogicService implements OnInit {
 
   private setCards() {
     this.config.cards.forEach(card => {
-      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url));
-      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url));
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, card.question, card.answers));
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, card.question, card.answers));
+      console.log("domanda: "+card.question);
     });
     this.shuffleCards();
   }

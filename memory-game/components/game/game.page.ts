@@ -5,6 +5,9 @@ import { TimerController } from 'src/app/services/timer-controller/timer-control
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
 import { MemoryCard } from '../memory-card';
 import { MemoryPlayer } from '../memory-player';
+import { CardQuestionPage } from '../../modal-page/card-question/card-question.page';
+import { ModalController } from '@ionic/angular';
+import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
 
 @Component({
   selector: 'app-game',
@@ -20,11 +23,15 @@ export class GamePage implements OnInit, OnDestroy {
     private gameLogic: GameLogicService,
     private router: Router,
     private alertCreator: AlertCreatorService,
-    private timerService: TimerController
+    private timerService: TimerController,
+    private modalController: ModalController,
+    private dataKeeper: MemoryDataKeeperService,
+    private alertController: AlertCreatorService
   ) { }
 
   ngOnInit() {
     this.gameLogic.initialization();
+    //se gamemode è a tempo prendi il tempo e gestisci il countdown  (normal/tempo)
   }
 
   ngOnDestroy() {
@@ -37,7 +44,7 @@ export class GamePage implements OnInit, OnDestroy {
 
   endTurn() {
     this.gameLogic.endCurrentPlayerTurn();
-    console.log("Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
+    this.alertController.createInfoAlert("FINE TURNO", "Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
   }
 
   selectCard(card: MemoryCard) {
@@ -47,8 +54,6 @@ export class GamePage implements OnInit, OnDestroy {
         card.memory_card.revealCard();
         this.selectedCards.push(card);
       }
-
-      console.log(this.selectedCards);
 
       if (this.selectedCards.length == 2) {
         this.gameLogic.flippableCards = false;
@@ -62,39 +67,21 @@ export class GamePage implements OnInit, OnDestroy {
 
   compareCards() {
     if (this.selectedCards[0].title == this.selectedCards[1].title) {
-      console.log("SONO UGUALI");
-      this.gameLogic.getCurrentPlayer().guessedCards.push(this.selectedCards[0]);
-      this.carteScoperte += 1;
-
-      if (this.carteScoperte == this.gameLogic.cards.length) {
-        var button = [{
-          text: 'TORNA AL MENU', handler: () => {
-            this.gameLogic.stopTimers();
-            this.router.navigateByUrl('/memory', { replaceUrl: true });
-          }
-        }];
-        this.alertCreator.createAlert("PARTITA TERMINATA", "Il giocatore " + this.getWinner() + " ha vinto la partita", button);
-      }
-
       this.selectedCards[0].enabled = false;
       this.selectedCards[1].enabled = false;
-
-      console.log(this.gameLogic.getCurrentPlayer().nickname + " ha indovinato ");
-      console.log(this.gameLogic.getCurrentPlayer().guessedCards);
+      this.presentaDomanda(this.selectedCards[0]);
     }
     else {
-      console.log("SONO DIVERSE");
-
       this.selectedCards[0].enabled = true;
       this.selectedCards[1].enabled = true;
 
       this.selectedCards[0].memory_card.coverCard();
       this.selectedCards[1].memory_card.coverCard();
 
-      this.gameLogic.endCurrentPlayerTurn();
+      this.endTurn();
+      this.selectedCards = [];
+      this.gameLogic.flippableCards = true;
     }
-    this.selectedCards = [];
-    this.gameLogic.flippableCards = true;
   }
 
   private getWinner() {
@@ -103,6 +90,52 @@ export class GamePage implements OnInit, OnDestroy {
         return a;
       } else return b;
     }).nickname;
+  }
+
+  private async presentaDomanda(card: MemoryCard) {
+    const modal = await this.modalController.create({
+      component: CardQuestionPage,
+      componentProps: {
+        card: card
+      },
+      cssClass: 'fullscreen'
+    });
+
+    modal.onDidDismiss().then((data) => {
+      const rispostaCorretta = data['data'];
+
+      if (rispostaCorretta) {
+        this.carteScoperte += 1;
+        this.gameLogic.getCurrentPlayer().guessedCards.push(this.selectedCards[0]);
+      }
+      else {
+        this.selectedCards[0].enabled = true;
+        this.selectedCards[1].enabled = true;
+
+        this.selectedCards[0].memory_card.coverCard();
+        this.selectedCards[1].memory_card.coverCard();
+
+        this.endTurn();
+      }
+      this.selectedCards = [];
+      this.gameLogic.flippableCards = true;
+
+      this.controllaVittoria();
+    });
+
+    await modal.present();
+  }
+
+  controllaVittoria() {
+    if (this.carteScoperte == this.gameLogic.cards.length) {
+      var button = [{
+        text: 'TORNA AL MENU', handler: () => {
+          this.gameLogic.stopTimers();
+          this.router.navigateByUrl('/memory', { replaceUrl: true });
+        }
+      }];
+      this.alertCreator.createAlert("PARTITA TERMINATA", "Il giocatore " + this.getWinner() + " ha vinto la partita", button);
+    }
   }
 
 

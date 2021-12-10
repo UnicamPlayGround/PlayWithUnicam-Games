@@ -7,7 +7,11 @@ const routes: Routes = [
   {
     path: '',
     component: MemoryGamePage
+  },  {
+    path: 'card-question',
+    loadChildren: () => import('./modal-page/card-question/card-question.module').then( m => m.CardQuestionPageModule)
   }
+
 ];
 
 @NgModule({
