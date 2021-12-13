@@ -41,9 +41,6 @@ export class GamePage implements OnInit, OnDestroy {
       this.setTimer();
   }
 
-  /**
-   * Imposta la variabile 'timeMode' a true e inizializza 'minutes' e 'seconds' in base al loro valore iniziale.
-   */
   private setTimer() {
     this.timeMode = true;
     this.minutes = this.dataKeeper.getGameTime().minutes;
@@ -51,9 +48,6 @@ export class GamePage implements OnInit, OnDestroy {
     this.startTimer();
   }
 
-  /**
-   * Fa partire il countdown per la partita.
-   */
   private startTimer() {
     this.interval = setInterval(() => {
       if (this.seconds == 0) {
@@ -71,28 +65,15 @@ export class GamePage implements OnInit, OnDestroy {
     this.gameLogic.stopTimers();
   }
 
-  /**
-   * Ritorna le carte da gioco prendendole dal service 'gameLogic'.
-   * @returns le carte da gioco
-   */
   getCards() {
     return this.gameLogic.getCards();
   }
 
-  /**
-   * richiama il metodo per terminare il turno del giocatore corrente dal service 'gameLogic'.
-   * Dopodichè viene mostrato l'alert informando l'utente del cambio turno.
-   */
   endTurn() {
     this.gameLogic.endCurrentPlayerTurn();
     this.alertController.createInfoAlert("FINE TURNO", "Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
   }
 
-  /**
-   * Metodo richiamato ogni volta che l'utente preme su una carta.
-   * Quest'ultima verrà girata se 'flippableCards' è true e se la carta non è già girata.
-   * @param card 
-   */
   selectCard(card: MemoryCard) {
     if (card.enabled && this.gameLogic.flippableCards && !this.selectedCards.includes(card)) {
 
@@ -111,10 +92,6 @@ export class GamePage implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Confronta le due carte selezionate dall'utente.
-   * Se le carte sono uguali verrà presentata la domanda relativa alla carta, altrimenti le carte verranno coperte.
-   */
   compareCards() {
     if (this.selectedCards[0].title == this.selectedCards[1].title) {
       this.selectedCards[0].enabled = false;
@@ -134,10 +111,6 @@ export class GamePage implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Restituisce l'usetrname del giocatore che ha vinto la partita
-   * @returns 
-   */
   private getWinner() {
     return this.gameLogic.players.reduce((a: MemoryPlayer, b: MemoryPlayer) => {
       if (a.guessedCards.length > b.guessedCards.length) {
@@ -146,13 +119,6 @@ export class GamePage implements OnInit, OnDestroy {
     }).nickname;
   }
 
-  /**
-   * Presenta la modal della domanda relativa ad una carta.
-   * Se l'utente risponde correttamente alla domanda, esso riceverà un punto e verrà richiamato il metodo per controllare se la partita è finita e,
-   * in caso negativo, il turno rimane al giocatore.
-   * Altrimenti il giocatore non riceve nessun punto, le carte verrano coperte ed il turno verrà passato al prossimo giocatore.
-   * @param card carta da cui viene presa la domanda
-   */
   private async presentaDomanda(card: MemoryCard) {
     const modal = await this.modalController.create({
       component: CardQuestionPage,
@@ -181,9 +147,6 @@ export class GamePage implements OnInit, OnDestroy {
     await modal.present();
   }
 
-  /**
-   * Copre le carte selezionate
-   */
   private coverSelectedCards() {
     this.selectedCards[0].enabled = true;
     this.selectedCards[1].enabled = true;
@@ -192,17 +155,11 @@ export class GamePage implements OnInit, OnDestroy {
     this.selectedCards[1].memory_card.coverCard();
   }
 
-  /**
-   * Controlla se la partita è terminata oppure no. In caso positivo richiama il metodo opportuno.
-   */
   controllaVittoria() {
     if (this.carteScoperte == this.gameLogic.cards.length)
       this.terminaPartita();
   }
 
-  /**
-   * Effettua la chiamata REST per terminare la partita
-   */
   private terminaPartita() {
     var button = [{
       text: 'TORNA AL MENU', handler: () => {
@@ -216,5 +173,6 @@ export class GamePage implements OnInit, OnDestroy {
     });
     if (this.timeMode) clearInterval(this.interval);
   }
+
 
 }
