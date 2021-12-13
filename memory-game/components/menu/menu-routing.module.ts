@@ -15,8 +15,7 @@ const routes: Routes = [
     children: [
       { path: 'dashboard', loadChildren: () => import('../dashboard/dashboard.module').then(m => m.DashboardPageModule) },
       { path: 'players', loadChildren: () => import('../players/players.module').then(m => m.PlayersPageModule) },
-      { path: 'game', loadChildren: () => import('../game/game.module').then(m => m.GamePageModule) },
-      // { path: 'games', loadChildren: () => import('../games/games.module').then(m => m.GamesPageModule) }
+      { path: 'game', loadChildren: () => import('../gameSingleMode/game.module').then(m => m.GamePageModule) },
     ]
   }
 ];

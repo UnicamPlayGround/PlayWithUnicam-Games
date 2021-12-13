@@ -35,6 +35,10 @@ export class GameLogicService implements OnInit {
 
   ngOnInit() { }
 
+  /**
+   * Metodo che inizializza tutto il necessario per una partita (il config del gioco, le carte, timer...)
+   * @returns 
+   */
   initialization() {
     this.memoryCards = [];
     this.startTimers();
@@ -47,7 +51,9 @@ export class GameLogicService implements OnInit {
         .catch(error => reject(error))
     });
   }
-
+/**
+ * Metodo che effettua il ping.
+ */
   async ping() {
     (await this.lobbyManager.ping()).subscribe(
       async (res) => { },
@@ -59,6 +65,11 @@ export class GameLogicService implements OnInit {
     );
   }
 
+  /**
+   * Effettua una chiamata REST per prendere il config del gioco.
+   * Dopodichè richiama i metodi per inizializzare le carte ed i giocatori.
+   * @returns Promise
+   */
   getGameConfig() {
     return new Promise(async (resolve, reject) => {
       const token_value = (await this.loginService.getToken()).value;
@@ -110,10 +121,17 @@ export class GameLogicService implements OnInit {
     this.currentPlayer = this.players[0];
   }
 
+  /**
+   * Ritorna il giocatore corrente
+   * @returns il giocatore corrente
+   */
   getCurrentPlayer() {
     return this.currentPlayer;
   }
 
+  /**
+   * Fa terminare il turno al giocatore corrente.
+   */
   endCurrentPlayerTurn() {
     var index = this.players.indexOf(this.currentPlayer);
     if (index < (this.players.length - 1))
@@ -122,6 +140,10 @@ export class GameLogicService implements OnInit {
     this.flippableCards = !this.flippableCards;
   }
 
+  /**
+   * Si occupa di impostare i giocatori della partita in base alla versione del gioco
+   * @returns Promise
+   */
   private setPlayers() {
     if (this.config.version == "single") {
       let promise = new Promise((resolve) => { return resolve(true); });
@@ -132,10 +154,18 @@ export class GameLogicService implements OnInit {
     else { return this.updatePlayers(); }
   }
 
+  /**
+   * Ritorna le carte da gioco
+   * @returns le carte della partita
+   */
   getCards() {
     return this.memoryCards;
   }
 
+  /**
+   * Imposta le carte da gioco raddoppiando quelle presenti nel config e,
+   * dopodichè, viene richiamato il metodo per mescolarle.
+   */
   private setCards() {
     this.config.cards.forEach(card => {
       this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, card.question, card.answers));
@@ -144,6 +174,9 @@ export class GameLogicService implements OnInit {
     this.shuffleCards();
   }
 
+  /**
+   * Mescola le carte da gioco.
+   */
   private shuffleCards() {
     var currentIndex = this.memoryCards.length;
     var temporaryValue, randomIndex;
@@ -157,6 +190,9 @@ export class GameLogicService implements OnInit {
     }
   }
 
+  /**
+   * Fa terminare la partita effettuando una chiamata REST.
+   */
   async terminaPartita() {
     const tokenValue = (await this.loginService.getToken()).value;
     const toSend = { 'token': tokenValue }
@@ -177,6 +213,9 @@ export class GameLogicService implements OnInit {
     //TODO aggiungere o eliminare timerGiocatori
   }
 
+  /**
+   * Ferma i timers usati.
+   */
   stopTimers() {
     this.timerService.stopTimers(this.timerGiocatori, this.timerPing);
   }
