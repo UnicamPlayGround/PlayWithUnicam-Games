@@ -13,13 +13,14 @@ import { TimerController } from 'src/app/services/timer-controller/timer-control
 import { ToastCreatorService } from 'src/app/services/toast-creator/toast-creator.service';
 import { UiBuilderService } from './services/game-builder/ui-builder.service';
 import jwt_decode from 'jwt-decode';
+import { Game } from '../game';
 
 @Component({
   selector: 'app-goose-game',
   templateUrl: './goose-game.page.html',
   styleUrls: ['./goose-game.page.scss'],
 })
-export class GooseGamePage implements OnInit {
+export class GooseGamePage implements OnInit, Game {
 
   cells = [];
   lobbyPlayers = [];
@@ -34,6 +35,9 @@ export class GooseGamePage implements OnInit {
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
   lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
 
+  /**
+   * Array contenente le domande che il giocatore locale deve ancora fare.
+   */
   domandeDisponibili = [];
 
   private timerGiocatori;
@@ -74,24 +78,23 @@ export class GooseGamePage implements OnInit {
     const token_value = (await this.loginService.getToken()).value;
     const headers = { 'token': token_value };
 
-    this.http.get('/game/config', { headers }).subscribe(
-      async (res) => {
-        this.cells = res['results'][0].config.cells;
-        this.uiBuilder.createGameBoard(this.cells);
-        this.domandeDisponibili = this.domandeDisponibili.concat(this.cells);
-        this.domandeDisponibili.shift();
-        this.domandeDisponibili.pop();
-        this.loadPlayers();
-      },
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'File di configurazione mancante');
-      }
-    );
-
-
-    // this.uiBuilder.createGameBoard(this.cells);
+    return new Promise<void>((resolve, reject) => {
+      this.http.get('/game/config', { headers }).subscribe(
+        async (res) => {
+          this.cells = res['results'][0].config.cells;
+          this.uiBuilder.createGameBoard(this.cells);
+          this.setQuestionsAvailable();
+          this.loadPlayers();
+          return resolve();
+        },
+        async (res) => {
+          this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.errorManager.stampaErrore(res, 'File di configurazione mancante');
+          return reject("File di configurazione mancante");
+        }
+      );
+    })
   }
 
   /**
@@ -127,75 +130,82 @@ export class GooseGamePage implements OnInit {
    * Invia al Server lo storico dei risultati dei lanci del dado relativi al Giocatore locale.
    * Inoltre se *"fineTurno"* è true conclude il turno del Giocatore.
    * @param info Informazioni da salvare
-   * @param fineTurno true se il turno deve concludersi, false altrimenti
    */
-  private async inviaDatiPartita(info, fineTurno) {
+  async inviaDatiPartita(info: JSON) {
     const tokenValue = (await this.loginService.getToken()).value;
     const toSend = { 'token': tokenValue, 'info_giocatore': info }
 
-    this.http.put('/game/save', toSend).subscribe(
-      async (res) => {
-        if (fineTurno)
-          this.concludiTurno(() => { });
-      },
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
-      }
-    );
+    return new Promise<void>((resolve, reject) => {
+      this.http.put('/game/save', toSend).subscribe(
+        async (res) => { return resolve(); },
+        async (res) => {
+          this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
+          return reject('Invio dati partita fallito');
+        }
+      );
+    })
   }
 
   /**
    * Conclude il turno del Giocatore locale.
-   * @param cb Callback
    */
-  async concludiTurno(cb) {
+  async concludiTurno() {
     this.myTurn = false;
     const tokenValue = (await this.loginService.getToken()).value;
     const toSend = { 'token': tokenValue }
 
-    this.http.put('/game/fine-turno', toSend).subscribe(
-      async (res) => {
-        cb();
-      },
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
-      }
-    );
+    return new Promise<void>((resolve, reject) => {
+      this.http.put('/game/fine-turno', toSend).subscribe(
+        async (res) => { return resolve(); },
+        async (res) => {
+          this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
+          return reject('Invio dati partita fallito');
+        }
+      );
+    })
   }
 
   /**
    * Fa terminare la partita e ferma gli opportuni timers.
    */
-  private async terminaPartita() {
+  async terminaPartita() {
     const tokenValue = (await this.loginService.getToken()).value;
     const toSend = { 'token': tokenValue }
 
-    this.http.put('/partita/termina', toSend).subscribe(
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita);
-      },
-      async (res) => {
-        this.errorManager.stampaErrore(res, 'Terminazione partita fallita');
-      });
+    return new Promise<void>((resolve, reject) => {
+      this.http.put('/partita/termina', toSend).subscribe(
+        async (res) => {
+          this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita);
+          return resolve();
+        },
+        async (res) => {
+          this.errorManager.stampaErrore(res, 'Terminazione partita fallita');
+          return reject('Terminazione partita fallita');
+        });
+    })
   }
 
   /**
    * Carica le Informazioni della Lobby.
    */
-  private async loadInfoLobby() {
-    (await this.lobbyManager.loadInfoLobby()).subscribe(
-      async (res) => {
-        this.lobby = res['results'][0];
-      },
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
-      });
+  loadInfoLobby() {
+    return new Promise<void>(async (resolve, reject) => {
+      (await this.lobbyManager.loadInfoLobby()).subscribe(
+        async (res) => {
+          this.lobby = res['results'][0];
+          return resolve();
+        },
+        async (res) => {
+          this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
+          return reject('Impossibile caricare la lobby!');
+        });
+    })
   }
 
   /**
@@ -203,48 +213,68 @@ export class GooseGamePage implements OnInit {
    * La prima volta che viene fatto, vengono inizializzati i giocatori tramite il
    * metodo setGamePlayers().
    */
-  async loadPlayers() {
-    (await this.lobbyManager.getPartecipanti()).subscribe(
-      async (res) => {
-        this.lobbyPlayers = res['results'];
-        if (this.gamePlayers.length == 0) this.setGamePlayers();
-        if (this.gamePlayers.length > this.lobbyPlayers.length) this.rimuoviGiocatore();
-      },
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Impossibile caricare i giocatori!');
-      });
+  loadPlayers() {
+    return new Promise<void>(async (resolve, reject) => {
+      (await this.lobbyManager.getPartecipanti()).subscribe(
+        async (res) => {
+          this.lobbyPlayers = res['results'];
+          if (this.gamePlayers.length == 0) this.setGamePlayers();
+          if (this.gamePlayers.length > this.lobbyPlayers.length) this.rimuoviGiocatore();
+          return resolve();
+        },
+        async (res) => {
+          this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.errorManager.stampaErrore(res, 'Impossibile caricare i giocatori!');
+          return reject('Impossibile caricare i giocatori!');
+        });
+    })
   }
 
   /**
    * Effettua l'operazione di ping richiamando il metodo opportuno.
    */
-  async ping() {
-    (await this.lobbyManager.ping()).subscribe(
-      async (res) => { },
-      async (res) => {
-        this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Ping fallito');
-      }
-    );
+  ping() {
+    return new Promise<void>(async (resolve, reject) => {
+      (await this.lobbyManager.ping()).subscribe(
+        async (res) => { return resolve(); },
+        async (res) => {
+          this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.errorManager.stampaErrore(res, 'Ping fallito');
+          return reject('Ping fallito');
+        }
+      );
+    })
   }
 
   /**
    * Fa abbandonare la partita ad un giocatore.
    */
-  private async abbandonaPartita() {
+  abbandonaPartita() {
     this.timerService.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
-    (await this.lobbyManager.abbandonaLobby()).subscribe(
-      async (res) => {
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-      },
-      async (res) => {
-        this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
-        this.errorManager.stampaErrore(res, 'Abbandono fallito');
-      }
-    );
+    return new Promise<void>(async (resolve, reject) => {
+      (await this.lobbyManager.abbandonaLobby()).subscribe(
+        async (res) => {
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          return resolve();
+        },
+        async (res) => {
+          this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+          this.errorManager.stampaErrore(res, 'Abbandono fallito');
+          return reject('Abbandono fallito');
+        }
+      );
+    })
+  }
+
+  /**
+   * Riempe l'array delle domande disponibili.
+   */
+  setQuestionsAvailable() {
+    this.domandeDisponibili = this.domandeDisponibili.concat(this.cells);
+    this.domandeDisponibili.shift();
+    this.domandeDisponibili.pop();
   }
 
   /**
@@ -402,7 +432,8 @@ export class GooseGamePage implements OnInit {
         this.alertCreator.createInfoAlert('Complimenti', "Hai risposto a tutte le domande, attendi che finisca il turno l'avversario!");
         this.alertFineDomande = false;
       }
-      this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
+      this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info)
+        .then(_ => { this.concludiTurno(); });
     }
   }
 
@@ -427,7 +458,8 @@ export class GooseGamePage implements OnInit {
       if (rispostaCorretta)
         this.iniziaTurno();
       else
-        this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
+        this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info)
+          .then(_ => { this.concludiTurno(); });
     });
 
     await modal.present();
@@ -520,7 +552,7 @@ export class GooseGamePage implements OnInit {
       var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
 
       if (goose == this.gamePlayers[this.localPlayerIndex].goose) {
-        this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, false);
+        this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info);
         this.terminaPartita();
         this.alertCreator.createAlert("Vittoria", "Complimenti, hai vinto la partita!", button);
       } else {
@@ -556,11 +588,12 @@ export class GooseGamePage implements OnInit {
 
         if (!this.controllaFinePartita(posizione, goose)) {
           if (goose == this.gamePlayers[this.localPlayerIndex].goose) {
-            this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, false);
+            this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info);
             if (posizione != 0)
               this.presentaDomanda();
             else
-              this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info, true);
+              this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info)
+                .then(_ => { this.concludiTurno(); });
           }
 
           if (this.info_partita.giocatore_corrente == this.gamePlayers[this.localPlayerIndex].username && !this.myTurn)
@@ -626,7 +659,8 @@ export class GooseGamePage implements OnInit {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
       async () => {
         if (this.myTurn)
-          this.concludiTurno(async () => { this.abbandonaPartita(); });
+          this.concludiTurno()
+            .then(_ => { this.abbandonaPartita(); });
         else
           this.abbandonaPartita();
       })
