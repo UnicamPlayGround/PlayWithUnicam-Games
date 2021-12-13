@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { MemoryGamePageRoutingModule } from './memory-game-routing.module';
 
 import { MemoryGamePage } from './memory-game.page';
-import { MemoryCardComponent } from './components/memory-card/memory-card.component';
+import { MemoryCardComponent } from '../components/memory-card/memory-card.component';
 import { ClassificaPageModule } from 'src/app/modal-pages/classifica/classifica.module';
 
 @NgModule({
