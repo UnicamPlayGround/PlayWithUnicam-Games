@@ -2,12 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
-import { GameLogicService } from '../../services/game-logic/game-logic.service';
-import { MemoryCard } from '../memory-card';
-import { MemoryPlayer } from '../memory-player';
-import { CardQuestionPage } from '../../modal-page/card-question/card-question.page';
+import { GameLogicService } from '../services/game-logic/game-logic.service';
+import { MemoryCard } from '../components/memory-card';
+import { MemoryPlayer } from '../components/memory-player';
+import { CardQuestionPage } from '../modal-page/card-question/card-question.page';
 import { ModalController } from '@ionic/angular';
-import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
+import { MemoryDataKeeperService } from '../services/data-keeper/data-keeper.service';
 
 @Component({
   selector: 'app-game',
