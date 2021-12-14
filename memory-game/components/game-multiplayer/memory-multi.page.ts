@@ -172,7 +172,7 @@ export class MemoryMultiGamePage implements OnInit {
       this.gameLogic.terminaPartita();
       
       this.alertCreator.createAlert("HAI VINTO!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
-      this.timerService.stopTimers(this.timerInfoPartita, this.gameLogic.timerGiocatori);
+      this.timerService.stopTimers(this.timerInfoPartita);
       this.stopTimer();
     }
   }
@@ -186,7 +186,7 @@ export class MemoryMultiGamePage implements OnInit {
         this.lobby = res['results'][0];
       },
       async (res) => {
-        this.timerService.stopTimers(this.gameLogic.timerGiocatori, this.timerInfoPartita, this.gameLogic.timerPing);
+        this.timerService.stopTimers(this.timerInfoPartita);
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
       });
@@ -203,7 +203,7 @@ export class MemoryMultiGamePage implements OnInit {
     this.http.put('/game/save', toSend).subscribe(
       async (res) => { },
       async (res) => {
-        this.timerService.stopTimers(this.gameLogic.timerGiocatori, this.timerInfoPartita, this.gameLogic.timerPing);
+        this.timerService.stopTimers(this.timerInfoPartita);
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
       }
@@ -224,7 +224,6 @@ export class MemoryMultiGamePage implements OnInit {
     });
 
     modal.onDidDismiss().then(async () => {
-      this.timerService.stopTimers(this.gameLogic.timerPing);
       if (this.localPlayer.nickname == this.lobby.admin_lobby)
         this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
       else
@@ -303,7 +302,7 @@ export class MemoryMultiGamePage implements OnInit {
         }
       },
       async (res) => {
-        this.timerService.stopTimers(this.gameLogic.timerGiocatori, this.timerInfoPartita, this.gameLogic.timerPing);
+        this.timerService.stopTimers(this.timerInfoPartita);
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
       }

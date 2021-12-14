@@ -14,7 +14,7 @@ import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-m
   templateUrl: './game.page.html',
   styleUrls: ['./game.page.scss'],
 })
-export class GamePage implements OnInit, OnDestroy {
+export class GamePage implements OnInit {
   selectedCards: MemoryCard[] = [];
   players: MemoryPlayer[] = [];
   carteScoperte = 0;
@@ -59,10 +59,6 @@ export class GamePage implements OnInit, OnDestroy {
         this.terminaPartita();
 
     }, 1000);
-  }
-
-  ngOnDestroy() {
-    this.gameLogic.stopTimers();
   }
 
   getCards() {
@@ -163,7 +159,6 @@ export class GamePage implements OnInit, OnDestroy {
   private terminaPartita() {
     var button = [{
       text: 'Torna al menu', handler: () => {
-        this.gameLogic.stopTimers();
         this.router.navigateByUrl('/memory', { replaceUrl: true });
       }
     }];

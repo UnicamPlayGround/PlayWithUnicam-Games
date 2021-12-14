@@ -13,7 +13,6 @@ export class DashboardPage implements OnInit, OnDestroy {
   gameTime: string = new Date("2012-12-12T00:01:00").toISOString();
   gameMode: String;
   checkData: boolean;
-  timerPing;
 
   constructor(
     private dataKeeper: MemoryDataKeeperService,
@@ -24,8 +23,6 @@ export class DashboardPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.gameMode = this.dataKeeper.getGameMode();
     this.checkData = this.dataKeeper.checkData();
-    this.gameLogic.ping();
-    this.timerPing = this.timerService.getTimer(() => { this.gameLogic.ping() }, 4000);
   }
 
   ngOnDestroy() {
@@ -33,7 +30,6 @@ export class DashboardPage implements OnInit, OnDestroy {
       var date = new Date(this.gameTime);
       this.dataKeeper.setGameTime(date.getMinutes(), date.getSeconds());
     }
-    this.timerService.stopTimers(this.timerPing);
   }
 
   setGameMode(mode) {
@@ -43,7 +39,6 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   startGame() {
-    this.timerService.stopTimers(this.timerPing);
     this.router.navigateByUrl('/memory/game', { replaceUrl: true });
   }
 
