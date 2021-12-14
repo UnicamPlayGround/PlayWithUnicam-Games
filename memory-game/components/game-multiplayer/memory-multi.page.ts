@@ -3,23 +3,23 @@ import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creato
 import { HttpClient } from '@angular/common/http';
 import { LoginService } from 'src/app/services/login-service/login.service';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
-import { GameLogicService } from './services/game-logic/game-logic.service';
-import { MemoryCard } from './components/memory-card';
+import { GameLogicService } from '../../services/game-logic/game-logic.service';
+import { MemoryCard } from '../memory-card';
 import { ModalController } from '@ionic/angular';
 import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { Router } from '@angular/router';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
-import { MemoryPlayer } from './components/memory-player';
+import { MemoryPlayer } from '../memory-player';
 import jwt_decode from 'jwt-decode';
 
 
 @Component({
-  selector: 'app-memory-game',
-  templateUrl: './memory-game.page.html',
-  styleUrls: ['./memory-game.page.scss'],
+  selector: 'app-memory-multi',
+  templateUrl: './memory-multi.page.html',
+  styleUrls: ['./memory-multi.page.scss'],
 })
-export class MemoryGamePage implements OnInit {
+export class MemoryMultiGamePage implements OnInit {
 
   time = 0;
   display;

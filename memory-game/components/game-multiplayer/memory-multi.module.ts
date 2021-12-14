@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { MemoryGamePageRoutingModule } from './memory-game-routing.module';
+import { MemoryGamePageRoutingModule } from './memory-multi-routing.module';
 
-import { MemoryGamePage } from './memory-game.page';
-import { MemoryCardComponent } from './components/memory-card/memory-card.component';
+import { MemoryMultiGamePage } from './memory-multi.page';
+import { MemoryCardComponent } from '../memory-card/memory-card.component';
 import { ClassificaPageModule } from 'src/app/modal-pages/classifica/classifica.module';
 
 @NgModule({
@@ -18,6 +18,6 @@ import { ClassificaPageModule } from 'src/app/modal-pages/classifica/classifica.
     MemoryGamePageRoutingModule,
     ClassificaPageModule
   ],
-  declarations: [MemoryGamePage, MemoryCardComponent]
+  declarations: [MemoryMultiGamePage, MemoryCardComponent]
 })
 export class MemoryGamePageModule {}
