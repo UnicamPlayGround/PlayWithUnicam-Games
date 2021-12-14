@@ -7,8 +7,6 @@ export declare interface Game {
 
     inviaDatiPartita(info: JSON): Promise<void>;
 
-    concludiTurno(): Promise<void>;
-
     terminaPartita(): Promise<void>;
 
     loadInfoLobby(): Promise<void>;

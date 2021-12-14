@@ -11,16 +11,16 @@ import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { ToastCreatorService } from 'src/app/services/toast-creator/toast-creator.service';
+import { TurnBasedGame } from '../turn-based-game';
 import { UiBuilderService } from './services/game-builder/ui-builder.service';
 import jwt_decode from 'jwt-decode';
-import { Game } from '../game';
 
 @Component({
   selector: 'app-goose-game',
   templateUrl: './goose-game.page.html',
   styleUrls: ['./goose-game.page.scss'],
 })
-export class GooseGamePage implements OnInit, Game {
+export class GooseGamePage implements OnInit, TurnBasedGame {
 
   cells = [];
   lobbyPlayers = [];
