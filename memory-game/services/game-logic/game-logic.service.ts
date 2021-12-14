@@ -150,6 +150,7 @@ export class GameLogicService implements OnInit {
     var temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
+      //TODO: Migliorare algoritmo per mischiare le carte
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
       temporaryValue = this.memoryCards[currentIndex];
