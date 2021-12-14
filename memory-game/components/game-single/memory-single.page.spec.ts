@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { GamePage } from './game.page';
+import { MemorySingleGamePage } from './memory-single.page';
 
-describe('GamePage', () => {
-  let component: GamePage;
-  let fixture: ComponentFixture<GamePage>;
+describe('MemorySinglePage', () => {
+  let component: MemorySingleGamePage;
+  let fixture: ComponentFixture<MemorySingleGamePage>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ GamePage ],
+      declarations: [ MemorySingleGamePage ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GamePage);
+    fixture = TestBed.createComponent(MemorySingleGamePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

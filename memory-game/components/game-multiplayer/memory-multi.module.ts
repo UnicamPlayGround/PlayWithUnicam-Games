@@ -20,4 +20,4 @@ import { ClassificaPageModule } from 'src/app/modal-pages/classifica/classifica.
   ],
   declarations: [MemoryMultiGamePage, MemoryCardComponent]
 })
-export class MemoryGamePageModule {}
+export class MemoryMultiPageModule {}

@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { GamePageRoutingModule } from './game-routing.module';
+import { GamePageRoutingModule } from './memory-single-routing.module';
 
-import { GamePage } from './game.page';
+import { MemorySingleGamePage } from './memory-single.page';
 import { MemoryCardComponent } from '../memory-card/memory-card.component';
 import { QuestionModalPageModule } from 'src/app/modal-pages/question-modal/question-modal.module';
 
@@ -18,6 +18,6 @@ import { QuestionModalPageModule } from 'src/app/modal-pages/question-modal/ques
     GamePageRoutingModule,
     QuestionModalPageModule
   ],
-  declarations: [GamePage, MemoryCardComponent]
+  declarations: [MemorySingleGamePage, MemoryCardComponent]
 })
-export class GamePageModule { }
+export class MemorySinglePageModule { }

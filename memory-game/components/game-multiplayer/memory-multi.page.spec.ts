@@ -3,7 +3,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { MemoryMultiGamePage } from './memory-multi.page';
 
-describe('MemoryGamePage', () => {
+describe('MemoryMultiPage', () => {
   let component: MemoryMultiGamePage;
   let fixture: ComponentFixture<MemoryMultiGamePage>;
 
