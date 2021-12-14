@@ -35,7 +35,7 @@ export class GamePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.gameLogic.initialization();
+    this.gameLogic.initialize();
 
     if (this.dataKeeper.getGameMode() == "tempo")
       this.setTimer();

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Question } from 'src/app/modal-pages/question-modal/question';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
@@ -13,9 +13,8 @@ import { MemoryDataKeeperService } from '../data-keeper/data-keeper.service';
 @Injectable({
   providedIn: 'root'
 })
-export class GameLogicService implements OnInit {
-  config;
-  cards = [];
+export class GameLogicService {
+  config: any;
   memoryCards: MemoryCard[] = [];
   lobbyPlayers = [];
   players: MemoryPlayer[] = [];
@@ -31,9 +30,7 @@ export class GameLogicService implements OnInit {
     private loginService: LoginService,
     private http: HttpClient) { }
 
-  ngOnInit() { }
-
-  initialization() {
+  initialize() {
     this.memoryCards = [];
     return new Promise((resolve, reject) => {
       this.getGameConfig()
@@ -43,6 +40,15 @@ export class GameLogicService implements OnInit {
         })
         .catch(error => reject(error))
     });
+  }
+
+  reset() {
+    this.config = {};
+    this.memoryCards = [];
+    this.lobbyPlayers = [];
+    this.players = [];
+    this.currentPlayer = null;
+    this.flippableCards = false;
   }
 
   async ping() {
@@ -63,7 +69,6 @@ export class GameLogicService implements OnInit {
       this.http.get('/game/config', { headers }).subscribe(
         async (res) => {
           this.config = res['results'][0].config;
-          this.cards = res['results'][0].config.cards;
           this.setCards();
           this.setPlayers()
             .then(_ => { return resolve(true); })
@@ -164,6 +169,6 @@ export class GameLogicService implements OnInit {
       });
   }
 
-  
+
 
 }

@@ -50,4 +50,10 @@ export class MemoryDataKeeperService {
     this.players.splice(index, 1);
   }
 
+  reset() {
+    this.players = [];
+    this.gameMode = null;
+    this.gameTime = null;
+  }
+
 }

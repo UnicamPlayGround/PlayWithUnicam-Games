@@ -14,7 +14,7 @@ import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-m
   templateUrl: './memory-single.page.html',
   styleUrls: ['./memory-single.page.scss'],
 })
-export class MemorySingleGamePage implements OnInit {
+export class MemorySingleGamePage implements OnInit, OnDestroy {
   selectedCards: MemoryCard[] = [];
   players: MemoryPlayer[] = [];
   carteScoperte = 0;
@@ -35,10 +35,14 @@ export class MemorySingleGamePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.gameLogic.initialization();
+    this.gameLogic.initialize();
 
     if (this.dataKeeper.getGameMode() == "tempo")
       this.setTimer();
+  }
+
+  ngOnDestroy() {
+    this.gameLogic.reset();
   }
 
   private setTimer() {
@@ -152,7 +156,7 @@ export class MemorySingleGamePage implements OnInit {
   }
 
   controllaVittoria() {
-    if (this.carteScoperte == this.gameLogic.cards.length)
+    if (this.carteScoperte == (this.gameLogic.memoryCards.length / 2))
       this.terminaPartita();
   }
 

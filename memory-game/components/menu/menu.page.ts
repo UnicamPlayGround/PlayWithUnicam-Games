@@ -30,6 +30,7 @@ export class MemoryMenuPage implements OnInit {
 
   ngOnDestroy() {
     this.timerController.stopTimers(this.timerPing);
+    this.dataKeeper.reset();
   }
 
   backToLobby() {
