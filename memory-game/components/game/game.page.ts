@@ -5,9 +5,9 @@ import { TimerController } from 'src/app/services/timer-controller/timer-control
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
 import { MemoryCard } from '../memory-card';
 import { MemoryPlayer } from '../memory-player';
-import { CardQuestionPage } from '../../modal-page/card-question/card-question.page';
 import { ModalController } from '@ionic/angular';
 import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
+import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-modal.page';
 
 @Component({
   selector: 'app-game',
@@ -71,7 +71,7 @@ export class GamePage implements OnInit, OnDestroy {
 
   endTurn() {
     this.gameLogic.endCurrentPlayerTurn();
-    this.alertController.createInfoAlert("FINE TURNO", "Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
+    this.alertController.createInfoAlert("Fine del turno", "Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
   }
 
   selectCard(card: MemoryCard) {
@@ -121,9 +121,9 @@ export class GamePage implements OnInit, OnDestroy {
 
   private async presentaDomanda(card: MemoryCard) {
     const modal = await this.modalController.create({
-      component: CardQuestionPage,
+      component: QuestionModalPage,
       componentProps: {
-        card: card
+        question: card.question
       },
       cssClass: 'fullscreen'
     });
@@ -162,12 +162,12 @@ export class GamePage implements OnInit, OnDestroy {
 
   private terminaPartita() {
     var button = [{
-      text: 'TORNA AL MENU', handler: () => {
+      text: 'Torna al menu', handler: () => {
         this.gameLogic.stopTimers();
         this.router.navigateByUrl('/memory', { replaceUrl: true });
       }
     }];
-    this.alertCreator.createAlert("PARTITA TERMINATA", "Il giocatore " + this.getWinner() + " ha vinto la partita", button);
+    this.alertCreator.createAlert("Fine della partita!", this.getWinner() + " ha vinto la partita!", button);
     this.dataKeeper.getPlayers().forEach(player => {
       player.guessedCards = [];
     });

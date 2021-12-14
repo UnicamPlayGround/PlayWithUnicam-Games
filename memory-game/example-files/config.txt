@@ -2,8 +2,33 @@
 "game":"memory-game",
 "version":"multi",
 "cards": [
-    {"title":"hard disk", "text":"aaaa", "url":"https://www.street-price.it/data/image/product/big/DT01ACA100-zKeJ.jpg", "question":"domanda?", "answers":["risposta1", "risposta2", "risposta3"]},
-    {"title":"mouse", "text":"bbbb", "url":"https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg", "question":"domanda?", "answers":["risposta1", "risposta2", "risposta3"]},
-    {"title":"monitor", "text":"cccc", "url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg", "question":"domanda?", "answers":["risposta1", "risposta2", "risposta3"]}
+    	{
+	"title":"Hard Disk",
+	"text":"Questo è un hard disk.",
+	"url":"https://bit.ly/3GKrant",
+	"question":"Cos'è l'oggetto in foto?",
+	"answers":["Un hard disk", "Una scheda video", "Un processore"]
+	},
+    	{
+	"title":"Mouse",
+	"text":"Questo è un mouse.",
+	"url":"https://dell.to/3m4k5Gq",
+	"question":"Cos'è l'oggetto in foto?",
+	"answers":["Un mouse", "Un criceto", "Una chiavetta USB"]
+	},
+    	{
+	"title":"Monitor",
+	"text":"Questo è un monitor",
+	"url":"https://bit.ly/321sWS4",
+	"question":"Cos'è l'oggetto in foto?",
+	"answers":["Un monitor", "Un laptop", "Uno smartphone"]
+	},
+	{
+	"title":"Ventola per PC",
+	"text":"Questa è una ventola per PC.",
+	"url":"https://bit.ly/3ERURCw",
+	"question":"Cos'è l'oggetto in foto?",
+	"answers":["Una ventola per PC", "L'elica di un elicottero", "Un tritarifiuti"]
+	}
     ]
 }

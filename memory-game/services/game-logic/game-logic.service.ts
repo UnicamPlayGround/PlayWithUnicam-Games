@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Question } from 'src/app/modal-pages/question-modal/question';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
@@ -138,8 +139,8 @@ export class GameLogicService implements OnInit {
 
   private setCards() {
     this.config.cards.forEach(card => {
-      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, card.question, card.answers));
-      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, card.question, card.answers));
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question, card.answers, card.url, null, 10)));
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question, card.answers, card.url, null, 10)));
     });
     this.shuffleCards();
   }

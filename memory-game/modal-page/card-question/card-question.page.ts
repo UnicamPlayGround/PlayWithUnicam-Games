@@ -42,8 +42,8 @@ export class CardQuestionPage implements OnInit {
  * Inserisce le risposte di una determinata domanda all'interno dell'array 'answers'
  */
   getAnswers() {
-    for (let index = 0; index < this.card.answers.length; index++)
-      this.answers.push(this.card.answers[index]);
+    // for (let index = 0; index < this.card.answers.length; index++)
+    //   this.answers.push(this.card.answers[index]);
   }
 
   /**
@@ -59,19 +59,19 @@ export class CardQuestionPage implements OnInit {
   }
 
   radioGroupChange(event) {
-    if (event.detail.value === this.card.answers[0]) {
-      document.getElementById(event.detail.value).classList.add("correct-answer");
-      this.rispostaSelezionata = true;
-      this.rispostaCorretta = true;
-      this.timer.enabled = false;
-    }
-    else {
-      document.getElementById(event.detail.value).classList.add("wrong-answer");
-      document.getElementById(this.card.answers[0]).classList.add("correct-answer");
-      this.rispostaSelezionata = true;
-      this.rispostaCorretta = false;
-      this.timer.enabled = false;
-    }
+    // if (event.detail.value === this.card.answers[0]) {
+    //   document.getElementById(event.detail.value).classList.add("correct-answer");
+    //   this.rispostaSelezionata = true;
+    //   this.rispostaCorretta = true;
+    //   this.timer.enabled = false;
+    // }
+    // else {
+    //   document.getElementById(event.detail.value).classList.add("wrong-answer");
+    //   document.getElementById(this.card.answers[0]).classList.add("correct-answer");
+    //   this.rispostaSelezionata = true;
+    //   this.rispostaCorretta = false;
+    //   this.timer.enabled = false;
+    // }
   }
 
   /**
