@@ -84,7 +84,7 @@ export class GameLogicService implements OnInit {
         async (res) => {
           this.lobbyPlayers = res['results'];
 
-          if (this.players.length == 0) this.setGamePlayers(); console.log("lunghezza su updatePlayers: " + this.players.length);
+          if (this.players.length == 0) this.setGamePlayers();
           return resolve(true);
         },
         async (res) => {

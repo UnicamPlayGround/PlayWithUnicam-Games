@@ -26,8 +26,6 @@ export class MemoryMenuPage implements OnInit {
     this.players = this.dataKeeper.getPlayers();
     this.gameLogic.ping();
     this.timerPing = this.timerController.getTimer(() => { this.gameLogic.ping() }, 4000);
-    console.log("cairico ng on init");
-
   }
 
   ngOnDestroy() {
