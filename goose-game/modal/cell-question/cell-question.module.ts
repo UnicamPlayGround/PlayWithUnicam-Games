@@ -6,9 +6,9 @@ import { IonicModule } from '@ionic/angular';
 
 import { CellQuestionPageRoutingModule } from './cell-question-routing.module';
 
-import { CellQuestionPage } from './cell-question.page';
+import { CellQuestionPage, SafePipe } from './cell-question.page';
 import { TimerComponent } from 'src/app/components/timer/timer.component';
-import { SafePipe } from 'src/app/mgp_games/memory-game/modal-page/card-question/card-question.page';
+
 
 @NgModule({
   imports: [

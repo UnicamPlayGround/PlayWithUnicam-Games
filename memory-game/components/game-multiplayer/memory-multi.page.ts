@@ -167,7 +167,7 @@ export class MemoryMultiGamePage implements OnInit {
    */
   private checkEndMatch() {
     var button = [{ text: 'Vai alla classifica', handler: () => { this.showRanking(); } }];
-    if (this.localPlayer.guessedCards.length == this.gameLogic.cards.length) {
+    if (this.localPlayer.guessedCards.length == (this.gameLogic.memoryCards.length / 2)) {
       this.sendMatchData(this.localPlayer.guessedCards.length);
       this.gameLogic.terminaPartita();
       
