@@ -10,6 +10,7 @@ import { MemoryCard } from '../memory-card';
 import { MemoryPlayer } from '../memory-player';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-modal.page';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import jwt_decode from 'jwt-decode';
 
@@ -20,10 +21,22 @@ import jwt_decode from 'jwt-decode';
 })
 export class MemoryMultiGamePage implements OnInit, OnDestroy {
 
-  time = 0;
-  display;
-  interval;
+  /**
+   * tempo della partita in secondi
+   */
+  seconds = 0;
+  /**
+   * stringa per mostare il tempo (formato 'min:sec')
+   */
+  display: String;
+  /**
+   * timer della partita (conteggio dei secondi della partita)
+   */
+  timerPartita;
 
+  /**
+   * Giocatore locale
+   */
   localPlayer: MemoryPlayer;
 
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
@@ -32,7 +45,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
   private timerInfoPartita;
   private timerPing;
 
-  selectedCards = [];
+  selectedCards: MemoryCard[] = [];
 
   constructor(
     private alertCreator: AlertCreatorService,
@@ -68,10 +81,8 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    * Prende il giocatore locale tramite il token e imposta la variabile 'localPlayer'.
    */
   private async setLocalPlayer() {
-    let localPlayerUsername: String;
     const token = (await this.loginService.getToken()).value;
     const decodedToken: any = jwt_decode(token);
-    localPlayerUsername = decodedToken.username;
     this.gameLogic.players.forEach(player => {
       if (player.nickname == decodedToken.username) this.localPlayer = new MemoryPlayer(decodedToken.username);
     });
@@ -89,13 +100,9 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    * Fa partire il timer del gioco.
    */
   startTimer() {
-    this.interval = setInterval(() => {
-      if (this.time === 0) {
-        this.time++;
-      } else {
-        this.time++;
-      }
-      this.display = this.transform(this.time);
+    this.timerPartita = setInterval(() => {
+      this.seconds++;
+      this.display = this.transform(this.seconds);
     }, 1000);
   }
 
@@ -115,7 +122,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    * Ferma il timer
    */
   private stopTimer() {
-    clearInterval(this.interval);
+    clearInterval(this.timerPartita);
   }
 
   /**
@@ -146,24 +153,68 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    */
   private compareCards() {
     if (this.selectedCards[0].title == this.selectedCards[1].title) {
-      this.localPlayer.guessedCards.push(this.selectedCards[0]);
 
-      this.sendMatchData(this.localPlayer.guessedCards.length);
-      this.checkEndMatch();
+      this.showQuestion(this.selectedCards[0]);
 
       this.selectedCards[0].enabled = false;
       this.selectedCards[1].enabled = false;
     }
     else {
+      this.selectedCards[0].memory_card.coverCard();
+      this.selectedCards[1].memory_card.coverCard();
+
       this.selectedCards[0].enabled = true;
       this.selectedCards[1].enabled = true;
 
-      this.selectedCards[0].memory_card.coverCard();
-      this.selectedCards[1].memory_card.coverCard();
+      this.selectedCards = [];
+      this.gameLogic.flippableCards = true;
     }
+  }
 
+  /**
+   * Presenta la domanda relativa alla coppia di carte indovinata.
+   * Se l'utente risponde correttamente alla domanda, verrà informato il server e verrà controllato se la partita è terminata.
+   * Altrimenti le carte verranno ricoperte.
+   * @param card la carta da cui prendere la domanda
+   */
+  private async showQuestion(card: MemoryCard) {
+    const modal = await this.modalController.create({
+      component: QuestionModalPage,
+      componentProps: {
+        question: card.question
+      },
+      cssClass: 'fullscreen'
+    });
+
+    modal.onDidDismiss().then((data) => {
+      const correctAnswer = data['data'];
+
+      if (correctAnswer) {
+        this.localPlayer.guessedCards.push(this.selectedCards[0]);
+
+        this.sendMatchData(this.localPlayer.guessedCards.length);
+        this.checkEndMatch();
+        this.selectedCards = [];
+      }
+      else {
+        this.coverSelectedCards();
+      }
+      this.gameLogic.flippableCards = true;
+    });
+
+    await modal.present();
+  }
+
+  /**
+   * Copre le carte selezionate poichè non sono uguali e imposta le relativi variabili 'enabled' uguale a true.
+   */
+  private coverSelectedCards() {
+    this.selectedCards[0].enabled = true;
+    this.selectedCards[1].enabled = true;
+
+    this.selectedCards[0].memory_card.coverCard();
+    this.selectedCards[1].memory_card.coverCard();
     this.selectedCards = [];
-    this.gameLogic.flippableCards = true;
   }
 
   /**
