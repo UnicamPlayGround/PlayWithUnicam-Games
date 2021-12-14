@@ -1,25 +1,24 @@
-import { Component, OnInit } from '@angular/core';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
-import { HttpClient } from '@angular/common/http';
-import { LoginService } from 'src/app/services/login-service/login.service';
+import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
-import { MemoryCard } from '../memory-card';
-import { ModalController } from '@ionic/angular';
-import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
-import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
-import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
+import { LoginService } from 'src/app/services/login-service/login.service';
+import { MemoryCard } from '../memory-card';
 import { MemoryPlayer } from '../memory-player';
+import { ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import jwt_decode from 'jwt-decode';
-
 
 @Component({
   selector: 'app-memory-multi',
   templateUrl: './memory-multi.page.html',
   styleUrls: ['./memory-multi.page.scss'],
 })
-export class MemoryMultiGamePage implements OnInit {
+export class MemoryMultiGamePage implements OnInit, OnDestroy {
 
   time = 0;
   display;
@@ -31,6 +30,7 @@ export class MemoryMultiGamePage implements OnInit {
   lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
 
   private timerInfoPartita;
+  private timerPing;
 
   selectedCards = [];
 
@@ -50,6 +50,7 @@ export class MemoryMultiGamePage implements OnInit {
     this.gameLogic.ping();
     this.loadInfoLobby();
     this.timerInfoPartita = this.timerService.getTimer(() => { this.getInfoPartita() }, 2000);
+    this.timerPing = this.timerService.getTimer(() => { this.gameLogic.ping() }, 4000);
 
     this.gameLogic.initialization()
       .then(_ => {
@@ -58,11 +59,15 @@ export class MemoryMultiGamePage implements OnInit {
       })
   }
 
+  ngOnDestroy() {
+    console.log("ngOnDestroy");
+  }
+
   /**
    * Prende il giocatore locale tramite il token e imposta la variabile 'localPlayer'.
    */
   private async setLocalPlayer() {
-    let localPlayerUsername : String;
+    let localPlayerUsername: String;
     const token = (await this.loginService.getToken()).value;
     const decodedToken: any = jwt_decode(token);
     localPlayerUsername = decodedToken.username;
@@ -170,9 +175,8 @@ export class MemoryMultiGamePage implements OnInit {
     if (this.localPlayer.guessedCards.length == (this.gameLogic.memoryCards.length / 2)) {
       this.sendMatchData(this.localPlayer.guessedCards.length);
       this.gameLogic.terminaPartita();
-      
+
       this.alertCreator.createAlert("HAI VINTO!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
-      this.timerService.stopTimers(this.timerInfoPartita);
       this.stopTimer();
     }
   }
@@ -186,7 +190,7 @@ export class MemoryMultiGamePage implements OnInit {
         this.lobby = res['results'][0];
       },
       async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita);
+        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
       });
@@ -203,7 +207,7 @@ export class MemoryMultiGamePage implements OnInit {
     this.http.put('/game/save', toSend).subscribe(
       async (res) => { },
       async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita);
+        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
       }
@@ -224,6 +228,7 @@ export class MemoryMultiGamePage implements OnInit {
     });
 
     modal.onDidDismiss().then(async () => {
+      this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
       if (this.localPlayer.nickname == this.lobby.admin_lobby)
         this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
       else
@@ -294,7 +299,7 @@ export class MemoryMultiGamePage implements OnInit {
             if (p.info_giocatore == this.gameLogic.cards.length) {
               if (p.username != this.localPlayer.nickname) {
                 this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
-                this.timerService.stopTimers(this.timerInfoPartita);
+                this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
                 this.stopTimer();
               }
             }
@@ -302,7 +307,7 @@ export class MemoryMultiGamePage implements OnInit {
         }
       },
       async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita);
+        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
         this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
       }
