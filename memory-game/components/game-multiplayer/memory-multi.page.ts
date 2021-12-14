@@ -61,6 +61,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.gameLogic.reset();
+    this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
   }
 
   /**
@@ -299,7 +300,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
             if (p.info_giocatore == (this.gameLogic.memoryCards.length / 2)) {
               if (p.username != this.localPlayer.nickname) {
                 this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
-                this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
+                this.timerService.stopTimers(this.timerInfoPartita);
                 this.stopTimer();
               }
             }
