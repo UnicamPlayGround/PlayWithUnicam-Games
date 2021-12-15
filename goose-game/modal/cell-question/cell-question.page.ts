@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Pipe, PipeTransform } from '@angular/core';
-import { Timer } from 'src/app/components/timer/timer';
+import { Timer } from 'src/app/components/progress-bar-timer/timer';
 
 @Pipe({ name: 'safe' })
 export class SafePipe implements PipeTransform {

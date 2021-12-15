@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { CellQuestionPageRoutingModule } from './cell-question-routing.module';
 
 import { CellQuestionPage, SafePipe } from './cell-question.page';
-import { TimerComponent } from 'src/app/components/timer/timer.component';
+import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 
 
 @NgModule({
@@ -15,8 +15,9 @@ import { TimerComponent } from 'src/app/components/timer/timer.component';
     CommonModule,
     FormsModule,
     IonicModule,
-    CellQuestionPageRoutingModule
+    CellQuestionPageRoutingModule,
+    SharedComponentsModule
   ],
-  declarations: [CellQuestionPage, SafePipe, TimerComponent]
+  declarations: [CellQuestionPage, SafePipe]
 })
 export class CellQuestionPageModule { }

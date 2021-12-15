@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { MemoryGameEditorComponent } from './memory-game-editor.component';
+import { MemoryGameEditorPage } from './memory-game-editor.page';
 
-describe('MemoryGameEditorComponent', () => {
-  let component: MemoryGameEditorComponent;
-  let fixture: ComponentFixture<MemoryGameEditorComponent>;
+describe('MemoryGameEditorPage', () => {
+  let component: MemoryGameEditorPage;
+  let fixture: ComponentFixture<MemoryGameEditorPage>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MemoryGameEditorComponent ],
+      declarations: [ MemoryGameEditorPage ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MemoryGameEditorComponent);
+    fixture = TestBed.createComponent(MemoryGameEditorPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
