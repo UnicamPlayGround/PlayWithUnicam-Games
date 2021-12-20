@@ -137,8 +137,8 @@ export class GameLogicService {
 
   private setCards() {
     this.config.cards.forEach(card => {
-      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question, card.answers, card.url, null, 10)));
-      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question, card.answers, card.url, null, 10)));
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question, card.answers, card.url, null, card.seconds)));
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question, card.answers, card.url, null, card.seconds)));
     });
     this.shuffleCards();
   }

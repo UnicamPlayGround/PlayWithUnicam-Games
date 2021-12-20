@@ -181,7 +181,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
     const modal = await this.modalController.create({
       component: QuestionModalPage,
       componentProps: {
-        question: card.question
+        question: card.question,
       },
       cssClass: 'fullscreen'
     });
