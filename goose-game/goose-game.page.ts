@@ -1,5 +1,4 @@
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
-import { CellQuestionPage } from './modal/cell-question/cell-question.page';
 import { ClassificaPage } from '../../modal-pages/classifica/classifica.page';
 import { Component, OnInit } from '@angular/core';
 import { DadiPage } from 'src/app/modal-pages/dadi/dadi.page';
@@ -8,12 +7,15 @@ import { HttpClient } from '@angular/common/http';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
 import { ModalController } from '@ionic/angular';
+import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-modal.page';
 import { Router } from '@angular/router';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { ToastCreatorService } from 'src/app/services/toast-creator/toast-creator.service';
 import { TurnBasedGame } from '../turn-based-game';
 import { UiBuilderService } from './services/game-builder/ui-builder.service';
 import jwt_decode from 'jwt-decode';
+import { GooseGameCell } from './components/goose-game-cell';
+import { Question } from 'src/app/modal-pages/question-modal/question';
 
 @Component({
   selector: 'app-goose-game',
@@ -22,7 +24,7 @@ import jwt_decode from 'jwt-decode';
 })
 export class GooseGamePage implements OnInit, TurnBasedGame {
 
-  cells = [];
+  cells: GooseGameCell[] = [];
   lobbyPlayers = [];
   gamePlayers = [];
   localPlayerIndex;
@@ -38,7 +40,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
   /**
    * Array contenente le domande che il giocatore locale deve ancora fare.
    */
-  domandeDisponibili = [];
+  domandeDisponibili: GooseGameCell[] = [];
 
   private timerGiocatori;
   private timerPing;
@@ -81,7 +83,12 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
     return new Promise<void>((resolve, reject) => {
       this.http.get('/game/config', { headers }).subscribe(
         async (res) => {
-          this.cells = res['results'][0].config.cells;
+          res['results'][0].config.cells.forEach(cell => {
+            if (cell.question)
+              this.cells.push(new GooseGameCell(cell.title, new Question(cell.question.q, cell.question.answers, cell.question.img_url, cell.question.video_url, 10)));
+            else
+              this.cells.push(new GooseGameCell(cell.title));
+          });
           this.uiBuilder.createGameBoard(this.cells);
           this.setQuestionsAvailable();
           this.loadPlayers();
@@ -417,14 +424,14 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
    * @returns presenta la Modal.
    */
   async presentaDomanda() {
-    const numeroCasella = this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].title;
+    const numeroCasella: number = parseInt(this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].title);
 
     if (this.domandeDisponibili.length > 0) {
       if (this.domandeDisponibili.includes(this.cells[numeroCasella])) {
-        this.creaModalDomanda(numeroCasella, this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)].question);
+        this.creaModalDomanda(this.cells[this.getPosizionePedina(this.gamePlayers[this.localPlayerIndex].goose)]);
         this.eliminaDomanda(numeroCasella);
       } else {
-        this.creaModalDomanda(this.domandeDisponibili[0].title, this.domandeDisponibili[0].question);
+        this.creaModalDomanda(this.domandeDisponibili[0]);
         this.domandeDisponibili.splice(0, 1);
       }
     } else {
@@ -439,15 +446,13 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
 
   /**
    * Crea la Modal per presentare la domanda.
-   * @param numeroCasella Numero casella dove si trova la pedina del giocatore
-   * @param domanda Domanda da presentare
+   * @param cell Casella dove si trova la pedina del giocatore
    */
-  private async creaModalDomanda(numeroCasella, domanda) {
+  private async creaModalDomanda(cell: GooseGameCell) {
     const modal = await this.modalController.create({
-      component: CellQuestionPage,
+      component: QuestionModalPage,
       componentProps: {
-        nCasella: numeroCasella,
-        question: domanda
+        question: cell.question
       },
       cssClass: 'fullscreen'
     });

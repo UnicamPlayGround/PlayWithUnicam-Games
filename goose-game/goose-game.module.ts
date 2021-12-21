@@ -7,9 +7,9 @@ import { IonicModule } from '@ionic/angular';
 import { GooseGamePageRoutingModule } from './goose-game-routing.module';
 
 import { GooseGamePage } from './goose-game.page';
-import { CellQuestionPageModule } from './modal/cell-question/cell-question.module';
 import { ClassificaPageModule } from '../../modal-pages/classifica/classifica.module';
 import { DadiPageModule } from 'src/app/modal-pages/dadi/dadi.module';
+import { QuestionModalPageModule } from 'src/app/modal-pages/question-modal/question-modal.module';
 
 @NgModule({
   imports: [
@@ -17,7 +17,7 @@ import { DadiPageModule } from 'src/app/modal-pages/dadi/dadi.module';
     FormsModule,
     IonicModule,
     GooseGamePageRoutingModule,
-    CellQuestionPageModule,
+    QuestionModalPageModule,
     ClassificaPageModule,
     DadiPageModule
   ],
