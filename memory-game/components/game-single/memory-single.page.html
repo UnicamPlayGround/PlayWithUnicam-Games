@@ -19,6 +19,11 @@
       <p><strong> {{minutes}} : {{seconds}}</strong></p>
     </ion-card-content>
   </ion-card>
+  <fieldset class="currentPlayer">
+    <legend style="color: blue; font-family: papyrus;"><strong>Giocatore corrente</strong></legend>{{currentPlayerUsername}}
+  </fieldset>
+  <br>
+  <br>
 
   <ion-row>
     <app-memory-card *ngFor="let card of getCards()" [card]="card" (click)="selectCard(card)" class="card">

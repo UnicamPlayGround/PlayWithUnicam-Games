@@ -22,6 +22,8 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
   interval;
   minutes;
   seconds;
+  currentPlayerUsername: String;
+
 
   constructor(
     private gameLogic: GameLogicService,
@@ -32,11 +34,12 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
     private alertController: AlertCreatorService
   ) { }
 
-  ngOnInit() {
-    this.gameLogic.initialize();
+  async ngOnInit() {
+    await this.gameLogic.initialize();
 
     if (this.dataKeeper.getGameMode() == "tempo")
       this.setTimer();
+    this.currentPlayerUsername = this.gameLogic.players[0].nickname;
   }
 
   ngOnDestroy() {
@@ -70,6 +73,7 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
   endTurn() {
     this.gameLogic.endCurrentPlayerTurn();
     this.alertController.createInfoAlert("Fine del turno", "Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
+    this.currentPlayerUsername = this.gameLogic.getCurrentPlayer().nickname;
   }
 
   selectCard(card: MemoryCard) {
