@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
-import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
 import { MemoryCard } from '../memory-card';
 import { MemoryPlayer } from '../memory-player';
@@ -28,7 +27,6 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
     private gameLogic: GameLogicService,
     private router: Router,
     private alertCreator: AlertCreatorService,
-    private timerService: TimerController,
     private modalController: ModalController,
     private dataKeeper: MemoryDataKeeperService,
     private alertController: AlertCreatorService
