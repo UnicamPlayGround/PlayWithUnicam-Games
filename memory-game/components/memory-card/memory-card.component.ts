@@ -30,9 +30,7 @@ export class MemoryCardComponent implements OnInit, AfterViewInit {
   }
 
   revealCard() {
-    if (this.card.enabled && this.gameLogic.flippableCards) {
-      this.inner.nativeElement.style.transform = "rotateY(180deg)";
-    }
+    this.inner.nativeElement.style.transform = "rotateY(180deg)";
   }
 
   coverCard() {
