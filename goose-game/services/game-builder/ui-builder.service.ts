@@ -15,12 +15,12 @@ export class UiBuilderService {
    * @param cells L'array di caselle con cui costruire il tabellone.
    */
   createGameBoard(cells) {
-    this.cells = cells;
+    this.initCells(cells);
     var currentCellNumber = 0
     var currentRowNumber = 0;
     var direction = true;
 
-    cells.forEach(cell => {
+    this.cells.forEach(cell => {
       const currentRow = document.getElementById("row" + currentRowNumber);
       const newCell = this.createGameCell(currentCellNumber++);
 
@@ -39,6 +39,16 @@ export class UiBuilderService {
     if (document.getElementById("row" + currentRowNumber).childNodes.length < 8) {
       this.fillRowWithEmptyCells(document.getElementById("row" + currentRowNumber), direction);
     }
+  }
+
+  /**
+   * Crea una copia locale dell'array delle caselle per il tabellone.
+   * @param cells L'array di caselle con cui costruire il tabellone.
+   */
+  private initCells(cells: any[]) {
+    this.cells = [];
+    cells.push({ title: cells.length.toString() });
+    this.cells = this.cells.concat(cells);
   }
 
   /**

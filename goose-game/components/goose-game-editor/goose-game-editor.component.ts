@@ -8,7 +8,6 @@ import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creato
   styleUrls: ['./goose-game-editor.component.scss'],
 })
 export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
-  cells = [];
   expandedCell: Number;
   bulkEdit = false;
   edit = {};
@@ -29,7 +28,6 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
   ngOnInit() {
     if (!this.config.cells)
       this.config.cells = [];
-    this.cells = this.config.cells;
   }
 
   /**
@@ -39,7 +37,7 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
    */
   updateConfig() {
     if (this.config.cells.length > 0) {
-      this.config.cells = this.cells;
+      // this.config.cells.shift();
       this.updateConfigEvent.emit(this.config);
     }
     else this.alertCreator.createInfoAlert("Errore", "Il tabellone non può essere lasciato vuoto!");
@@ -72,14 +70,14 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
   }
 
   /**
- * Elimina le caselle selezionate.
- */
+   * Elimina le caselle selezionate.
+   */
   deleteSelectedCells() {
     let toDelete = Object.keys(this.edit);
     const indexesToDelete = toDelete.filter(index => this.edit[index]).map(key => +key);
 
     while (indexesToDelete.length) {
-      this.cells.splice(indexesToDelete.pop(), 1);
+      this.config.cells.splice(indexesToDelete.pop(), 1);
     }
   }
 
@@ -100,7 +98,7 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
     }
     else {
       this.alertCreator.createConfirmationAlert("Sei sicuro di voler eliminare tutte le caselle?", () => {
-        this.cells = [];
+        this.config.cells.splice(0, this.config.cells.length);
       });
     }
   }
@@ -131,9 +129,9 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
    * di partenza delle pedine.
    */
   addCell() {
-    if (this.cells.length == 0)
-      this.cells.push(this.getCellObject(0));
-    this.cells.push(this.getCellObject(this.cells.length));
+    if (this.config.cells.length == 0)
+      this.config.cells.push(this.getCellObject(0));
+    this.config.cells.push(this.getCellObject(this.config.cells.length + 1));
   }
 
   /**
@@ -153,7 +151,7 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
    * @param cellIndex L'indice della casella selezionata.
    */
   addAnswer(cellIndex) {
-    this.cells[cellIndex].question.answers.push(null);
+    this.config.cells[cellIndex].question.answers.push(null);
   }
 
   /**
@@ -162,7 +160,7 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
    * @param answerIndex L'indice della risposta da eliminare.
    */
   deleteAnswer(cellIndex, answerIndex) {
-    this.cells[cellIndex].question.answers.splice(answerIndex, 1);
+    this.config.cells[cellIndex].question.answers.splice(answerIndex, 1);
   }
 
 }
