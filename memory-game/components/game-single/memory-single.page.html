@@ -10,18 +10,23 @@
 
 <ion-content id="content">
 
-  <ion-card class="time" *ngIf="timeMode">
-    <ion-card-header>
-      <ion-card-title><strong>TIMER</strong></ion-card-title>
-    </ion-card-header>
+  <ion-row>
+    <ion-card class="time" *ngIf="timeMode">
+      <ion-card-header>
+        <ion-card-title><strong>TIMER</strong></ion-card-title>
+      </ion-card-header>
+  
+      <ion-card-content>
+        <p><strong> {{minutes}} : {{seconds}}</strong></p>
+      </ion-card-content>
+    </ion-card>
 
-    <ion-card-content>
-      <p><strong> {{minutes}} : {{seconds}}</strong></p>
-    </ion-card-content>
-  </ion-card>
-  <fieldset class="currentPlayer">
-    <legend style="color: blue; font-family: papyrus;"><strong>Giocatore corrente</strong></legend>{{currentPlayerUsername}}
-  </fieldset>
+    <fieldset class="currentPlayer">
+      <legend style="color: blue; font-family: papyrus;"><strong>Giocatore corrente</strong></legend>{{currentPlayerUsername}}
+    </fieldset>
+  </ion-row>
+  
+  
   <br>
   <br>
 
