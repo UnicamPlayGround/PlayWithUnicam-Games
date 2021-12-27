@@ -6,6 +6,7 @@
       <ion-icon slot="start" name="exit-outline"></ion-icon>
     </ion-button>
   </ion-toolbar>
+  <app-progress-bar-timer *ngIf="timerFinale.enabled" [timer]="timerFinale" color="danger" reversed="true"></app-progress-bar-timer>
 </ion-header>
 
 <ion-content>
