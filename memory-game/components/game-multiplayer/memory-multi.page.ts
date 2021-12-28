@@ -334,23 +334,21 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
   /**
    * Calcolare la classifica in modo dinamico.
    */
-  private calculateRanking() {
-    setTimeout(async () => {
-      const token_value = (await this.loginService.getToken()).value;
-      const headers = { 'token': token_value };
+  private async calculateRanking() {
+    const token_value = (await this.loginService.getToken()).value;
+    const headers = { 'token': token_value };
 
-      this.http.get('/game/status', { headers }).subscribe(
-        async (res) => {
-          this.info_partita = res['results'];
-          this.saveRanking();
-        },
-        async (res) => {
-          this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-          this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
-        }
-      );
-    }, 2000);
+    this.http.get('/game/status', { headers }).subscribe(
+      async (res) => {
+        this.info_partita = res['results'];
+        this.saveRanking();
+      },
+      async (res) => {
+        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
+      }
+    );
   }
 
   /**
