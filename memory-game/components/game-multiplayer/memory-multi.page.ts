@@ -1,5 +1,5 @@
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
-import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
+import { ClassificaDinamicaPage } from 'src/app/modal-pages/classifica-dinamica/classifica-dinamica.page';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
@@ -9,10 +9,11 @@ import { LoginService } from 'src/app/services/login-service/login.service';
 import { MemoryCard } from '../memory-card';
 import { MemoryPlayer } from '../memory-player';
 import { ModalController } from '@ionic/angular';
-import { Router } from '@angular/router';
 import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-modal.page';
+import { Router } from '@angular/router';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import jwt_decode from 'jwt-decode';
+import { Timer } from 'src/app/components/timer-components/timer';
 
 @Component({
   selector: 'app-memory-multi',
@@ -33,11 +34,18 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    * timer della partita (conteggio dei secondi della partita)
    */
   timerPartita;
-
   /**
    * Giocatore locale
    */
   localPlayer: MemoryPlayer;
+  /**
+   * Timer che viene avviato quando un giocatore vince
+   */
+  timerFinale: Timer = new Timer(30, () => this.showRanking(), false);
+  /**
+   * Classifica della partita
+   */
+  classifica: any[] = [];
 
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
   lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
@@ -84,8 +92,10 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
     const token = (await this.loginService.getToken()).value;
     const decodedToken: any = jwt_decode(token);
     this.gameLogic.players.forEach(player => {
-      if (player.nickname == decodedToken.username) this.localPlayer = new MemoryPlayer(decodedToken.username);
+      if (player.nickname == decodedToken.username)
+        this.localPlayer = new MemoryPlayer(decodedToken.username);
     });
+    this.sendMatchData(this.localPlayer.guessedCards.length);
   }
 
   /**
@@ -228,8 +238,10 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
       this.sendMatchData(this.localPlayer.guessedCards.length);
       this.gameLogic.terminaPartita();
 
-      this.alertCreator.createAlert("HAI VINTO!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
+      this.alertCreator.createAlert("Fine partita!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
+      this.timerService.stopTimers(this.timerInfoPartita);
       this.stopTimer();
+      this.timerFinale.enabled = false;
     }
   }
 
@@ -254,7 +266,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    */
   private async sendMatchData(info) {
     const tokenValue = (await this.loginService.getToken()).value;
-    const toSend = { 'token': tokenValue, 'info_giocatore': info }
+    const toSend = { 'token': tokenValue, 'info_giocatore': { "guessed_cards": info, "time": this.seconds } }
 
     this.http.put('/game/save', toSend).subscribe(
       async (res) => { },
@@ -271,10 +283,12 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    * @returns presenta la modal
    */
   private async showRanking() {
+    this.calculateRanking();
     const modal = await this.modalController.create({
-      component: ClassificaPage,
+      component: ClassificaDinamicaPage,
       componentProps: {
-        classifica: this.calculateRanking()
+        classifica: this.classifica,
+        callback: () => this.recalculateRanking()
       },
       cssClass: 'fullheight'
     });
@@ -295,50 +309,70 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    * @returns la lista ordinata ottenuta richiamando il metodo 'sortRanking'
    */
   private calculateRanking() {
-    var classifica = [];
-    var usernames = [];
+    this.classifica.splice(0, this.classifica.length);
+    var toSave;
     this.info_partita.info.giocatori.forEach(p => {
-      if (p.username == this.localPlayer.nickname) {
-        var toSave = { "username": this.localPlayer.nickname, "punteggio": this.localPlayer.guessedCards.length }
-        classifica.push(toSave);
-        usernames.push(toSave.username);
-      } else {
-        toSave = { "username": p.username, "punteggio": p.info_giocatore }
-        classifica.push(toSave);
-        usernames.push(toSave.username);
-      }
-
+      if (p.username == this.localPlayer.nickname)
+        toSave = { "username": this.localPlayer.nickname, "punteggio": this.localPlayer.guessedCards.length, "time": this.seconds }
+      else
+        toSave = { "username": p.username, "punteggio": p.info_giocatore.guessed_cards, "time": p.info_giocatore.time }
+      this.classifica.push(toSave);
     });
-    if (classifica.length < this.gameLogic.players.length) {
-      for (let index = 0; index < this.gameLogic.players.length; index++) {
-        if (!(usernames.includes(this.gameLogic.players[index].nickname))) {
-          var toSave = { "username": this.gameLogic.players[index].nickname, "punteggio": 0 }
-          classifica.push(toSave);
-          usernames.push(toSave.username);
-        }
-      }
-    }
 
-    return this.sortRanking(classifica);
+    return this.sortRanking();
   }
 
   /**
-   * Ordina la classifica passata in input.
-   * @param classifica 
-   * @returns 
+   * Funzione ricorsiva per continuare a calcolare la classifica in modo dinamico.
    */
-  private sortRanking(classifica) {
-    classifica.sort(function (a, b) {
-      return b.punteggio - a.punteggio;
+  private recalculateRanking() {
+    setTimeout(async () => {
+      var partitaTerminata = true;
+
+      const token_value = (await this.loginService.getToken()).value;
+      const headers = { 'token': token_value };
+
+      this.http.get('/game/status', { headers }).subscribe(
+        async (res) => {
+          this.info_partita = res['results'];
+
+          if (this.info_partita.info != null) {
+            this.info_partita.info.giocatori.forEach(p => {
+              if (p.info_giocatore.guessed_cards != (this.gameLogic.memoryCards.length / 2))
+                partitaTerminata = false;
+            });
+          }
+
+          this.calculateRanking();
+          if (!partitaTerminata)
+            this.recalculateRanking();
+        },
+        async (res) => {
+          this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
+        }
+      );
+    }, 2000);
+  }
+
+  /**
+   * Ordina la classifica.
+   */
+  private sortRanking() {
+    this.classifica.sort(function (a, b) {
+      if (a.punteggio == b.punteggio)
+        return a.time - b.time;
+      else
+        return b.punteggio - a.punteggio;
     });
-    return classifica;
   }
 
   /**
    * Effettua la chiamata REST per ottenere le informazioni della partita di tutti i giocatori.
    */
   private async getInfoPartita() {
-    var button = [{ text: 'Vai alla classifica', handler: () => { this.showRanking(); } }];
+    var button = [{ text: 'Continua a giocare' }];
     const token_value = (await this.loginService.getToken()).value;
     const headers = { 'token': token_value };
 
@@ -348,11 +382,12 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
 
         if (this.info_partita.info != null) {
           this.info_partita.info.giocatori.forEach(p => {
-            if (p.info_giocatore == (this.gameLogic.memoryCards.length / 2)) {
+            if (p.info_giocatore.guessed_cards == (this.gameLogic.memoryCards.length / 2)) {
               if (p.username != this.localPlayer.nickname) {
                 this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
                 this.timerService.stopTimers(this.timerInfoPartita);
-                this.stopTimer();
+                this.timerFinale.enabled = true;
+                this.timerFinale.timerComponent.startTimer();
               }
             }
           });

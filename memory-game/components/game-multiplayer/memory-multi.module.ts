@@ -7,8 +7,9 @@ import { IonicModule } from '@ionic/angular';
 import { MemoryGamePageRoutingModule } from './memory-multi-routing.module';
 
 import { MemoryMultiGamePage } from './memory-multi.page';
-import { ClassificaPageModule } from 'src/app/modal-pages/classifica/classifica.module';
 import { MemoryCardComponentModule } from '../memory-card/memory-card.module';
+import { SharedComponentsModule } from 'src/app/components/shared-components.module';
+import { ClassificaDinamicaPageModule } from 'src/app/modal-pages/classifica-dinamica/classifica-dinamica.module';
 
 @NgModule({
   imports: [
@@ -16,9 +17,10 @@ import { MemoryCardComponentModule } from '../memory-card/memory-card.module';
     FormsModule,
     IonicModule,
     MemoryGamePageRoutingModule,
-    ClassificaPageModule,
+    ClassificaDinamicaPageModule,
+    SharedComponentsModule,
     MemoryCardComponentModule
   ],
   declarations: [MemoryMultiGamePage]
 })
-export class MemoryMultiPageModule {}
+export class MemoryMultiPageModule { }
