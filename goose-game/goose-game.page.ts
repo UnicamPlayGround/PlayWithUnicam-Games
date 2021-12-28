@@ -655,7 +655,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
   }
 
   /**
-   * Apre una modal per confermare l'abbandono della partita.
+   * Apre un alert per confermare l'abbandono della partita.
    * 
    * Prima di effettuare l'abbandono della partita viene controllato se il giocatore che vuole
    * abbandonare è il *giocatore corrente*, in caso positivo viene concluso il suo turno.

@@ -401,16 +401,22 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
     );
   }
 
-  confermaAbbandonoPartita() {
+  /**
+   * Chiede all'utente la conferma di abbandonare la partita
+   */
+  confirmLeaveMatch() {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
       async () => {
-        this.abbandonaPartita();
+        this.leaveMatch();
         console.log("esco");
         
       })
   }
 
-  private abbandonaPartita() {
+  /**
+   * Fa uscire il giocatore dalla partita.
+   */
+  private leaveMatch() {
     this.timerService.stopTimers(this.timerPing, this.timerInfoPartita);
     return new Promise<void>(async (resolve, reject) => {
       (await this.lobbyManager.abbandonaLobby()).subscribe(
