@@ -41,7 +41,11 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
   /**
    * Timer che viene avviato quando un giocatore vince
    */
-  timerFinale: Timer = new Timer(30, () => this.showRanking(), false);
+  timerFinale: Timer = new Timer(10, () => {
+    this.stopTimer();
+    this.sendMatchData();
+    this.showRanking();
+  }, false);
   /**
    * Classifica della partita
    */
@@ -95,7 +99,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
       if (player.nickname == decodedToken.username)
         this.localPlayer = new MemoryPlayer(decodedToken.username);
     });
-    this.sendMatchData(this.localPlayer.guessedCards.length);
+    this.sendMatchData();
   }
 
   /**
@@ -129,7 +133,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
   }
 
   /**
-   * Ferma il timer
+   * Ferma il timer della partita.
    */
   private stopTimer() {
     clearInterval(this.timerPartita);
@@ -202,7 +206,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
       if (correctAnswer) {
         this.localPlayer.guessedCards.push(this.selectedCards[0]);
 
-        this.sendMatchData(this.localPlayer.guessedCards.length);
+        this.sendMatchData();
         this.checkEndMatch();
         this.selectedCards = [];
       }
@@ -235,7 +239,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
   private checkEndMatch() {
     var button = [{ text: 'Vai alla classifica', handler: () => { this.showRanking(); } }];
     if (this.localPlayer.guessedCards.length == (this.gameLogic.memoryCards.length / 2)) {
-      this.sendMatchData(this.localPlayer.guessedCards.length);
+      this.sendMatchData();
       this.gameLogic.terminaPartita();
 
       this.alertCreator.createAlert("Fine partita!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
@@ -262,11 +266,10 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
 
   /**
    * Effettua la chiamata REST per aggiornare il database con le informazioni passate in input.
-   * @param info 
    */
-  private async sendMatchData(info) {
+  private async sendMatchData() {
     const tokenValue = (await this.loginService.getToken()).value;
-    const toSend = { 'token': tokenValue, 'info_giocatore': { "guessed_cards": info, "time": this.seconds } }
+    const toSend = { 'token': tokenValue, 'info_giocatore': { "guessed_cards": this.localPlayer.guessedCards.length, "time": this.seconds } }
 
     this.http.put('/game/save', toSend).subscribe(
       async (res) => { },
@@ -306,6 +309,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
 
   /**
    * Inserisce all'interno di una lista tutti i giocatori con il relativo punteggio.
+   * * Se il giocatore non ha ancora completato il memory avrà come punteggio "ancora in gioco".
    * @returns la lista ordinata ottenuta richiamando il metodo 'sortRanking'
    */
   private calculateRanking() {
@@ -313,13 +317,17 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
     var toSave;
     this.info_partita.info.giocatori.forEach(p => {
       if (p.username == this.localPlayer.nickname)
-        toSave = { "username": this.localPlayer.nickname, "punteggio": this.localPlayer.guessedCards.length, "time": this.seconds }
-      else
-        toSave = { "username": p.username, "punteggio": p.info_giocatore.guessed_cards, "time": p.info_giocatore.time }
+        toSave = { "username": this.localPlayer.nickname, "guessed_cards": this.localPlayer.guessedCards.length, "time": this.seconds, "punteggio": this.transform(this.seconds) }
+      else {
+        if (p.info_giocatore.guessed_cards == (this.gameLogic.memoryCards.length / 2))
+          toSave = { "username": p.username, "guessed_cards": p.info_giocatore.guessed_cards, "time": p.info_giocatore.time, "punteggio": this.transform(p.info_giocatore.time) }
+        else
+          toSave = { "username": p.username, "guessed_cards": p.info_giocatore.guessed_cards, "time": p.info_giocatore.time, "punteggio": "ancora in gioco" }
+      }
       this.classifica.push(toSave);
     });
-
-    return this.sortRanking();
+    this.sortRanking();
+    this.updateScore();
   }
 
   /**
@@ -342,8 +350,8 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
                 partitaTerminata = false;
             });
           }
-
           this.calculateRanking();
+
           if (!partitaTerminata)
             this.recalculateRanking();
         },
@@ -361,10 +369,24 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    */
   private sortRanking() {
     this.classifica.sort(function (a, b) {
-      if (a.punteggio == b.punteggio)
+      if (a.guessed_cards == b.guessed_cards)
         return a.time - b.time;
       else
-        return b.punteggio - a.punteggio;
+        return b.guessed_cards - a.guessed_cards;
+    });
+  }
+
+  /**
+   * Quando il Timer finale arriva a 0 aggiorna il punteggio dei giocatori che non hanno indovinato tutte le carte,
+   * passando da *"ancora in gioco"* al tempo del 
+   * giocatore che ha vinto più il tempo del Timer finale.
+   */
+  private updateScore() {
+    var tempoVittoria = this.classifica[0].time;
+
+    this.classifica.forEach(giocatore => {
+      if (giocatore.time >= (tempoVittoria + this.timerFinale.getTimerTime()) - 1)
+        giocatore.punteggio = this.transform(giocatore.time);
     });
   }
 
@@ -387,7 +409,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
                 this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
                 this.timerService.stopTimers(this.timerInfoPartita);
                 this.timerFinale.enabled = true;
-                this.timerFinale.timerComponent.startTimer();
+                this.timerFinale.getTimerComponent().startTimer();
               }
             }
           });
@@ -406,11 +428,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    */
   confirmLeaveMatch() {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
-      async () => {
-        this.leaveMatch();
-        console.log("esco");
-        
-      })
+      async () => { this.leaveMatch(); })
   }
 
   /**
