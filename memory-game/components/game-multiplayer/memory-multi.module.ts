@@ -9,7 +9,7 @@ import { MemoryGamePageRoutingModule } from './memory-multi-routing.module';
 import { MemoryMultiGamePage } from './memory-multi.page';
 import { MemoryCardComponentModule } from '../memory-card/memory-card.module';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
-import { ClassificaDinamicaPageModule } from 'src/app/modal-pages/classifica-dinamica/classifica-dinamica.module';
+import { ClassificaPageModule } from 'src/app/modal-pages/classifica/classifica.module';
 
 @NgModule({
   imports: [
@@ -17,7 +17,7 @@ import { ClassificaDinamicaPageModule } from 'src/app/modal-pages/classifica-din
     FormsModule,
     IonicModule,
     MemoryGamePageRoutingModule,
-    ClassificaDinamicaPageModule,
+    ClassificaPageModule,
     SharedComponentsModule,
     MemoryCardComponentModule
   ],

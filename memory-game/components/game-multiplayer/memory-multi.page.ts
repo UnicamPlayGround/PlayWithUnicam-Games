@@ -1,5 +1,5 @@
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
-import { ClassificaDinamicaPage } from 'src/app/modal-pages/classifica-dinamica/classifica-dinamica.page';
+import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
@@ -11,9 +11,9 @@ import { MemoryPlayer } from '../memory-player';
 import { ModalController } from '@ionic/angular';
 import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-modal.page';
 import { Router } from '@angular/router';
+import { Timer } from 'src/app/components/timer-components/timer';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import jwt_decode from 'jwt-decode';
-import { Timer } from 'src/app/components/timer-components/timer';
 
 @Component({
   selector: 'app-memory-multi',
@@ -41,11 +41,11 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
   /**
    * Timer che viene avviato quando un giocatore vince
    */
-  timerFinale: Timer = new Timer(10, () => {
+  timerFinale: Timer = new Timer(10, false, () => {
     this.stopTimer();
     this.sendMatchData();
     this.showRanking();
-  }, false);
+  });
   /**
    * Classifica della partita
    */
@@ -56,6 +56,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
 
   private timerInfoPartita;
   private timerPing;
+  private timerClassifica;
 
   selectedCards: MemoryCard[] = [];
 
@@ -76,6 +77,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
     this.loadInfoLobby();
     this.timerInfoPartita = this.timerService.getTimer(() => { this.getInfoPartita() }, 2000);
     this.timerPing = this.timerService.getTimer(() => { this.gameLogic.ping() }, 4000);
+    this.timerClassifica = this.timerService.getTimer(() => { this.calculateRanking() }, 2000);
 
     this.gameLogic.initialize()
       .then(_ => {
@@ -86,7 +88,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.gameLogic.reset();
-    this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
+    this.timerService.stopTimers(this.timerInfoPartita, this.timerPing, this.timerClassifica);
   }
 
   /**
@@ -286,12 +288,11 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    * @returns presenta la modal
    */
   private async showRanking() {
-    this.calculateRanking();
+    this.saveRanking();
     const modal = await this.modalController.create({
-      component: ClassificaDinamicaPage,
+      component: ClassificaPage,
       componentProps: {
-        classifica: this.classifica,
-        callback: () => this.recalculateRanking()
+        classifica: this.classifica
       },
       cssClass: 'fullheight'
     });
@@ -312,7 +313,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
    * * Se il giocatore non ha ancora completato il memory avrà come punteggio "ancora in gioco".
    * @returns la lista ordinata ottenuta richiamando il metodo 'sortRanking'
    */
-  private calculateRanking() {
+  private saveRanking() {
     this.classifica.splice(0, this.classifica.length);
     var toSave;
     this.info_partita.info.giocatori.forEach(p => {
@@ -331,29 +332,17 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
   }
 
   /**
-   * Funzione ricorsiva per continuare a calcolare la classifica in modo dinamico.
+   * Calcolare la classifica in modo dinamico.
    */
-  private recalculateRanking() {
+  private calculateRanking() {
     setTimeout(async () => {
-      var partitaTerminata = true;
-
       const token_value = (await this.loginService.getToken()).value;
       const headers = { 'token': token_value };
 
       this.http.get('/game/status', { headers }).subscribe(
         async (res) => {
           this.info_partita = res['results'];
-
-          if (this.info_partita.info != null) {
-            this.info_partita.info.giocatori.forEach(p => {
-              if (p.info_giocatore.guessed_cards != (this.gameLogic.memoryCards.length / 2))
-                partitaTerminata = false;
-            });
-          }
-          this.calculateRanking();
-
-          if (!partitaTerminata)
-            this.recalculateRanking();
+          this.saveRanking();
         },
         async (res) => {
           this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
@@ -402,18 +391,15 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
       async (res) => {
         this.info_partita = res['results'];
 
-        if (this.info_partita.info != null) {
-          this.info_partita.info.giocatori.forEach(p => {
-            if (p.info_giocatore.guessed_cards == (this.gameLogic.memoryCards.length / 2)) {
-              if (p.username != this.localPlayer.nickname) {
-                this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
-                this.timerService.stopTimers(this.timerInfoPartita);
-                this.timerFinale.enabled = true;
-                this.timerFinale.getTimerComponent().startTimer();
-              }
+        this.info_partita.info.giocatori.forEach(p => {
+          if (p.info_giocatore.guessed_cards == (this.gameLogic.memoryCards.length / 2)) {
+            if (p.username != this.localPlayer.nickname) {
+              this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
+              this.timerService.stopTimers(this.timerInfoPartita);
+              this.timerFinale.startTimer();
             }
-          });
-        }
+          }
+        });
       },
       async (res) => {
         this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
