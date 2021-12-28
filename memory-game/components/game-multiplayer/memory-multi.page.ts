@@ -366,4 +366,30 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
     );
   }
 
+  confermaAbbandonoPartita() {
+    this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
+      async () => {
+        this.abbandonaPartita();
+        console.log("esco");
+        
+      })
+  }
+
+  private abbandonaPartita() {
+    this.timerService.stopTimers(this.timerPing, this.timerInfoPartita);
+    return new Promise<void>(async (resolve, reject) => {
+      (await this.lobbyManager.abbandonaLobby()).subscribe(
+        async (res) => {
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          return resolve();
+        },
+        async (res) => {
+          this.timerPing = this.timerService.getTimer(() => { this.gameLogic.ping() }, 4000);
+          this.errorManager.stampaErrore(res, 'Abbandono fallito');
+          return reject('Abbandono fallito');
+        }
+      );
+    })
+  }
+
 }
