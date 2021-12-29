@@ -2,6 +2,7 @@ import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creato
 import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
+import { Game } from 'src/app/mgp_games/game';
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
 import { HttpClient } from '@angular/common/http';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
@@ -20,8 +21,7 @@ import jwt_decode from 'jwt-decode';
   templateUrl: './memory-multi.page.html',
   styleUrls: ['./memory-multi.page.scss'],
 })
-export class MemoryMultiGamePage implements OnInit, OnDestroy {
-
+export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
   /**
    * tempo della partita in secondi
    */
@@ -73,22 +73,150 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
   ) { }
 
   async ngOnInit() {
-    this.gameLogic.ping();
+    this.ping();
     this.loadInfoLobby();
     this.timerInfoPartita = this.timerService.getTimer(() => { this.getInfoPartita() }, 2000);
-    this.timerPing = this.timerService.getTimer(() => { this.gameLogic.ping() }, 4000);
+    this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
     this.timerClassifica = this.timerService.getTimer(() => { this.calculateRanking() }, 2000);
 
-    this.gameLogic.initialize()
+    this.getGameConfig()
+      .then(_ => { return this.loadPlayers() })
       .then(_ => {
         this.setLocalPlayer();
         this.startTimer();
-      })
+      });
   }
 
   ngOnDestroy() {
     this.gameLogic.reset();
     this.timerService.stopTimers(this.timerInfoPartita, this.timerPing, this.timerClassifica);
+  }
+
+  /**
+   * ------------------------------ CHIAMATE REST ------------------------------
+   */
+
+  /**
+   * Carica le informazioni della lobby.
+   */
+  async loadInfoLobby() {
+    (await this.lobbyManager.loadInfoLobby()).subscribe(
+      async (res) => {
+        this.lobby = res['results'][0];
+      },
+      async (res) => {
+        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
+      });
+  }
+
+  /**
+   * Effettua la chiamata REST per aggiornare il database con le informazioni passate in input.
+   */
+  async sendMatchData() {
+    const tokenValue = (await this.loginService.getToken()).value;
+    const toSend = { 'token': tokenValue, 'info_giocatore': { "guessed_cards": this.localPlayer.guessedCards.length, "time": this.seconds } }
+
+    this.http.put('/game/save', toSend).subscribe(
+      async (res) => { },
+      async (res) => {
+        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
+      }
+    )
+  }
+
+  /**
+   * Calcolare la classifica in modo dinamico.
+   */
+  private async calculateRanking() {
+    const token_value = (await this.loginService.getToken()).value;
+    const headers = { 'token': token_value };
+
+    this.http.get('/game/status', { headers }).subscribe(
+      async (res) => {
+        this.info_partita = res['results'];
+        this.saveRanking();
+      },
+      async (res) => {
+        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
+      }
+    );
+  }
+
+  /**
+   * Effettua la chiamata REST per ottenere le informazioni della partita di tutti i giocatori.
+   */
+  async getInfoPartita() {
+    var button = [{ text: 'Continua a giocare' }];
+    const token_value = (await this.loginService.getToken()).value;
+    const headers = { 'token': token_value };
+
+    this.http.get('/game/status', { headers }).subscribe(
+      async (res) => {
+        this.info_partita = res['results'];
+
+        this.info_partita.info.giocatori.forEach(p => {
+          if (p.info_giocatore.guessed_cards == (this.gameLogic.memoryCards.length / 2)) {
+            if (p.username != this.localPlayer.nickname) {
+              this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
+              this.timerService.stopTimers(this.timerInfoPartita);
+              this.timerFinale.startTimer();
+            }
+          }
+        });
+      },
+      async (res) => {
+        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
+      }
+    );
+  }
+
+  //TODO commentare
+  getGameConfig(): Promise<void> {
+    return this.gameLogic.initialize();
+  }
+
+  loadPlayers(): Promise<void> {
+    return this.gameLogic.updatePlayers();
+  }
+
+  /**
+   * Fa uscire il giocatore dalla partita.
+   */
+  leaveMatch() {
+    this.timerService.stopTimers(this.timerPing, this.timerInfoPartita);
+    return new Promise<void>(async (resolve, reject) => {
+      (await this.lobbyManager.abbandonaLobby()).subscribe(
+        async (res) => {
+          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          return resolve();
+        },
+        async (res) => {
+          this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+          this.errorManager.stampaErrore(res, 'Abbandono fallito');
+          return reject('Abbandono fallito');
+        }
+      );
+    })
+  }
+
+  /**
+   * Effettua l'operazione di ping.
+   */
+  ping(): Promise<void> {
+    return this.gameLogic.ping();
+  }
+
+  //TODO commentare
+  terminaPartita(): Promise<void> {
+    return this.gameLogic.terminaPartita();
   }
 
   /**
@@ -242,45 +370,13 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
     var button = [{ text: 'Vai alla classifica', handler: () => { this.showRanking(); } }];
     if (this.localPlayer.guessedCards.length == (this.gameLogic.memoryCards.length / 2)) {
       this.sendMatchData();
-      this.gameLogic.terminaPartita();
+      this.terminaPartita();
 
       this.alertCreator.createAlert("Fine partita!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
       this.timerService.stopTimers(this.timerInfoPartita);
       this.stopTimer();
       this.timerFinale.enabled = false;
     }
-  }
-
-  /**
-   * Carica le informazioni della lobby.
-   */
-  private async loadInfoLobby() {
-    (await this.lobbyManager.loadInfoLobby()).subscribe(
-      async (res) => {
-        this.lobby = res['results'][0];
-      },
-      async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
-      });
-  }
-
-  /**
-   * Effettua la chiamata REST per aggiornare il database con le informazioni passate in input.
-   */
-  private async sendMatchData() {
-    const tokenValue = (await this.loginService.getToken()).value;
-    const toSend = { 'token': tokenValue, 'info_giocatore': { "guessed_cards": this.localPlayer.guessedCards.length, "time": this.seconds } }
-
-    this.http.put('/game/save', toSend).subscribe(
-      async (res) => { },
-      async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
-      }
-    )
   }
 
   /**
@@ -332,26 +428,6 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
   }
 
   /**
-   * Calcolare la classifica in modo dinamico.
-   */
-  private async calculateRanking() {
-    const token_value = (await this.loginService.getToken()).value;
-    const headers = { 'token': token_value };
-
-    this.http.get('/game/status', { headers }).subscribe(
-      async (res) => {
-        this.info_partita = res['results'];
-        this.saveRanking();
-      },
-      async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
-      }
-    );
-  }
-
-  /**
    * Ordina la classifica.
    */
   private sortRanking() {
@@ -378,61 +454,11 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy {
   }
 
   /**
-   * Effettua la chiamata REST per ottenere le informazioni della partita di tutti i giocatori.
-   */
-  private async getInfoPartita() {
-    var button = [{ text: 'Continua a giocare' }];
-    const token_value = (await this.loginService.getToken()).value;
-    const headers = { 'token': token_value };
-
-    this.http.get('/game/status', { headers }).subscribe(
-      async (res) => {
-        this.info_partita = res['results'];
-
-        this.info_partita.info.giocatori.forEach(p => {
-          if (p.info_giocatore.guessed_cards == (this.gameLogic.memoryCards.length / 2)) {
-            if (p.username != this.localPlayer.nickname) {
-              this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
-              this.timerService.stopTimers(this.timerInfoPartita);
-              this.timerFinale.startTimer();
-            }
-          }
-        });
-      },
-      async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
-      }
-    );
-  }
-
-  /**
    * Chiede all'utente la conferma di abbandonare la partita
    */
   confirmLeaveMatch() {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
       async () => { this.leaveMatch(); })
-  }
-
-  /**
-   * Fa uscire il giocatore dalla partita.
-   */
-  private leaveMatch() {
-    this.timerService.stopTimers(this.timerPing, this.timerInfoPartita);
-    return new Promise<void>(async (resolve, reject) => {
-      (await this.lobbyManager.abbandonaLobby()).subscribe(
-        async (res) => {
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
-          return resolve();
-        },
-        async (res) => {
-          this.timerPing = this.timerService.getTimer(() => { this.gameLogic.ping() }, 4000);
-          this.errorManager.stampaErrore(res, 'Abbandono fallito');
-          return reject('Abbandono fallito');
-        }
-      );
-    })
   }
 
 }

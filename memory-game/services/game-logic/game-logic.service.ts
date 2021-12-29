@@ -5,7 +5,6 @@ import { Question } from 'src/app/modal-pages/question-modal/question';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
-import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { MemoryCard } from '../../components/memory-card';
 import { MemoryPlayer } from '../../components/memory-player';
 import { MemoryDataKeeperService } from '../data-keeper/data-keeper.service';
@@ -24,19 +23,20 @@ export class GameLogicService {
   constructor(
     private dataKeeper: MemoryDataKeeperService,
     private lobbyManager: LobbyManagerService,
-    private timerService: TimerController,
     private router: Router,
     private errorManager: ErrorManagerService,
     private loginService: LoginService,
     private http: HttpClient) { }
 
+  //TODO commentare
+
   initialize() {
     this.memoryCards = [];
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.getGameConfig()
         .then(_ => {
           this.flippableCards = true;
-          return resolve(true);
+          return resolve();
         })
         .catch(error => reject(error))
     });
@@ -84,13 +84,14 @@ export class GameLogicService {
   }
 
   async updatePlayers() {
-    return new Promise(async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       (await this.lobbyManager.getPartecipanti()).subscribe(
         async (res) => {
           this.lobbyPlayers = res['results'];
 
-          if (this.players.length == 0) this.setGamePlayers();
-          return resolve(true);
+          if (this.players.length == 0)
+            this.setGamePlayers();
+          return resolve();
         },
         async (res) => {
           reject();
@@ -168,7 +169,5 @@ export class GameLogicService {
         this.errorManager.stampaErrore(res, 'Terminazione partita fallita');
       });
   }
-
-
 
 }
