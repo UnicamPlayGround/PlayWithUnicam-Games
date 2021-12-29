@@ -138,7 +138,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
    * Inoltre se *"fineTurno"* è true conclude il turno del Giocatore.
    * @param info Informazioni da salvare
    */
-  async inviaDatiPartita(info: JSON) {
+  async sendMatchData(info: JSON) {
     const tokenValue = (await this.loginService.getToken()).value;
     const toSend = { 'token': tokenValue, 'info_giocatore': info }
 
@@ -258,7 +258,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
   /**
    * Fa abbandonare la partita ad un giocatore.
    */
-  abbandonaPartita() {
+  leaveMatch() {
     this.timerService.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
     return new Promise<void>(async (resolve, reject) => {
       (await this.lobbyManager.abbandonaLobby()).subscribe(
@@ -439,7 +439,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
         this.alertCreator.createInfoAlert('Complimenti', "Hai risposto a tutte le domande, attendi che finisca il turno l'avversario!");
         this.alertFineDomande = false;
       }
-      this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info)
+      this.sendMatchData(this.gamePlayers[this.localPlayerIndex].info)
         .then(_ => { this.concludiTurno(); });
     }
   }
@@ -463,7 +463,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
       if (rispostaCorretta)
         this.iniziaTurno();
       else
-        this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info)
+        this.sendMatchData(this.gamePlayers[this.localPlayerIndex].info)
           .then(_ => { this.concludiTurno(); });
     });
 
@@ -557,7 +557,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
       var button = [{ text: 'Vai alla classifica', handler: () => { this.mostraClassifica(); } }];
 
       if (goose == this.gamePlayers[this.localPlayerIndex].goose) {
-        this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info);
+        this.sendMatchData(this.gamePlayers[this.localPlayerIndex].info);
         this.terminaPartita();
         this.alertCreator.createAlert("Vittoria", "Complimenti, hai vinto la partita!", button);
       } else {
@@ -593,11 +593,11 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
 
         if (!this.controllaFinePartita(posizione, goose)) {
           if (goose == this.gamePlayers[this.localPlayerIndex].goose) {
-            this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info);
+            this.sendMatchData(this.gamePlayers[this.localPlayerIndex].info);
             if (posizione != 0)
               this.presentaDomanda();
             else
-              this.inviaDatiPartita(this.gamePlayers[this.localPlayerIndex].info)
+              this.sendMatchData(this.gamePlayers[this.localPlayerIndex].info)
                 .then(_ => { this.concludiTurno(); });
           }
 
@@ -665,9 +665,9 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
       async () => {
         if (this.myTurn)
           this.concludiTurno()
-            .then(_ => { this.abbandonaPartita(); });
+            .then(_ => { this.leaveMatch(); });
         else
-          this.abbandonaPartita();
+          this.leaveMatch();
       })
   }
 }

@@ -5,7 +5,7 @@ export declare interface Game {
 
     getInfoPartita(): Promise<void>;
 
-    inviaDatiPartita(info: JSON): Promise<void>;
+    sendMatchData(info: JSON): Promise<void>;
 
     terminaPartita(): Promise<void>;
 
@@ -13,7 +13,10 @@ export declare interface Game {
 
     loadPlayers(): Promise<void>;
 
+    /**
+     * Effettua l'operazione di ping.
+     */
     ping(): Promise<void>;
 
-    abbandonaPartita(): Promise<void>;
+    leaveMatch(): Promise<void>;
 }
