@@ -17,30 +17,11 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
    */
   @Input('config') config = { cells: [] };
 
-  /**
-   * Questo EventEmitter consente a questo component di comunicare con il suo parent emettendo
-   * eventi contenenti determinati valori che saranno poi intercettati dal parent.
-   */
-  @Output() updateConfigEvent = new EventEmitter<Object>();
-
   constructor(private alertCreator: AlertCreatorService) { }
 
   ngOnInit() {
     if (!this.config.cells)
       this.config.cells = [];
-  }
-
-  /**
-   * Quando l'utente salva la configurazione del gioco tramite l'apposito button,
-   * emette un evento contenente il config del gioco aggiornato che verrà poi catturato dal
-   * componente parent.
-   */
-  updateConfig() {
-    if (this.config.cells.length > 0) {
-      // this.config.cells.shift();
-      this.updateConfigEvent.emit(this.config);
-    }
-    else this.alertCreator.createInfoAlert("Errore", "Il tabellone non può essere lasciato vuoto!");
   }
 
   /**
