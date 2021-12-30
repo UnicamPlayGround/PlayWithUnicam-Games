@@ -1,12 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
 import { MemoryCard } from '../memory-card';
+import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
 import { MemoryPlayer } from '../memory-player';
 import { ModalController } from '@ionic/angular';
-import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
 import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-modal.page';
+import { Router } from '@angular/router';
+import { Timer } from 'src/app/components/timer-components/timer';
 
 @Component({
   selector: 'app-game',
@@ -18,12 +19,9 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
   players: MemoryPlayer[] = [];
   carteScoperte = 0;
 
-  timeMode = false;
-  interval;
-  minutes;
-  seconds;
-  currentPlayerUsername: String;
+  timer: Timer = new Timer(10, false, () => this.terminaPartita());
 
+  currentPlayerUsername: String;
 
   constructor(
     private gameLogic: GameLogicService,
@@ -44,26 +42,18 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.gameLogic.reset();
+    this.timer.stopTimer();
   }
 
   private setTimer() {
-    this.timeMode = true;
-    this.minutes = this.dataKeeper.getGameTime().minutes;
-    this.seconds = this.dataKeeper.getGameTime().seconds;
-    this.startTimer();
+    this.timer.setTimerTime(this.convertTime(this.dataKeeper.getGameTime().minutes, this.dataKeeper.getGameTime().seconds));
+    this.timer.startTimer();
   }
 
-  private startTimer() {
-    this.interval = setInterval(() => {
-      if (this.seconds == 0) {
-        this.minutes -= 1;
-        this.seconds = 59;
-      }
-      this.seconds -= 1;
-      if (this.seconds == 0 && this.minutes == 0)
-        this.terminaPartita();
-
-    }, 1000);
+  private convertTime(minutes: string, seconds: string) {
+    var min = (minutes.charAt(0) == "0") ? minutes.charAt(1) : minutes;
+    var sec = (seconds.charAt(0) == "0") ? seconds.charAt(1) : seconds;
+    return (Number(min) * 60) + Number(sec);
   }
 
   getCards() {
@@ -172,7 +162,6 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
     this.dataKeeper.getPlayers().forEach(player => {
       player.guessedCards = [];
     });
-    if (this.timeMode) clearInterval(this.interval);
   }
 
 

@@ -90,6 +90,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
   ngOnDestroy() {
     this.gameLogic.reset();
     this.timerService.stopTimers(this.timerInfoPartita, this.timerPing, this.timerClassifica);
+    this.timerFinale.stopTimer();
   }
 
   /**

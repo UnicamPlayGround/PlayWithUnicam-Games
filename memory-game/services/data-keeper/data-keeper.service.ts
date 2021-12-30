@@ -8,7 +8,7 @@ import { MemoryPlayer } from '../../components/memory-player';
 export class MemoryDataKeeperService {
   private players: MemoryPlayer[] = [];
   private gameMode: String;
-  private gameTime;
+  private gameTime = { minutes: "01", seconds: "00" };
 
   constructor(private alertCreator: AlertCreatorService) { }
 
@@ -32,8 +32,12 @@ export class MemoryDataKeeperService {
     return this.gameTime;
   }
 
-  setGameTime(minutes: Number, seconds: Number) {
-    this.gameTime = { minutes: minutes, seconds: seconds };
+  setGameTime(minutes: number, seconds: number) {
+    var min = (minutes < 10) ? "0" + minutes : minutes.toString();
+    var sec = (seconds < 10) ? "0" + seconds : seconds.toString();
+
+    this.gameTime.minutes = min;
+    this.gameTime.seconds = sec;
   }
 
   addPlayer(nickname) {
@@ -53,7 +57,7 @@ export class MemoryDataKeeperService {
   reset() {
     this.players = [];
     this.gameMode = null;
-    this.gameTime = null;
+    this.gameTime = { minutes: "01", seconds: "00" };
   }
 
 }

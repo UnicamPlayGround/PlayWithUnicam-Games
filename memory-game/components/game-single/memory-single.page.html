@@ -1,32 +1,24 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-
+    <ion-label *ngIf="timer.enabled">Tempo rimanente: {{timer.getTimeLeftToPrint()}}</ion-label>
   </ion-toolbar>
+
+  <app-progress-bar-timer *ngIf="timer.enabled" [timer]="timer" color="danger" reversed="true"></app-progress-bar-timer>
 </ion-header>
 
 <ion-content id="content">
 
   <ion-row>
-    <ion-card class="time" *ngIf="timeMode">
-      <ion-card-header>
-        <ion-card-title><strong>TIMER</strong></ion-card-title>
-      </ion-card-header>
-  
-      <ion-card-content>
-        <p><strong> {{minutes}} : {{seconds}}</strong></p>
-      </ion-card-content>
-    </ion-card>
-
     <fieldset class="currentPlayer">
-      <legend style="color: blue; font-family: papyrus;"><strong>Giocatore corrente</strong></legend>{{currentPlayerUsername}}
+      <legend style="color: blue; font-family: papyrus;"><strong>Giocatore corrente</strong></legend>
+      {{currentPlayerUsername}}
     </fieldset>
   </ion-row>
-  
-  
+
+
   <br>
   <br>
 

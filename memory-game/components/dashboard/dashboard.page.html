@@ -56,7 +56,8 @@
               <ion-item>
                 <ion-label text-wrap>Durata</ion-label>
                 <ion-datetime displayFormat="mm:ss" minuteValues="1,2,3,4,5,6,7,8,9,10" [(ngModel)]="gameTime"
-                  placeholder="Scegli la durata della partita"></ion-datetime>
+                  placeholder="Scegli la durata della partita" (ionChange)="saveTime()">
+                </ion-datetime>
               </ion-item>
             </div>
 
@@ -69,7 +70,8 @@
             </ion-label>
           </ion-list-header>
 
-          <ion-button (click)="startGame()" slot="end" size="large" color="unicamblue" [class.button-disabled]="!checkData" style="float: right;">
+          <ion-button (click)="startGame()" slot="end" size="large" color="unicamblue"
+            [class.button-disabled]="!checkData" style="float: right;">
             <ion-label>Avvia partita!</ion-label>
             <ion-icon slot="end" name="play"></ion-icon>
           </ion-button>
