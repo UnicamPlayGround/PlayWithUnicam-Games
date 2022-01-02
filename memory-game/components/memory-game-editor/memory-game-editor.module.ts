@@ -10,6 +10,7 @@ import { MemoryGameEditorPage } from './memory-game-editor.page';
 import { MemoryCardComponentModule } from '../memory-card/memory-card.module';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 import { CreateCardPageModule } from '../create-card/create-card.module';
+import { SwiperModule } from 'swiper/angular';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { CreateCardPageModule } from '../create-card/create-card.module';
     MemoryGameEditorPageRoutingModule,
     MemoryCardComponentModule,
     SharedComponentsModule,
-    CreateCardPageModule
+    CreateCardPageModule,
+    SwiperModule
   ],
   declarations: [MemoryGameEditorPage]
 })

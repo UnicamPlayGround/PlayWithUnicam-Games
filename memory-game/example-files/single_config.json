@@ -1,6 +1,7 @@
 {
     "game": "memory-game",
     "version": "single",
+    "end_countdown": 60,
     "cards": [
         {
             "title": "Hard disk",

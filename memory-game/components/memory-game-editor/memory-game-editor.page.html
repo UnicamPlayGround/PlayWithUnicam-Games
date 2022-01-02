@@ -3,17 +3,18 @@
   <div class="container">
     <div class="buttons-container">
       <div class="buttons">
-        <ion-button (click)="addNewCard()" color="unicamblue">
+        <ion-button (click)="addNewCard()" color="unicamblue" title="Crea una nuova carta">
           <ion-icon slot="start" name="add"></ion-icon>
           Aggiungi
         </ion-button>
 
-        <ion-button (click)="toggleBulkEdit()" color="unicamgrey" [class.button-disabled]="memoryCards.length == 0">
+        <ion-button (click)="toggleBulkEdit()" color="unicamgrey" [class.button-disabled]="memoryCards.length == 0"
+          title="Abilita la selezione multipla delle carte">
           <ion-icon slot="start" name="checkbox"></ion-icon>
           Seleziona
         </ion-button>
 
-        <ion-button (click)="bulkDelete()" color="unicamred" *ngIf="bulkEdit">
+        <ion-button (click)="bulkDelete()" color="unicamred" *ngIf="bulkEdit" title="Elimina elementi selezionati">
           <ion-icon slot="start" name="trash"></ion-icon>
           Elimina
         </ion-button>
@@ -24,16 +25,32 @@
       <h2>Elenco delle carte aggiunte</h2>
     </div>
 
-    <ion-grid>
-      <ion-row>
-        <ion-col *ngFor="let card of memoryCards; let i = index;" size-sm="4" size-md="3" size-lg="2" size="6">
-          <ion-card class="memory-card" button="true" tappable title="Modifica" (click)="editCard(card, i)">
-            <img src="{{card.url}}" alt="">
-            <ion-checkbox *ngIf="bulkEdit" [(ngModel)]="edit[i]"></ion-checkbox>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
+    <swiper [config]="swiperConfig">
+      <ng-template swiperSlide *ngFor="let card of memoryCards; let i = index;">
+        <ion-card class="memory-card" button="true" tappable title="Modifica" (click)="editCard(card, i)">
+          <img src="{{card.url}}" alt="">
+          <ion-checkbox *ngIf="bulkEdit" [(ngModel)]="edit[i]"></ion-checkbox>
+        </ion-card>
+      </ng-template>
+    </swiper>
 
+    <div class="title">
+      <h2>Impostazioni partita</h2>
+    </div>
+
+    <ion-item lines="none" class="countdown-selector">
+      <ion-label text-wrap style="font-size: 18px; color: var(--ion-color-unicamgrey);">
+        Durata del countdown
+      </ion-label>
+      <ion-datetime displayFormat="mm:ss" [(ngModel)]="endCountdown" placeholder="Scegli la durata della partita"
+        (ionChange)="updateEndCountdown()"
+        style="max-width: 70px; font-size: 18px; color: var(--ion-color-unicamgrey); text-align: left;">
+      </ion-datetime>
+    </ion-item>
+
+    <p style="font-size: 14px; color: var(--ion-color-unicamgrey);">
+      Nella versione multiplayer, quando un giocatore vince, viene avviato un countdown che concede agli altri
+      la possibilità di continuare la partita e tentare di indovinare le coppie di carte ancora coperte.
+    </p>
+  </div>
 </ion-content>

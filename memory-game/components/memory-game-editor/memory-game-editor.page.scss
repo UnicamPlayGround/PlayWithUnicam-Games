@@ -3,10 +3,10 @@
     margin:auto;
 }
 
-.container, .button-container{
+.container{
     max-width: 1000px;
     margin:auto;
-    padding: 10px;
+    padding: 20px;
 }
 
 .buttons-container{
@@ -18,14 +18,20 @@
 }
 
 .title{
-    padding: 20px;
-
     h2{
         font-family: "Poppins" sans-serif !important;
         font-weight: bold !important;
         color:var(--ion-color-unicamblue) !important;
         font-size: 26px !important;
     }
+}
+
+.countdown-selector{
+    max-width: 400px;
+    --background: transparent;
+    --inner-padding-start: 0px;
+    --inner-padding-end: 0px;
+    --padding-start: 0px;
 }
 
 .memory-card{
@@ -51,4 +57,12 @@
 .memory-card:hover{
     box-shadow: 0 13px 16px 0 rgba(0,0,0,0.24), 0 18px 50px 0 rgba(0,0,0,0.19);
     transform: translateY(-6px);
+}
+
+@media screen and (max-width:440px) {
+    .title{    
+        h2{
+            font-size: 22px !important;
+        }
+    }
 }

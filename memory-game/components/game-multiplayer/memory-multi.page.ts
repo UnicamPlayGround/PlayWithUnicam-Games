@@ -41,7 +41,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
   /**
    * Timer che viene avviato quando un giocatore vince
    */
-  timerFinale: Timer = new Timer(10, false, () => {
+  timerFinale: Timer = new Timer(null, false, () => {
     this.stopTimer();
     this.sendMatchData();
     this.showRanking();
@@ -84,6 +84,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       .then(_ => {
         this.setLocalPlayer();
         this.startTimer();
+        this.timerFinale.setTimerTime(this.gameLogic.config.end_countdown);
       });
   }
 

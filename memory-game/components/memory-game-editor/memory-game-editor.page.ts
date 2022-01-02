@@ -5,6 +5,7 @@ import { Question } from 'src/app/modal-pages/question-modal/question';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 import { CreateCardPage } from '../create-card/create-card.page';
 import { MemoryCard } from '../memory-card';
+import Swiper, { SwiperOptions, Pagination } from 'swiper';
 
 @Component({
   selector: 'app-memory-game-editor',
@@ -17,13 +18,49 @@ export class MemoryGameEditorPage implements OnInit, GameEditorComponent {
   edit = {};
 
   /**
+   * Countdown che sarà avviato appena un giocatore vince
+   */
+  endCountdown: string = new Date("2022-01-01T00:01:00").toISOString();
+
+  /**
    * Il valore della variabile config viene ottenuto dal component padre di questo editor.
    */
   @Input('config') config: any = { cards: [] };
 
+  swiperConfig: SwiperOptions = {
+    slidesPerView: 2,
+    spaceBetween: 0,
+    pagination: true,
+    grabCursor: true,
+    breakpoints: {
+      // when window width is >= 365px
+      365: {
+        slidesPerView: 3,
+        spaceBetween: 0
+      },
+      // when window width is >= 560px
+      560: {
+        slidesPerView: 4,
+        spaceBetween: 0
+      },
+      // when window width is >= 700px
+      700: {
+        slidesPerView: 5,
+        spaceBetween: 0
+      },
+      // when window width is >= 860px
+      860: {
+        slidesPerView: 6,
+        spaceBetween: 0
+      }
+    }
+  }
+
   constructor(private modalController: ModalController, private alertCreator: AlertCreatorService) { }
 
   ngOnInit() {
+    Swiper.use([Pagination]);
+
     if (this.config.cards) {
       this.config.cards.forEach(card => {
         this.memoryCards.push(
@@ -39,7 +76,16 @@ export class MemoryGameEditorPage implements OnInit, GameEditorComponent {
           ));
       });
     }
+    if (this.config.end_countdown) {
+      var date = new Date(null);
+      date.setSeconds(this.config.end_countdown);
+      this.endCountdown = date.toISOString();
+    }
+  }
 
+  updateEndCountdown() {
+    var date = new Date(this.endCountdown);
+    this.config.end_countdown = (date.getMinutes() * 60) + date.getSeconds();
   }
 
   /**
