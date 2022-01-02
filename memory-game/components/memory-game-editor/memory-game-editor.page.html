@@ -1,11 +1,39 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <div class="toolbar-container">
-      
-    </div>
-  </ion-toolbar>
-</ion-header>
+<ion-content color="light">
 
-<ion-content>
-  <ion-progress-bar type="determinate" value="0.42" buffer="0.5" reversed="false" color="primary"></ion-progress-bar>
+  <div class="container">
+    <div class="buttons-container">
+      <div class="buttons">
+        <ion-button (click)="addNewCard()" color="unicamblue">
+          <ion-icon slot="start" name="add"></ion-icon>
+          Aggiungi
+        </ion-button>
+
+        <ion-button (click)="toggleBulkEdit()" color="unicamgrey" [class.button-disabled]="memoryCards.length == 0">
+          <ion-icon slot="start" name="checkbox"></ion-icon>
+          Seleziona
+        </ion-button>
+
+        <ion-button (click)="bulkDelete()" color="unicamred" *ngIf="bulkEdit">
+          <ion-icon slot="start" name="trash"></ion-icon>
+          Elimina
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="title">
+      <h2>Elenco delle carte aggiunte</h2>
+    </div>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col *ngFor="let card of memoryCards; let i = index;" size-sm="4" size-md="3" size-lg="2" size="6">
+          <ion-card class="memory-card" button="true" tappable title="Modifica" (click)="editCard(card, i)">
+            <img src="{{card.url}}" alt="">
+            <ion-checkbox *ngIf="bulkEdit" [(ngModel)]="edit[i]"></ion-checkbox>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
 </ion-content>

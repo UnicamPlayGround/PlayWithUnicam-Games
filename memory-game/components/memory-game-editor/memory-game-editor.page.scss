@@ -2,3 +2,53 @@
     max-width: 1000px;
     margin:auto;
 }
+
+.container, .button-container{
+    max-width: 1000px;
+    margin:auto;
+    padding: 10px;
+}
+
+.buttons-container{
+    text-align: center;
+}
+
+.buttons{
+    display: inline-block;
+}
+
+.title{
+    padding: 20px;
+
+    h2{
+        font-family: "Poppins" sans-serif !important;
+        font-weight: bold !important;
+        color:var(--ion-color-unicamblue) !important;
+        font-size: 26px !important;
+    }
+}
+
+.memory-card{
+    aspect-ratio: 3/4;
+    border-radius: 20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align: center;
+    padding:8%;
+}
+
+.memory-card img{
+    height: auto;
+}
+
+.memory-card ion-checkbox{
+    position:absolute;
+    top:20px;
+    left: 20px;
+}
+
+.memory-card:hover{
+    box-shadow: 0 13px 16px 0 rgba(0,0,0,0.24), 0 18px 50px 0 rgba(0,0,0,0.19);
+    transform: translateY(-6px);
+}

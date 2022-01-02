@@ -6,49 +6,57 @@
 			"title": "Hard Disk",
 			"text": "Questo è un hard disk.",
 			"url": "https://bit.ly/3GKrant",
-			"seconds": 15,
-			"question": "Cos'è l'oggetto in foto?",
-			"answers": [
-				"Un hard disk",
-				"Una scheda video",
-				"Un processore"
-			]
+			"question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Un hard disk",
+                    "Un processore",
+                    "Un microchip"
+                ],
+                "countdown_seconds": 10
+            }
 		},
 		{
 			"title": "Mouse",
 			"text": "Questo è un mouse.",
 			"url": "https://dell.to/3m4k5Gq",
-			"seconds": 5,
-			"question": "Cos'è l'oggetto in foto?",
-			"answers": [
-				"Un mouse",
-				"Un criceto",
-				"Una chiavetta USB"
-			]
+			"question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Un mouse",
+                    "Un criceto",
+                    "Un dispositivo di archiviazione USB"
+                ],
+                "countdown_seconds": 15
+            }
 		},
 		{
 			"title": "Monitor",
 			"text": "Questo è un monitor",
 			"url": "https://bit.ly/321sWS4",
-			"seconds": 10,
-			"question": "Cos'è l'oggetto in foto?",
-			"answers": [
-				"Un monitor",
-				"Un laptop",
-				"Uno smartphone"
-			]
+			"question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Un monitor",
+                    "Un tablet",
+                    "Un libro"
+                ],
+                "countdown_seconds": 20
+            }
 		},
 		{
 			"title": "Ventola per PC",
 			"text": "Questa è una ventola per PC.",
 			"url": "https://bit.ly/3ERURCw",
-			"seconds": 20,
-			"question": "Cos'è l'oggetto in foto?",
-			"answers": [
-				"Una ventola per PC",
-				"L'elica di un elicottero",
-				"Un tritarifiuti"
-			]
+			"question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Una ventola per PC",
+                    "L'elica di un elicottero",
+                    "Un tritarifiuti"
+                ],
+                "countdown_seconds": 25
+            }
 		}
 	]
 }

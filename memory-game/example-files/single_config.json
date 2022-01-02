@@ -3,40 +3,46 @@
     "version": "single",
     "cards": [
         {
-            "title": "hard disk",
-            "text": "aaaa",
+            "title": "Hard disk",
+            "text": "Questo è un hard disk.",
             "url": "https://www.street-price.it/data/image/product/big/DT01ACA100-zKeJ.jpg",
-            "seconds": 20,
-            "question": "domanda?",
-            "answers": [
-                "risposta1",
-                "risposta2",
-                "risposta3"
-            ]
+            "question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Un hard disk",
+                    "Un processore",
+                    "Un microchip"
+                ],
+                "countdown_seconds": 10
+            }
         },
         {
-            "title": "mouse",
-            "text": "bbbb",
+            "title": "Mouse",
+            "text": "Questo è un mouse.",
             "url": "https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg",
-            "seconds": 15,
-            "question": "domanda?",
-            "answers": [
-                "risposta1",
-                "risposta2",
-                "risposta3"
-            ]
+            "question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Un mouse",
+                    "Un criceto",
+                    "Un dispositivo di archiviazione USB"
+                ],
+                "countdown_seconds": 15
+            }
         },
         {
-            "title": "monitor",
-            "text": "cccc",
+            "title": "Monitor",
+            "text": "Questo è un monitor",
             "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg",
-            "seconds": 10,
-            "question": "domanda?",
-            "answers": [
-                "risposta1",
-                "risposta2",
-                "risposta3"
-            ]
+            "question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Un monitor",
+                    "Un tablet",
+                    "Un libro"
+                ],
+                "countdown_seconds": 20
+            }
         }
     ]
 }

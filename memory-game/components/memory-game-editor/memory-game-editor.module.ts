@@ -9,6 +9,7 @@ import { MemoryGameEditorPageRoutingModule } from './memory-game-editor-routing.
 import { MemoryGameEditorPage } from './memory-game-editor.page';
 import { MemoryCardComponentModule } from '../memory-card/memory-card.module';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
+import { CreateCardPageModule } from '../create-card/create-card.module';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { SharedComponentsModule } from 'src/app/components/shared-components.mod
     IonicModule,
     MemoryGameEditorPageRoutingModule,
     MemoryCardComponentModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    CreateCardPageModule
   ],
   declarations: [MemoryGameEditorPage]
 })

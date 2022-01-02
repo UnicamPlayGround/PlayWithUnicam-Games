@@ -153,6 +153,7 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
   }
 
   private terminaPartita() {
+    this.timer.stopTimer();
     var button = [{
       text: 'Torna al menu', handler: () => {
         this.router.navigateByUrl('/memory', { replaceUrl: true });

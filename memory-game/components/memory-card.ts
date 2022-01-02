@@ -15,4 +15,13 @@ export class MemoryCard {
         this.url = url;
         this.question = question;
     }
+
+    getJSON() {
+        return {
+            title: this.title,
+            text: this.text,
+            url: this.url,
+            question: this.question.getJSON()
+        }
+    }
 }
