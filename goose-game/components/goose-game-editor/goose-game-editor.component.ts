@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { GameEditorComponent } from 'src/app/components/game-editor/game-editor.component';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 
@@ -12,16 +12,36 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
   bulkEdit = false;
   edit = {};
 
+  questionsCountdown: string[] = []
+
   /**
    * Il valore della variabile config viene ottenuto dal component padre di questo editor.
    */
-  @Input('config') config = { cells: [] };
+  @Input('config') config: any = { cells: [] };
 
   constructor(private alertCreator: AlertCreatorService) { }
 
   ngOnInit() {
     if (!this.config.cells)
       this.config.cells = [];
+
+    this.config.cells.forEach(cell => {
+      var date = new Date(null);
+      if (cell.question && cell.question.countdown_seconds)
+        date.setSeconds(cell.question.countdown_seconds);
+      else
+        date.setSeconds(0);
+      this.questionsCountdown.push(date.toISOString());
+    })
+  }
+
+  /**
+   * Salva il nuovo valore del timer della domanda.
+   * @param index Indice della casella
+   */
+  updateCountdown(index) {
+    var date = new Date(this.questionsCountdown[index]);
+    this.config.cells[index].question.countdown_seconds = (date.getMinutes() * 60) + date.getSeconds();
   }
 
   /**
@@ -58,7 +78,20 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
     const indexesToDelete = toDelete.filter(index => this.edit[index]).map(key => +key);
 
     while (indexesToDelete.length) {
-      this.config.cells.splice(indexesToDelete.pop(), 1);
+      var i = indexesToDelete.pop();
+      this.questionsCountdown.splice(i, 1);
+      this.config.cells.splice(i, 1);
+    }
+
+    this.resetIndexCell();
+  }
+
+  /**
+   * Resetta il titolo delle casella dopo una eliminazione.
+   */
+  private resetIndexCell() {
+    for (let i = 0; i < this.config.cells.length; i++) {
+      this.config.cells[i].title = i;
     }
   }
 
@@ -80,6 +113,7 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
     else {
       this.alertCreator.createConfirmationAlert("Sei sicuro di voler eliminare tutte le caselle?", () => {
         this.config.cells.splice(0, this.config.cells.length);
+        this.questionsCountdown.splice(0, this.questionsCountdown.length);
       });
     }
   }
@@ -110,9 +144,22 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
    * di partenza delle pedine.
    */
   addCell() {
-    if (this.config.cells.length == 0)
+    if (this.config.cells.length == 0) {
       this.config.cells.push(this.getCellObject(0));
-    this.config.cells.push(this.getCellObject(this.config.cells.length + 1));
+      this.addCountdown();
+    }
+
+    this.config.cells.push(this.getCellObject(this.config.cells.length));
+    this.addCountdown();
+  }
+
+  /**
+   * Aggiunge un countdown di 30 secondi all'array locale *"questionsCountdown"*.
+   */
+  addCountdown() {
+    var date = new Date(null);
+    date.setSeconds(30);
+    this.questionsCountdown.push(date.toISOString());
   }
 
   /**
@@ -121,10 +168,13 @@ export class GooseGameEditorComponent implements OnInit, GameEditorComponent {
    * @returns L'oggetto creato.
    */
   getCellObject(index) {
-    return {
-      title: index,
-      question: { img_url: "", video_url: "", q: "", answers: [] }
-    }
+    if (index == 0)
+      return { title: index };
+    else
+      return {
+        title: index,
+        question: { img_url: "", video_url: "", q: "", answers: [], countdown_seconds: 30 }
+      }
   }
 
   /**

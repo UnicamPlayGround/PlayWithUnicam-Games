@@ -58,6 +58,12 @@
               </ion-input>
             </ion-item>
             <ion-item>
+              <ion-label position="floating">Durata del countdown</ion-label>
+              <ion-datetime displayFormat="mm:ss" [(ngModel)]="questionsCountdown[i]" (ionChange)="updateCountdown(i)"
+                placeholder="Scegli la durata della partita">
+              </ion-datetime>
+            </ion-item>
+            <ion-item>
               <ion-label position="floating">Domanda</ion-label>
               <ion-input type="text" placeholder="Inserisci il testo della domanda" [(ngModel)]="cell.question.q">
               </ion-input>
