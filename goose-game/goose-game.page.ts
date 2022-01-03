@@ -85,7 +85,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
         async (res) => {
           res['results'][0].config.cells.forEach(cell => {
             if (cell.question)
-              this.cells.push(new GooseGameCell(cell.title, new Question(cell.question.q, cell.question.answers, cell.question.img_url, cell.question.video_url, 10)));
+              this.cells.push(new GooseGameCell(cell.title, new Question(cell.question.q, cell.question.answers, cell.question.img_url, cell.question.video_url, cell.question.countdown_seconds)));
             else
               this.cells.push(new GooseGameCell(cell.title));
           });
