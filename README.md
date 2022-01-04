@@ -1,2 +1,2 @@
-# mgp_games
-Raccolta di giochi per la piattaforma MGP
+# PlayWithUnicam-Games
+Raccolta di giochi per la piattaforma PlayWithUnicam.
