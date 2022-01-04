@@ -2,7 +2,7 @@ import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creato
 import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
-import { Game } from 'src/app/mgp_games/game';
+import { Game } from 'src/app/PlayWithUnicam-Games/game';
 import { GameLogicService } from '../../services/game-logic/game-logic.service';
 import { HttpClient } from '@angular/common/http';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
