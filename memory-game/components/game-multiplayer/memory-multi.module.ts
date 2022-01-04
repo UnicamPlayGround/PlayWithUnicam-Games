@@ -10,6 +10,7 @@ import { MemoryMultiGamePage } from './memory-multi.page';
 import { MemoryCardComponentModule } from '../memory-card/memory-card.module';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 import { ClassificaPageModule } from 'src/app/modal-pages/classifica/classifica.module';
+import { QuestionModalPageModule } from 'src/app/modal-pages/question-modal/question-modal.module';
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import { ClassificaPageModule } from 'src/app/modal-pages/classifica/classifica.
     FormsModule,
     IonicModule,
     MemoryGamePageRoutingModule,
+    QuestionModalPageModule,
     ClassificaPageModule,
     SharedComponentsModule,
     MemoryCardComponentModule
