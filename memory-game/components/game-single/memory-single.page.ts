@@ -159,7 +159,7 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
         this.router.navigateByUrl('/memory', { replaceUrl: true });
       }
     }];
-    this.alertCreator.createAlert("Fine della partita!", this.getWinner() + " ha vinto la partita!", button);
+    this.alertCreator.createAlert("Fine della partita!", this.getWinner() + " ha vinto la partita!", button, false);
     this.dataKeeper.getPlayers().forEach(player => {
       player.guessedCards = [];
     });

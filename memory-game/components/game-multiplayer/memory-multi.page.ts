@@ -165,7 +165,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
         this.info_partita.info.giocatori.forEach(p => {
           if (p.info_giocatore.guessed_cards == (this.gameLogic.memoryCards.length / 2)) {
             if (p.username != this.localPlayer.nickname) {
-              this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
+              this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button, true);
               this.timerCtrl.stopTimers(this.timerInfoPartita);
               this.timerFinale.startTimer();
             }
@@ -374,7 +374,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       this.sendMatchData();
       this.terminaPartita();
 
-      this.alertCreator.createAlert("Fine partita!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
+      this.alertCreator.createAlert("Fine partita!", "Complimenti, hai indovinato tutte le carte in " + this.display, button, false);
       this.timerCtrl.stopTimers(this.timerInfoPartita);
       this.stopTimer();
       this.timerFinale.enabled = false;

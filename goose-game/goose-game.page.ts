@@ -568,11 +568,11 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
       if (goose == this.gamePlayers[this.localPlayerIndex].goose) {
         this.sendMatchData(this.gamePlayers[this.localPlayerIndex].info);
         this.terminaPartita();
-        this.alertCreator.createAlert("Vittoria", "Complimenti, hai vinto la partita!", button);
+        this.alertCreator.createAlert("Vittoria", "Complimenti, hai vinto la partita!", button, false);
       } else {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita);
         const vincitore = this.cercaGiocatoreByGoose(goose);
-        this.alertCreator.createAlert("Peccato!", vincitore.username + " ha vinto!", button);
+        this.alertCreator.createAlert("Peccato!", vincitore.username + " ha vinto!", button, false);
       }
 
       return true;
