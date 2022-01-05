@@ -1,5 +1,5 @@
 {
-    "game": "memory-game",
+    "game_name": "memory-game",
     "version": "multi",
     "end_countdown": 60,
     "cards": [
