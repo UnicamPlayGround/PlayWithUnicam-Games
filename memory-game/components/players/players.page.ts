@@ -31,10 +31,7 @@ export class PlayersPage implements OnInit, OnDestroy {
     this.fetchPlayers();
   }
 
-  ngOnDestroy() {
-    //TODO contollare
-    console.log("ng on destroy players");
-  }
+  ngOnDestroy() { }
 
   addPlayer() {
     if (this.newPlayer.value.nickname.length != 0) {

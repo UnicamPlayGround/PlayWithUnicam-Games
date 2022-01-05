@@ -1,12 +1,12 @@
 /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
 .flip-card {
-    background-color: transparent;
+    background-color: transparent !important;
     border-radius: 20px;
-    max-width: 200px;
-    max-height: 300px;
-    width: 200px;
-    height: 300px;
+    max-width: 150px;
+    aspect-ratio: 3/4;
+    background-color: transparent !important;
     perspective: 1000px; /* Gives the 3D effect */
+    // box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
 }
 
 /* This container is needed to position the front and back side */
@@ -19,11 +19,6 @@
     transform-style: preserve-3d;
 }
 
-// /* Do an horizontal flip when you move the mouse over the flip box container */
-// .flip-card:hover .flip-card-inner {
-//     transform: rotateY(180deg);
-// }
-
 /* Position the front and back side */
 .flip-card-front, .flip-card-back {
     position: absolute;
@@ -33,8 +28,8 @@
     backface-visibility: hidden;
 
     img{
-        max-width: 128px;
-        max-height: 128px;
+        max-width: 65%;
+        height: auto;
     }
 }
 
@@ -43,22 +38,30 @@
     background: rgb(185,7,43);
     background: radial-gradient(circle, rgba(185,7,43,1) 0%, rgba(29,60,98,1) 100%);
 
-    border: 12px solid var(--ion-color-unicamgrey);
+    border: 4px solid var(--ion-color-unicamgrey);
     border-radius: 20px;
-    max-width: 200px;
-    max-height: 300px;
-    width: 200px;
-    height: 300px;
+    max-width: 150px;
+    height: auto;
+    aspect-ratio: 3/4;
 
     display:flex;
     justify-content:center;
     align-items:center;
 }
 
+.card-number{
+    color:rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    position: absolute;
+    margin:auto;
+    width: 100%;
+    height: 100%;
+}
+
 /* Style the back side */
 .flip-card-back {
     background-color: #fff;
-    border: 12px solid var(--ion-color-unicamgrey);
+    border: 1px solid #f1f1f1;
     border-radius: 20px;
     display:flex;
     justify-content:center;
@@ -66,20 +69,6 @@
     transform: rotateY(180deg);
 }
 
-@media screen and (max-width:1220px) {
-    .flip-card{
-        -webkit-transform:scale(0.6);
-        -moz-transform:scale(0.6);
-        -ms-transform:scale(0.6);
-        transform:scale(0.6);
-    }
-}
-
-@media screen and (max-width:800px) {
-    .flip-card{
-        -webkit-transform:scale(0.4);
-        -moz-transform:scale(0.4);
-        -ms-transform:scale(0.4);
-        transform:scale(0.4);
-    }
+.flip-card:hover{
+    // box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 100%);
 }

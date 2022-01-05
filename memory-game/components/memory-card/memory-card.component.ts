@@ -14,6 +14,12 @@ export class MemoryCardComponent implements OnInit, AfterViewInit {
   @Input('card') card: MemoryCard;
 
   /**
+   * Il numero da riportare sulla carta per facilitare la distinzione con le altre
+   * quando sono tutte coperte.
+   */
+  @Input('cardNumber') cardNumber: number;
+
+  /**
    * Questo EventEmitter consente a questo component di comunicare con il suo parent emettendo
    * eventi contenenti determinati valori che saranno poi intercettati dal parent.
    */
