@@ -67,7 +67,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
     private errorManager: ErrorManagerService,
     private gameLogic: GameLogicService,
     private modalController: ModalController,
-    private timerService: TimerController,
+    private timerCtrl: TimerController,
     private router: Router,
     private lobbyManager: LobbyManagerService
   ) { }
@@ -75,9 +75,9 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
   async ngOnInit() {
     this.ping();
     this.loadInfoLobby();
-    this.timerInfoPartita = this.timerService.getTimer(() => { this.getInfoPartita() }, 2000);
-    this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
-    this.timerClassifica = this.timerService.getTimer(() => { this.calculateRanking() }, 2000);
+    this.timerInfoPartita = this.timerCtrl.getTimer(() => { this.getInfoPartita() }, 2000);
+    this.timerPing = this.timerCtrl.getTimer(() => { this.ping() }, 4000);
+    this.timerClassifica = this.timerCtrl.getTimer(() => { this.calculateRanking() }, 2000);
 
     this.getGameConfig()
       .then(_ => { return this.loadPlayers() })
@@ -90,7 +90,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
 
   ngOnDestroy() {
     this.gameLogic.reset();
-    this.timerService.stopTimers(this.timerInfoPartita, this.timerPing, this.timerClassifica);
+    this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing, this.timerClassifica);
     this.timerFinale.stopTimer();
   }
 
@@ -107,8 +107,8 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
         this.lobby = res['results'][0];
       },
       async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl(this.gameLogic.redirectPath, { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
       });
   }
@@ -123,8 +123,8 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
     this.http.put('/game/save', toSend).subscribe(
       async (res) => { },
       async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl(this.gameLogic.redirectPath, { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
       }
     )
@@ -143,8 +143,8 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
         this.saveRanking();
       },
       async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl(this.gameLogic.redirectPath, { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
       }
     );
@@ -166,15 +166,15 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
           if (p.info_giocatore.guessed_cards == (this.gameLogic.memoryCards.length / 2)) {
             if (p.username != this.localPlayer.nickname) {
               this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button);
-              this.timerService.stopTimers(this.timerInfoPartita);
+              this.timerCtrl.stopTimers(this.timerInfoPartita);
               this.timerFinale.startTimer();
             }
           }
         });
       },
       async (res) => {
-        this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
+        this.router.navigateByUrl(this.gameLogic.redirectPath, { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
       }
     );
@@ -193,15 +193,15 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
    * Fa uscire il giocatore dalla partita.
    */
   leaveMatch() {
-    this.timerService.stopTimers(this.timerPing, this.timerInfoPartita);
+    this.timerCtrl.stopTimers(this.timerPing, this.timerInfoPartita);
     return new Promise<void>(async (resolve, reject) => {
       (await this.lobbyManager.abbandonaLobby()).subscribe(
         async (res) => {
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
           return resolve();
         },
         async (res) => {
-          this.timerPing = this.timerService.getTimer(() => { this.ping() }, 4000);
+          this.timerPing = this.timerCtrl.getTimer(() => { this.ping() }, 4000);
           this.errorManager.stampaErrore(res, 'Abbandono fallito');
           return reject('Abbandono fallito');
         }
@@ -375,7 +375,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       this.terminaPartita();
 
       this.alertCreator.createAlert("Fine partita!", "Complimenti, hai indovinato tutte le carte in " + this.display, button);
-      this.timerService.stopTimers(this.timerInfoPartita);
+      this.timerCtrl.stopTimers(this.timerInfoPartita);
       this.stopTimer();
       this.timerFinale.enabled = false;
     }
@@ -396,7 +396,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
     });
 
     modal.onDidDismiss().then(async () => {
-      this.timerService.stopTimers(this.timerInfoPartita, this.timerPing);
+      this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
       if (this.localPlayer.nickname == this.lobby.admin_lobby)
         this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
       else
@@ -460,7 +460,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
    */
   confirmLeaveMatch() {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler abbandonare la partita?',
-      async () => { this.leaveMatch(); })
+      async () => { this.leaveMatch(); });
   }
 
 }

@@ -19,6 +19,7 @@ export class GameLogicService {
   players: MemoryPlayer[] = [];
   currentPlayer: MemoryPlayer;
   flippableCards: boolean;
+  redirectPath: string;
 
   constructor(
     private dataKeeper: MemoryDataKeeperService,
@@ -26,7 +27,16 @@ export class GameLogicService {
     private router: Router,
     private errorManager: ErrorManagerService,
     private loginService: LoginService,
-    private http: HttpClient) { }
+    private http: HttpClient) {
+    this.loginService.getUserType().then(
+      tipoUtente => {
+        if (tipoUtente) {
+          if (tipoUtente == "ADMIN") this.redirectPath = '/admin/dashboard';
+          else this.redirectPath = '/player/dashboard';
+        }
+      }
+    );
+  }
 
   //TODO commentare
 
@@ -55,7 +65,7 @@ export class GameLogicService {
     (await this.lobbyManager.ping()).subscribe(
       async (res) => { },
       async (res) => {
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Ping fallito');
       }
     );
@@ -76,7 +86,7 @@ export class GameLogicService {
         },
         async (res) => {
           reject();
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
           this.errorManager.stampaErrore(res, 'File di configurazione mancante');
         }
       );
@@ -95,7 +105,7 @@ export class GameLogicService {
         },
         async (res) => {
           reject();
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
           this.errorManager.stampaErrore(res, 'Impossibile caricare i giocatori!');
         });
     });
@@ -139,7 +149,8 @@ export class GameLogicService {
   private setCards() {
     this.config.cards.forEach(card => {
       this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question.question, card.question.answers, card.url, null, card.question.countdown_seconds)));
-      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question.question, card.question.answers, card.url, null, card.question.countdown_seconds)));    });
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question.question, card.question.answers, card.url, null, card.question.countdown_seconds)));
+    });
     this.shuffleCards();
   }
 

@@ -24,7 +24,7 @@
 
   <ion-row>
     <ion-col *ngFor="let card of getCards(); let i = index;" size="3" size-sm="3" size-md="2" size-lg="1.5">
-      <app-memory-card [card]="card" [cardNumber]="i + 1" (click)="selectCard(card)" class="card">
+      <app-memory-card [card]="card" [cardNumber]="i" (click)="selectCard(card)">
       </app-memory-card>
     </ion-col>
   </ion-row>

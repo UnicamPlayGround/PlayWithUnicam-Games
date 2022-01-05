@@ -23,7 +23,7 @@ import { Question } from 'src/app/modal-pages/question-modal/question';
   styleUrls: ['./goose-game.page.scss'],
 })
 export class GooseGamePage implements OnInit, TurnBasedGame {
-
+  redirectPath: string;
   cells: GooseGameCell[] = [];
   lobbyPlayers = [];
   gamePlayers = [];
@@ -57,7 +57,16 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
     private router: Router,
     private http: HttpClient,
     private uiBuilder: UiBuilderService
-  ) { }
+  ) {
+    this.loginService.getUserType().then(
+      tipoUtente => {
+        if (tipoUtente) {
+          if (tipoUtente == "ADMIN") this.redirectPath = '/admin/dashboard';
+          else this.redirectPath = '/player/dashboard';
+        }
+      }
+    );
+  }
 
   async ngOnInit() {
     this.getGameConfig();
@@ -96,7 +105,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
         },
         async (res) => {
           this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
           this.errorManager.stampaErrore(res, 'File di configurazione mancante');
           return reject("File di configurazione mancante");
         }
@@ -127,7 +136,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
       },
       async (res) => {
         this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+        this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
       }
     );
@@ -147,7 +156,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
         async (res) => { return resolve(); },
         async (res) => {
           this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
           this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
           return reject('Invio dati partita fallito');
         }
@@ -168,7 +177,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
         async (res) => { return resolve(); },
         async (res) => {
           this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
           this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
           return reject('Invio dati partita fallito');
         }
@@ -208,7 +217,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
         },
         async (res) => {
           this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
           this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
           return reject('Impossibile caricare la lobby!');
         });
@@ -231,7 +240,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
         },
         async (res) => {
           this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
           this.errorManager.stampaErrore(res, 'Impossibile caricare i giocatori!');
           return reject('Impossibile caricare i giocatori!');
         });
@@ -247,7 +256,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
         async (res) => { return resolve(); },
         async (res) => {
           this.timerService.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
           this.errorManager.stampaErrore(res, 'Ping fallito');
           return reject('Ping fallito');
         }
@@ -263,7 +272,7 @@ export class GooseGamePage implements OnInit, TurnBasedGame {
     return new Promise<void>(async (resolve, reject) => {
       (await this.lobbyManager.abbandonaLobby()).subscribe(
         async (res) => {
-          this.router.navigateByUrl('/player/dashboard', { replaceUrl: true });
+          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
           return resolve();
         },
         async (res) => {
