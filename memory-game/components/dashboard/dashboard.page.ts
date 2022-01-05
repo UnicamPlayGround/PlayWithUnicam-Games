@@ -40,6 +40,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   startGame() {
+    this.dataKeeper.gameHasStarted = true;
     this.router.navigateByUrl('/memory/game', { replaceUrl: true });
   }
 

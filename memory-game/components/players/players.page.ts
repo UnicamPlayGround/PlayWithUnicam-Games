@@ -36,7 +36,7 @@ export class PlayersPage implements OnInit, OnDestroy {
   addPlayer() {
     if (this.newPlayer.value.nickname.length != 0) {
       this.dataKeeper.addPlayer(this.newPlayer.value.nickname);
-      this.router.navigateByUrl('/memory');;
+      this.newPlayer.reset();      
     } else this.alertCreator.createInfoAlert("Errore", "Il nickname non può essere vuoto!");
     //TODO: controllare bene che vi siano lettere
   }
@@ -44,7 +44,6 @@ export class PlayersPage implements OnInit, OnDestroy {
   deletePlayer(index) {
     this.alertCreator.createConfirmationAlert("Vuoi davvero eliminare il giocatore selezionato?", () => {
       this.dataKeeper.deletePlayer(index);
-      this.router.navigateByUrl('/memory');
     });
   }
 

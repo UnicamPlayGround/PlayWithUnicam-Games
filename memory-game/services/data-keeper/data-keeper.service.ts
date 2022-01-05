@@ -9,6 +9,7 @@ export class MemoryDataKeeperService {
   private players: MemoryPlayer[] = [];
   private gameMode: String;
   private gameTime = { minutes: "01", seconds: "00" };
+  gameHasStarted = false;
 
   constructor(private alertCreator: AlertCreatorService) { }
 
@@ -58,6 +59,7 @@ export class MemoryDataKeeperService {
     this.players = [];
     this.gameMode = null;
     this.gameTime = { minutes: "01", seconds: "00" };
+    this.gameHasStarted = false;
   }
 
 }

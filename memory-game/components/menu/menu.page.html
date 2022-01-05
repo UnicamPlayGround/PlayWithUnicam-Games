@@ -9,26 +9,26 @@
           style="margin-left:5px; max-width:100px;max-height: 100px;">
       </div>
 
-
-      <div style="padding:20px; color:var(--ion-color-light)">
-        <h2>Giocatori</h2>
-        <ion-item *ngFor="let player of players">
-          <ion-avatar slot="start">
-            <img src="../../../../../assets/icon/lobby-player.png" alt="Giocatore {{ player.nickname }}">
-          </ion-avatar>
-          <ion-label>{{ player.nickname }}</ion-label>
-        </ion-item>
-
+      <div *ngIf="!dataKeeper.gameHasStarted" style="padding:20px; max-height: 450px !important;">
+        <h2 class="title">Giocatori</h2>
+        <div style="max-height: 350px !important; overflow: auto;">
+          <ion-item *ngFor="let player of players">
+            <ion-avatar slot="start">
+              <img src="../../../../../assets/icon/lobby-player.png" alt="Giocatore {{ player.nickname }}">
+            </ion-avatar>
+            <ion-label>{{ player.nickname }}</ion-label>
+          </ion-item>
+        </div>
         <ion-menu-toggle auto-hide="false">
-          <ion-button routerLink="/memory/players" routerDirection="root" expand="block" color="unicamblue">
+          <ion-button (click)="addPlayer()" routerDirection="root" expand="block" color="light">
             <ion-icon slot="end" name="add"></ion-icon>
             <ion-label>Aggiungi</ion-label>
           </ion-button>
         </ion-menu-toggle>
       </div>
 
-      <div style="padding:20px; color:var(--ion-color-light)">
-        <h2>Classifica</h2>
+      <div *ngIf="dataKeeper.gameHasStarted" style="padding:20px;">
+        <h2 class="title">Classifica</h2>
 
         <ion-item *ngFor="let player of players; let i = index">
           <ion-avatar slot="start">
@@ -36,7 +36,7 @@
           </ion-avatar>
 
           <ion-label>{{ player.nickname }}</ion-label>
-          <ion-badge color="unicamblue"> {{ player.guessedCards.length }} </ion-badge>
+          <ion-badge color="light"> {{ player.guessedCards.length }} </ion-badge>
         </ion-item>
       </div>
     </ion-content>

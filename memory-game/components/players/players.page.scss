@@ -1,5 +1,23 @@
-ion-toolbar{
-    --background: transparent;
-    --border-color: transparent;
-    --border-style: none;
+.container{
+    max-width: 800px;
+    margin:auto;
+}
+
+.title{
+    font-size: 26px;
+    font-weight: bold;
+    color: var(--ion-color-dark);
+}
+
+ion-list{
+    border-radius: 20px;
+}
+
+.player-item{
+    color: var(--ion-color-dark);
+
+    ion-label{
+        color: var(--ion-color-dark);
+        font-size: 18px;
+    }
 }

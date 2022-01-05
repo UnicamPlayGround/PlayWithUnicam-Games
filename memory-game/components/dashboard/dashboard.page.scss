@@ -1,13 +1,76 @@
+.wave-header{
+    top: 100px;
+    position:absolute;
+    width: 100%;
+}
+
+.container{
+    max-width: 1000px;
+    margin:auto;
+}
+
+.title{
+    padding:0 10px !important;
+    text-align:left !important;
+    margin-top: 20px !important;
+    font-size: 26px;
+    font-weight: bold;
+    color: var(--ion-color-dark) !important;
+}
+
 #tempoModeCard, #normalModeCard{
-    border-radius: 15px;
+    border-radius: 20px !important;
+    min-height: 150px;
+
+    ion-card-header{
+        display: flex;
+        padding-top: 20px !important;
+    }
+}
+
+.card-icon{
+    padding:0 !important;
+    margin:0 !important;
+    font-size: 32px;
+}
+
+.card-title{
+    padding:0 10px !important;
+    margin:0 !important;
+    text-align:left !important;
+    font-size: 26px;
+    font-weight: bold;
 }
 
 .mode-selected{
-    --background: rgb(121,7,30);
-    --background: linear-gradient(90deg, rgba(121,7,30,1) 35%, rgba(185,7,43,1) 100%);
-    // --background: var(--ion-color-unicamred);
+    --background: rgb(146, 9, 36);
+    --background: linear-gradient(90deg, rgb(158, 19, 47) 35%, rgb(211, 20, 58)100%);
     --color:var(--ion-color-light);
-    ion-card-title{
-        --color:var(--ion-color-light);
+
+    ion-card-header{
+        .card-icon, .card-title{
+            --color:var(--ion-color-light) !important;
+        }
     }
+}
+
+.datetime-div{
+    padding: 20px;
+    border-radius: 20px;
+    // background-color: rgba(255, 255, 255, 0.2);
+    background-color: #fff !important;
+
+    ion-label{
+        color: var(--ion-color-dark);
+    }
+
+    ion-item{
+        color: var(--ion-color-dark);
+        font-size: 18px !important;
+        --background: transparent;
+    }
+}
+
+.start-button{
+    height: 58px !important;
 }

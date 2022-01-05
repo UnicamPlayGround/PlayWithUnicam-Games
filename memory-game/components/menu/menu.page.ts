@@ -33,6 +33,10 @@ export class MemoryMenuPage implements OnInit {
     this.dataKeeper.reset();
   }
 
+  addPlayer() {
+    this.router.navigateByUrl('/memory/players');
+  }
+
   backToLobby() {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler tornare alla lobby?',
       async () => {
