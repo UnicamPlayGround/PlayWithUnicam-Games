@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
-import { GameLogicService } from '../../services/game-logic/game-logic.service';
+import { MemoryGameLogicService } from '../../services/game-logic/memory-game-logic.service';
 
 @Component({
   selector: 'app-memory-dashboard',
@@ -16,7 +16,7 @@ export class MemoryMenuPage implements OnInit {
 
   constructor(
     private dataKeeper: MemoryDataKeeperService,
-    private gameLogic: GameLogicService,
+    private memoryGameLogic: MemoryGameLogicService,
     private timerController: TimerController,
     private alertCreator: AlertCreatorService,
     private router: Router
@@ -24,13 +24,17 @@ export class MemoryMenuPage implements OnInit {
 
   ngOnInit() {
     this.players = this.dataKeeper.getPlayers();
-    this.gameLogic.ping();
-    this.timerPing = this.timerController.getTimer(() => { this.gameLogic.ping() }, 4000);
+    this.memoryGameLogic.ping();
+    this.timerPing = this.timerController.getTimer(() => { this.memoryGameLogic.ping() }, 4000);
   }
 
   ngOnDestroy() {
     this.timerController.stopTimers(this.timerPing);
     this.dataKeeper.reset();
+  }
+
+  getGameHasStarted() {
+    return this.dataKeeper.gameHasStarted;
   }
 
   addPlayer() {

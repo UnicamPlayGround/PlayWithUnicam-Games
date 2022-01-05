@@ -11,7 +11,7 @@ import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-m
 import { Router } from '@angular/router';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { ToastCreatorService } from 'src/app/services/toast-creator/toast-creator.service';
-import { TurnBasedGame } from '../turn-based-game';
+import { TurnBasedGameLogic } from '../turn-based-game-logic';
 import { UiBuilderService } from './services/game-builder/ui-builder.service';
 import jwt_decode from 'jwt-decode';
 import { GooseGameCell } from './components/goose-game-cell';
@@ -22,7 +22,7 @@ import { Question } from 'src/app/modal-pages/question-modal/question';
   templateUrl: './goose-game.page.html',
   styleUrls: ['./goose-game.page.scss'],
 })
-export class GooseGamePage implements OnInit, TurnBasedGame {
+export class GooseGamePage implements OnInit, TurnBasedGameLogic {
   redirectPath: string;
   cells: GooseGameCell[] = [];
   lobbyPlayers = [];

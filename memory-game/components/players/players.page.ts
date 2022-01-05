@@ -1,10 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
-import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
 import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
-import { GameLogicService } from '../../services/game-logic/game-logic.service';
 import { MemoryPlayer } from '../memory-player';
 
 @Component({
@@ -19,10 +16,7 @@ export class PlayersPage implements OnInit, OnDestroy {
   constructor(
     private dataKeeper: MemoryDataKeeperService,
     private fb: FormBuilder,
-    private alertCreator: AlertCreatorService,
-    private gameLogic: GameLogicService,
-    private timerService: TimerController,
-    private router: Router) { }
+    private alertCreator: AlertCreatorService) { }
 
   ngOnInit() {
     this.newPlayer = this.fb.group({
@@ -36,7 +30,7 @@ export class PlayersPage implements OnInit, OnDestroy {
   addPlayer() {
     if (this.newPlayer.value.nickname.length != 0) {
       this.dataKeeper.addPlayer(this.newPlayer.value.nickname);
-      this.newPlayer.reset();      
+      this.newPlayer.reset();
     } else this.alertCreator.createInfoAlert("Errore", "Il nickname non può essere vuoto!");
     //TODO: controllare bene che vi siano lettere
   }

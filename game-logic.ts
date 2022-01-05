@@ -1,4 +1,4 @@
-export declare interface Game {
+export declare interface GameLogic {
     //TODO commentare
 
     getGameConfig(): Promise<void>;

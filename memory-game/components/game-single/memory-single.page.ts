@@ -1,6 +1,6 @@
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { GameLogicService } from '../../services/game-logic/game-logic.service';
+import { MemoryGameLogicService } from '../../services/game-logic/memory-game-logic.service';
 import { MemoryCard } from '../memory-card';
 import { MemoryDataKeeperService } from '../../services/data-keeper/data-keeper.service';
 import { MemoryPlayer } from '../memory-player';
@@ -24,7 +24,7 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
   currentPlayerUsername: String;
 
   constructor(
-    private gameLogic: GameLogicService,
+    private memoryGameLogic: MemoryGameLogicService,
     private router: Router,
     private alertCreator: AlertCreatorService,
     private modalController: ModalController,
@@ -33,15 +33,15 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
   ) { }
 
   async ngOnInit() {
-    await this.gameLogic.initialize();
+    await this.memoryGameLogic.initialize();
 
     if (this.dataKeeper.getGameMode() == "tempo")
       this.setTimer();
-    this.currentPlayerUsername = this.gameLogic.players[0].nickname;
+    this.currentPlayerUsername = this.memoryGameLogic.players[0].nickname;
   }
 
   ngOnDestroy() {
-    this.gameLogic.reset();
+    this.memoryGameLogic.reset();
     this.timer.stopTimer();
   }
 
@@ -57,17 +57,17 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
   }
 
   getCards() {
-    return this.gameLogic.getCards();
+    return this.memoryGameLogic.getCards();
   }
 
   endTurn() {
-    this.gameLogic.endCurrentPlayerTurn();
-    this.alertController.createInfoAlert("Fine del turno", "Ora è il turno di " + this.gameLogic.getCurrentPlayer().nickname);
-    this.currentPlayerUsername = this.gameLogic.getCurrentPlayer().nickname;
+    this.memoryGameLogic.endCurrentPlayerTurn();
+    this.alertController.createInfoAlert("Fine del turno", "Ora è il turno di " + this.memoryGameLogic.getCurrentPlayer().nickname);
+    this.currentPlayerUsername = this.memoryGameLogic.getCurrentPlayer().nickname;
   }
 
   selectCard(card: MemoryCard) {
-    if (card.enabled && this.gameLogic.flippableCards && !this.selectedCards.includes(card)) {
+    if (card.enabled && this.memoryGameLogic.flippableCards && !this.selectedCards.includes(card)) {
 
       if (this.selectedCards.length < 2) {
         card.memory_card.revealCard();
@@ -75,7 +75,7 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
       }
 
       if (this.selectedCards.length == 2) {
-        this.gameLogic.flippableCards = false;
+        this.memoryGameLogic.flippableCards = false;
 
         setTimeout(() => {
           this.compareCards();
@@ -99,12 +99,12 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
 
       this.endTurn();
       this.selectedCards = [];
-      this.gameLogic.flippableCards = true;
+      this.memoryGameLogic.flippableCards = true;
     }
   }
 
   private getWinner() {
-    return this.gameLogic.players.reduce((a: MemoryPlayer, b: MemoryPlayer) => {
+    return this.memoryGameLogic.players.reduce((a: MemoryPlayer, b: MemoryPlayer) => {
       if (a.guessedCards.length > b.guessedCards.length) {
         return a;
       } else return b;
@@ -125,7 +125,7 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
 
       if (rispostaCorretta) {
         this.carteScoperte += 1;
-        this.gameLogic.getCurrentPlayer().guessedCards.push(this.selectedCards[0]);
+        this.memoryGameLogic.getCurrentPlayer().guessedCards.push(this.selectedCards[0]);
         this.controllaVittoria();
       }
       else {
@@ -133,7 +133,7 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
         this.endTurn();
       }
       this.selectedCards = [];
-      this.gameLogic.flippableCards = true;
+      this.memoryGameLogic.flippableCards = true;
     });
 
     await modal.present();
@@ -148,7 +148,7 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
   }
 
   controllaVittoria() {
-    if (this.carteScoperte == (this.gameLogic.memoryCards.length / 2))
+    if (this.carteScoperte == (this.memoryGameLogic.memoryCards.length / 2))
       this.terminaPartita();
   }
 

@@ -12,7 +12,7 @@ import { MemoryDataKeeperService } from '../data-keeper/data-keeper.service';
 @Injectable({
   providedIn: 'root'
 })
-export class GameLogicService {
+export class MemoryGameLogicService {
   config: any;
   memoryCards: MemoryCard[] = [];
   lobbyPlayers = [];

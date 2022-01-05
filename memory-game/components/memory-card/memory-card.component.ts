@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { GameLogicService } from '../../services/game-logic/game-logic.service';
 import { MemoryCard } from '../memory-card';
 
 @Component({
@@ -27,7 +26,7 @@ export class MemoryCardComponent implements OnInit, AfterViewInit {
   @ViewChild('flipcard', { static: false }) flipcard: ElementRef;
   @ViewChild('inner') inner: ElementRef;
 
-  constructor(private gameLogic: GameLogicService) { }
+  constructor() { }
 
   ngAfterViewInit(): void { }
 

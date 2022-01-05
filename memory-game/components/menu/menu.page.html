@@ -9,7 +9,7 @@
           style="margin-left:5px; max-width:100px;max-height: 100px;">
       </div>
 
-      <div *ngIf="!dataKeeper.gameHasStarted" style="padding:20px; max-height: 450px !important;">
+      <div *ngIf="!getGameHasStarted()" style="padding:20px; max-height: 450px !important;">
         <h2 class="title">Giocatori</h2>
         <div style="max-height: 350px !important; overflow: auto;">
           <ion-item *ngFor="let player of players">
@@ -27,7 +27,7 @@
         </ion-menu-toggle>
       </div>
 
-      <div *ngIf="dataKeeper.gameHasStarted" style="padding:20px;">
+      <div *ngIf="getGameHasStarted()" style="padding:20px;">
         <h2 class="title">Classifica</h2>
 
         <ion-item *ngFor="let player of players; let i = index">

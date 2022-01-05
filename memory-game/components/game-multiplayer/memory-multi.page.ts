@@ -2,8 +2,8 @@ import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creato
 import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
-import { Game } from 'src/app/PlayWithUnicam-Games/game';
-import { GameLogicService } from '../../services/game-logic/game-logic.service';
+import { GameLogic } from 'src/app/PlayWithUnicam-Games/game-logic';
+import { MemoryGameLogicService } from '../../services/game-logic/memory-game-logic.service';
 import { HttpClient } from '@angular/common/http';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
@@ -21,7 +21,7 @@ import jwt_decode from 'jwt-decode';
   templateUrl: './memory-multi.page.html',
   styleUrls: ['./memory-multi.page.scss'],
 })
-export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
+export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
   /**
    * tempo della partita in secondi
    */
@@ -65,7 +65,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
     private loginService: LoginService,
     private http: HttpClient,
     private errorManager: ErrorManagerService,
-    private gameLogic: GameLogicService,
+    private memoryGameLogic: MemoryGameLogicService,
     private modalController: ModalController,
     private timerCtrl: TimerController,
     private router: Router,
@@ -84,12 +84,12 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       .then(_ => {
         this.setLocalPlayer();
         this.startTimer();
-        this.timerFinale.setTimerTime(this.gameLogic.config.end_countdown);
+        this.timerFinale.setTimerTime(this.memoryGameLogic.config.end_countdown);
       });
   }
 
   ngOnDestroy() {
-    this.gameLogic.reset();
+    this.memoryGameLogic.reset();
     this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing, this.timerClassifica);
     this.timerFinale.stopTimer();
   }
@@ -108,7 +108,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       },
       async (res) => {
         this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl(this.gameLogic.redirectPath, { replaceUrl: true });
+        this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
       });
   }
@@ -124,7 +124,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       async (res) => { },
       async (res) => {
         this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl(this.gameLogic.redirectPath, { replaceUrl: true });
+        this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
       }
     )
@@ -144,7 +144,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       },
       async (res) => {
         this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl(this.gameLogic.redirectPath, { replaceUrl: true });
+        this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
       }
     );
@@ -163,7 +163,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
         this.info_partita = res['results'];
 
         this.info_partita.info.giocatori.forEach(p => {
-          if (p.info_giocatore.guessed_cards == (this.gameLogic.memoryCards.length / 2)) {
+          if (p.info_giocatore.guessed_cards == (this.memoryGameLogic.memoryCards.length / 2)) {
             if (p.username != this.localPlayer.nickname) {
               this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button, true);
               this.timerCtrl.stopTimers(this.timerInfoPartita);
@@ -174,7 +174,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       },
       async (res) => {
         this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl(this.gameLogic.redirectPath, { replaceUrl: true });
+        this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
         this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
       }
     );
@@ -182,11 +182,11 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
 
   //TODO commentare
   getGameConfig(): Promise<void> {
-    return this.gameLogic.initialize();
+    return this.memoryGameLogic.initialize();
   }
 
   loadPlayers(): Promise<void> {
-    return this.gameLogic.updatePlayers();
+    return this.memoryGameLogic.updatePlayers();
   }
 
   /**
@@ -213,12 +213,12 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
    * Effettua l'operazione di ping.
    */
   ping(): Promise<void> {
-    return this.gameLogic.ping();
+    return this.memoryGameLogic.ping();
   }
 
   //TODO commentare
   terminaPartita(): Promise<void> {
-    return this.gameLogic.terminaPartita();
+    return this.memoryGameLogic.terminaPartita();
   }
 
   /**
@@ -227,7 +227,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
   private async setLocalPlayer() {
     const token = (await this.loginService.getToken()).value;
     const decodedToken: any = jwt_decode(token);
-    this.gameLogic.players.forEach(player => {
+    this.memoryGameLogic.players.forEach(player => {
       if (player.nickname == decodedToken.username)
         this.localPlayer = new MemoryPlayer(decodedToken.username);
     });
@@ -239,7 +239,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
    * @returns la lista delle carte utilizzate in partita
    */
   getCards() {
-    return this.gameLogic.getCards()
+    return this.memoryGameLogic.getCards()
   }
 
   /**
@@ -276,14 +276,14 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
    * @param card la carta con cui l'utente ha interagito
    */
   selectCard(card: MemoryCard) {
-    if (card.enabled && this.gameLogic.flippableCards && !this.selectedCards.includes(card)) {
+    if (card.enabled && this.memoryGameLogic.flippableCards && !this.selectedCards.includes(card)) {
       if (this.selectedCards.length < 2) {
         card.memory_card.revealCard();
         this.selectedCards.push(card);
       }
 
       if (this.selectedCards.length == 2) {
-        this.gameLogic.flippableCards = false;
+        this.memoryGameLogic.flippableCards = false;
 
         setTimeout(() => {
           this.compareCards();
@@ -313,7 +313,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       this.selectedCards[1].enabled = true;
 
       this.selectedCards = [];
-      this.gameLogic.flippableCards = true;
+      this.memoryGameLogic.flippableCards = true;
     }
   }
 
@@ -345,7 +345,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       else {
         this.coverSelectedCards();
       }
-      this.gameLogic.flippableCards = true;
+      this.memoryGameLogic.flippableCards = true;
     });
 
     await modal.present();
@@ -370,7 +370,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
    */
   private checkEndMatch() {
     var button = [{ text: 'Vai alla classifica', handler: () => { this.showRanking(); } }];
-    if (this.localPlayer.guessedCards.length == (this.gameLogic.memoryCards.length / 2)) {
+    if (this.localPlayer.guessedCards.length == (this.memoryGameLogic.memoryCards.length / 2)) {
       this.sendMatchData();
       this.terminaPartita();
 
@@ -418,7 +418,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, Game {
       if (p.username == this.localPlayer.nickname)
         toSave = { "username": this.localPlayer.nickname, "guessed_cards": this.localPlayer.guessedCards.length, "time": this.seconds, "punteggio": this.transform(this.seconds) }
       else {
-        if (p.info_giocatore.guessed_cards == (this.gameLogic.memoryCards.length / 2))
+        if (p.info_giocatore.guessed_cards == (this.memoryGameLogic.memoryCards.length / 2))
           toSave = { "username": p.username, "guessed_cards": p.info_giocatore.guessed_cards, "time": p.info_giocatore.time, "punteggio": this.transform(p.info_giocatore.time) }
         else
           toSave = { "username": p.username, "guessed_cards": p.info_giocatore.guessed_cards, "time": p.info_giocatore.time, "punteggio": "ancora in gioco" }
