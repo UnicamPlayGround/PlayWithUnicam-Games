@@ -25,7 +25,7 @@ export class MemoryGameEditorPage implements OnInit, GameEditorComponent {
   /**
    * Il valore della variabile config viene ottenuto dal component padre di questo editor.
    */
-  @Input('config') config: any = { cards: [] };
+  @Input('config') config: any = {};
 
   swiperConfig: SwiperOptions = {
     slidesPerView: 2,
@@ -102,6 +102,8 @@ export class MemoryGameEditorPage implements OnInit, GameEditorComponent {
 
       if (newMemoryCard) {
         this.memoryCards.push(newMemoryCard);
+        if (!this.config.cards)
+          this.config.cards = [];
         this.config.cards.push(newMemoryCard.getJSON());
       }
     });
