@@ -148,8 +148,8 @@ export class MemoryGameLogicService {
 
   private setCards() {
     this.config.cards.forEach(card => {
-      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question.question, card.question.answers, card.url, null, card.question.countdown_seconds)));
-      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question.question, card.question.answers, card.url, null, card.question.countdown_seconds)));
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question.question, card.question.answers, card.question.img_url, card.question.video_url, card.question.countdown_seconds)));
+      this.memoryCards.push(new MemoryCard(card.title, card.text, card.url, new Question(card.question.question, card.question.answers, card.question.img_url, card.question.video_url, card.question.countdown_seconds)));
     });
     this.shuffleCards();
   }

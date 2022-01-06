@@ -168,7 +168,9 @@ export class MemoryGameEditorPage implements OnInit, GameEditorComponent {
     const indexesToDelete = toDelete.filter(index => this.edit[index]).map(key => +key);
 
     while (indexesToDelete.length) {
-      this.memoryCards.splice(indexesToDelete.pop(), 1);
+      const i = indexesToDelete.pop();
+      this.memoryCards.splice(i, 1);
+      this.config.cards.splice(i, 1);
     }
   }
 

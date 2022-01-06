@@ -24,9 +24,9 @@
           <ion-card-content>
             <p>Titolo</p>
             <ion-input type="text" placeholder="Inserisci il titolo" [(ngModel)]="title"></ion-input>
-            <p>Testo</p>
+            <p>Descrizione</p>
             <ion-textarea placeholder="Inserisci il testo" [(ngModel)]="text"></ion-textarea>
-            <p>URL dell'immagine</p>
+            <p>URL dell'immagine da mostrare nella carta</p>
             <ion-input type="text" placeholder="Inserisci l'url dell'immagine" [(ngModel)]="url">
             </ion-input>
           </ion-card-content>
@@ -57,13 +57,19 @@
             <ion-input type="text" placeholder="Inserisci la domanda" [(ngModel)]="question.question">
             </ion-input>
 
+            <p>URL immagine della domanda (opzionale)</p>
+            <ion-input type="text" placeholder="Inserisci l'URL dell'immagine'" [(ngModel)]="question.imgUrl">
+            </ion-input>
+
+            <p>URL video della domanda (opzionale)</p>
+            <ion-input type="text" placeholder="Inserisci l'URL del video" [(ngModel)]="question.videoUrl">
+            </ion-input>
+
             <div *ngIf="question.answers.length > 0">
               <p style="color: var(--ion-color-unicamred);">* La risposta corretta deve essere inserita per prima!</p>
 
-              <ion-item lines="none"
-                *ngFor="let answer of question.answers; let j = index; trackBy:trackEditList">
-                <ion-input type="text" placeholder="Inserisci la risposta {{j+1}}"
-                  [(ngModel)]="question.answers[j]">
+              <ion-item lines="none" *ngFor="let answer of question.answers; let j = index; trackBy:trackEditList">
+                <ion-input type="text" placeholder="Inserisci la risposta {{j+1}}" [(ngModel)]="question.answers[j]">
                 </ion-input>
                 <ion-button slot="end" (click)="deleteAnswer(j)" fill="clear" color="unicamgrey" title="Elimina">
                   <ion-icon slot="icon-only" name="trash"></ion-icon>
