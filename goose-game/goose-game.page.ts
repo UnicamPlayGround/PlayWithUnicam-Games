@@ -525,7 +525,7 @@ export class GooseGamePage implements OnInit, TurnBasedGameLogic {
       componentProps: {
         classifica: this.calcolaClassifica()
       },
-      cssClass: 'fullheight'
+      cssClass: 'fullscreen'
     });
 
     modal.onDidDismiss().then(async () => {

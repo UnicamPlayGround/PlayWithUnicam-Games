@@ -392,7 +392,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
       componentProps: {
         classifica: this.classifica
       },
-      cssClass: 'fullheight'
+      cssClass: 'fullscreen'
     });
 
     modal.onDidDismiss().then(async () => {
