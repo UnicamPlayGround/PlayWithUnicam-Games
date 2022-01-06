@@ -197,7 +197,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
     return new Promise<void>(async (resolve, reject) => {
       (await this.lobbyManager.abbandonaLobby()).subscribe(
         async (res) => {
-          this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
+          this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
           return resolve();
         },
         async (res) => {
