@@ -41,6 +41,7 @@ export class MemorySingleGamePage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.dataKeeper.gameHasStarted = false;
     this.memoryGameLogic.reset();
     this.timer.stopTimer();
   }
