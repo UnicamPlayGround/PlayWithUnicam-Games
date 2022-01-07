@@ -62,13 +62,12 @@ export class MemoryGameLogicService {
   }
 
   async ping() {
-    (await this.lobbyManager.ping()).subscribe(
-      async (res) => { },
-      async (res) => {
-        this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Ping fallito');
-      }
-    );
+    return new Promise<void>(async (resolve, reject) => {
+      (await this.lobbyManager.ping()).subscribe(
+        async (res) => { return resolve(); },
+        async (res) => { reject(res); }
+      );
+    })
   }
 
   getGameConfig() {
@@ -84,11 +83,7 @@ export class MemoryGameLogicService {
             .then(_ => { return resolve(true); })
             .catch(error => { return reject(error) });
         },
-        async (res) => {
-          reject();
-          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
-          this.errorManager.stampaErrore(res, 'File di configurazione mancante');
-        }
+        async (res) => { return reject(res); }
       );
     });
   }
@@ -103,11 +98,7 @@ export class MemoryGameLogicService {
             this.setGamePlayers();
           return resolve();
         },
-        async (res) => {
-          reject();
-          this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
-          this.errorManager.stampaErrore(res, 'Impossibile caricare i giocatori!');
-        });
+        async (res) => { return reject(res); });
     });
 
   }

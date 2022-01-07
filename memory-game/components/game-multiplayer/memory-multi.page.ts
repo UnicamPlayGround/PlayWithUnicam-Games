@@ -60,6 +60,13 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
 
   selectedCards: MemoryCard[] = [];
 
+  /**
+   * Variabile booleana per indicare se l'utente sta uscendo dalla pagina o no:
+   * * **true** se l'utente sta uscendo dalla pagina
+   * * **false** altrimenti
+   */
+  isLeavingPage: boolean;
+
   constructor(
     private alertCreator: AlertCreatorService,
     private loginService: LoginService,
@@ -78,6 +85,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
     this.timerInfoPartita = this.timerCtrl.getTimer(() => { this.getInfoPartita() }, 2000);
     this.timerPing = this.timerCtrl.getTimer(() => { this.ping() }, 4000);
     this.timerClassifica = this.timerCtrl.getTimer(() => { this.calculateRanking() }, 2000);
+    this.isLeavingPage = false;
 
     this.getGameConfig()
       .then(_ => { return this.loadPlayers() })
@@ -106,11 +114,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
       async (res) => {
         this.lobby = res['results'][0];
       },
-      async (res) => {
-        this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Impossibile caricare la lobby!');
-      });
+      async (res) => { this.handleError(res, 'Impossibile caricare la lobby!'); });
   }
 
   /**
@@ -122,11 +126,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
 
     this.http.put('/game/save', toSend).subscribe(
       async (res) => { },
-      async (res) => {
-        this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Invio dati partita fallito');
-      }
+      async (res) => { this.handleError(res, 'Invio dati partita fallito'); }
     )
   }
 
@@ -142,11 +142,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
         this.info_partita = res['results'];
         this.saveRanking();
       },
-      async (res) => {
-        this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
-      }
+      async (res) => { this.handleError(res, 'Recupero informazioni partita fallito!'); }
     );
   }
 
@@ -172,21 +168,19 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
           }
         });
       },
-      async (res) => {
-        this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
-        this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
-        this.errorManager.stampaErrore(res, 'Recupero informazioni partita fallito!');
-      }
+      async (res) => { this.handleError(res, 'Recupero informazioni partita fallito!'); }
     );
   }
 
   //TODO commentare
   getGameConfig(): Promise<void> {
-    return this.memoryGameLogic.initialize();
+    return this.memoryGameLogic.initialize()
+      .catch(errorRes => { this.handleError(errorRes, "File di configurazione mancante!"); });
   }
 
   loadPlayers(): Promise<void> {
-    return this.memoryGameLogic.updatePlayers();
+    return this.memoryGameLogic.updatePlayers()
+      .catch(errorRes => { this.handleError(errorRes, "Impossibile caricare i giocatori!"); });
   }
 
   /**
@@ -213,12 +207,28 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
    * Effettua l'operazione di ping.
    */
   ping(): Promise<void> {
-    return this.memoryGameLogic.ping();
+    return this.memoryGameLogic.ping()
+      .catch(errorRes => { this.handleError(errorRes, "Ping fallito!"); });
   }
 
   //TODO commentare
   terminaPartita(): Promise<void> {
     return this.memoryGameLogic.terminaPartita();
+  }
+
+  /**
+   * Gestisce un errore causato da una chiamata REST e crea un alert 
+   * solo se l'utente non sta abbandonando la pagina. 
+   * @param res Response della chiamata REST
+   * @param errorText Header dell'alert
+   */
+  handleError(res, errorText: string) {
+    if (!this.isLeavingPage) {
+      this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
+      this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
+      this.errorManager.stampaErrore(res, errorText);
+      this.isLeavingPage = true;
+    }
   }
 
   /**
