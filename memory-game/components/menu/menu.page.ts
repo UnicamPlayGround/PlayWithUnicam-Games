@@ -13,6 +13,7 @@ import { MemoryGameLogicService } from '../../services/game-logic/memory-game-lo
 export class MemoryMenuPage implements OnInit {
   players = [];
   timerPing;
+  private workerPing = new Worker(new URL('src/app/workers/timer-worker.worker', import.meta.url));
 
   constructor(
     private dataKeeper: MemoryDataKeeperService,
@@ -25,12 +26,33 @@ export class MemoryMenuPage implements OnInit {
   ngOnInit() {
     this.players = this.dataKeeper.getPlayers();
     this.memoryGameLogic.ping();
-    this.timerPing = this.timerController.getTimer(() => { this.memoryGameLogic.ping() }, 4000);
+    this.initializeTimers();
   }
 
   ngOnDestroy() {
-    this.timerController.stopTimers(this.timerPing);
+    this.stopTimers();
     this.dataKeeper.reset();
+  }
+
+  /**
+   * Inizializza i timer della pagina.
+   */
+  private initializeTimers() {
+    if (typeof Worker !== 'undefined') {
+      this.workerPing.onmessage = () => { this.memoryGameLogic.ping() };
+      this.workerPing.postMessage(4000);
+    } else {
+      // Gli Web Worker non sono supportati.
+      this.timerPing = this.timerController.getTimer(() => { this.memoryGameLogic.ping() }, 4000);
+    }
+  }
+
+  /**
+   * Ferma i timer della pagina
+   */
+  private stopTimers() {
+    this.workerPing.terminate();
+    this.timerController.stopTimers(this.timerPing);
   }
 
   getGameHasStarted() {
@@ -44,7 +66,7 @@ export class MemoryMenuPage implements OnInit {
   backToLobby() {
     this.alertCreator.createConfirmationAlert('Sei sicuro di voler tornare alla lobby?',
       async () => {
-        this.timerController.stopTimers(this.timerPing);
+        this.stopTimers();
         this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
       });
   }
