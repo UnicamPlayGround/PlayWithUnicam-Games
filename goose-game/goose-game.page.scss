@@ -14,7 +14,8 @@
     display:flex;
     justify-content:center;
     align-items:center;
-    height:150px;
+    height:100px;
+    margin-bottom: 0px;
 }
 
 .players-legend{
@@ -157,7 +158,7 @@
     margin-top: 3rem;
 }
 
-@media only screen and (min-width: 1190px) and (max-width: 1430px){
+@media only screen and (min-width: 1190px) and (max-width: 1390px){
     ::ng-deep.game-cell{
         width: 140px;
         height: 140px;
