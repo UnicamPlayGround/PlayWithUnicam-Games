@@ -301,8 +301,18 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
    * @returns la stringa del tempo in formato 'min:sec'
    */
   private transform(value) {
-    const minutes: number = Math.floor(value / 60);
-    return minutes + ':' + (value - minutes * 60);
+    var minutes = Math.floor(value / 60);
+    var seconds = value - (minutes * 60);
+    var minString: string;
+    var secString: string;
+
+    if (minutes < 10) minString = "0" + minutes;
+    else minString = "" + minutes;
+
+    if (seconds < 10) secString = "0" + seconds;
+    else secString = "" + seconds;
+
+    return minString + ":" + secString;
   }
 
   /**
