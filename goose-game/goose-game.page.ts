@@ -548,7 +548,7 @@ export class GooseGamePage implements OnInit, OnDestroy, TurnBasedGameLogic {
    */
   private ordinaClassifica(classifica) {
     classifica.sort(function (a, b) {
-      return b.posizione - a.posizione;
+      return b.punteggio - a.punteggio;
     });
     return classifica;
   }
