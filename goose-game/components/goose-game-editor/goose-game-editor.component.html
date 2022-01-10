@@ -75,7 +75,9 @@
                 <ion-input type="text" placeholder="Inserisci il testo della risposta"
                   [(ngModel)]="cell.question.answers[j]">
                 </ion-input>
-                <ion-icon slot="start" name="trash-outline" (click)="deleteAnswer(i,j)"></ion-icon>
+                <div (click)="deleteAnswer(i,j)">
+                  <ion-icon slot="start" name="trash-outline"></ion-icon>
+                </div>
               </ion-item>
             </ion-list>
           </ion-list>
