@@ -1,12 +1,14 @@
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 import { ClassificaPage } from '../../modal-pages/classifica/classifica.page';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DadiPage } from 'src/app/modal-pages/dadi/dadi.page';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
+import { GooseGameCell } from './components/goose-game-cell';
 import { HttpClient } from '@angular/common/http';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
 import { ModalController } from '@ionic/angular';
+import { Question } from 'src/app/modal-pages/question-modal/question';
 import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-modal.page';
 import { Router } from '@angular/router';
 import { TimerController } from 'src/app/services/timer-controller/timer-controller.service';
@@ -14,15 +16,13 @@ import { ToastCreatorService } from 'src/app/services/toast-creator/toast-creato
 import { TurnBasedGameLogic } from '../turn-based-game-logic';
 import { UiBuilderService } from './services/game-builder/ui-builder.service';
 import jwt_decode from 'jwt-decode';
-import { GooseGameCell } from './components/goose-game-cell';
-import { Question } from 'src/app/modal-pages/question-modal/question';
 
 @Component({
   selector: 'app-goose-game',
   templateUrl: './goose-game.page.html',
   styleUrls: ['./goose-game.page.scss'],
 })
-export class GooseGamePage implements OnInit, TurnBasedGameLogic {
+export class GooseGamePage implements OnInit, OnDestroy, TurnBasedGameLogic {
   redirectPath: string;
   cells: GooseGameCell[] = [];
   lobbyPlayers = [];
@@ -45,6 +45,7 @@ export class GooseGamePage implements OnInit, TurnBasedGameLogic {
   private timerGiocatori;
   private timerPing;
   private timerInfoPartita;
+  private workerTimer = new Worker(new URL('src/app/workers/timer-worker.worker', import.meta.url));
 
   /**
    * Variabile booleana per indicare se l'utente sta uscendo dalla pagina o no:
@@ -76,13 +77,43 @@ export class GooseGamePage implements OnInit, TurnBasedGameLogic {
   }
 
   async ngOnInit() {
+    this.isLeavingPage = false;
     this.getGameConfig();
     this.ping();
-    this.loadInfoLobby()
-    this.timerGiocatori = this.timerController.getTimer(() => { this.loadPlayers() }, 3000);
-    this.timerInfoPartita = this.timerController.getTimer(() => { this.getInfoPartita() }, 2000);
-    this.timerPing = this.timerController.getTimer(() => { this.ping() }, 4000);
-    this.isLeavingPage = false;
+    this.loadInfoLobby();
+    this.initializeTimers();
+  }
+
+  ngOnDestroy(): void {
+    this.stopTimers();
+    this.isLeavingPage = true;
+  }
+
+  /**
+   * Inizializza i timer della pagina.
+   */
+  private initializeTimers() {
+    if (typeof Worker !== 'undefined') {
+      this.workerTimer.onmessage = () => {
+        this.ping();
+        this.loadPlayers();
+        this.getInfoPartita();
+      };
+      this.workerTimer.postMessage(2000);
+    } else {
+      // Gli Web Worker non sono supportati.
+      this.timerGiocatori = this.timerController.getTimer(() => { this.loadPlayers() }, 3000);
+      this.timerInfoPartita = this.timerController.getTimer(() => { this.getInfoPartita() }, 2000);
+      this.timerPing = this.timerController.getTimer(() => { this.ping() }, 4000);
+    }
+  }
+
+  /**
+   * Ferma i timer della pagina
+   */
+  private stopTimers() {
+    this.workerTimer.terminate();
+    this.timerController.stopTimers(this.timerGiocatori, this.timerInfoPartita, this.timerPing);
   }
 
   /**
@@ -260,7 +291,7 @@ export class GooseGamePage implements OnInit, TurnBasedGameLogic {
    * Fa abbandonare la partita ad un giocatore.
    */
   leaveMatch() {
-    this.timerController.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
+    this.stopTimers();
     return new Promise<void>(async (resolve, reject) => {
       (await this.lobbyManager.abbandonaLobby()).subscribe(
         async (res) => {
@@ -268,7 +299,7 @@ export class GooseGamePage implements OnInit, TurnBasedGameLogic {
           return resolve();
         },
         async (res) => {
-          this.timerPing = this.timerController.getTimer(() => { this.ping() }, 4000);
+          this.initializeTimers();
           this.errorManager.stampaErrore(res, 'Abbandono fallito');
           return reject('Abbandono fallito');
         }
@@ -284,7 +315,7 @@ export class GooseGamePage implements OnInit, TurnBasedGameLogic {
    */
   handleError(res, errorText: string) {
     if (!this.isLeavingPage) {
-      this.timerController.stopTimers(this.timerPing, this.timerGiocatori, this.timerInfoPartita);
+      this.stopTimers();
       this.router.navigateByUrl(this.redirectPath, { replaceUrl: true });
       this.errorManager.stampaErrore(res, errorText);
       this.isLeavingPage = true;
@@ -536,7 +567,7 @@ export class GooseGamePage implements OnInit, TurnBasedGameLogic {
     });
 
     modal.onDidDismiss().then(async () => {
-      this.timerController.stopTimers(this.timerPing);
+      this.stopTimers();
       if (this.gamePlayers[this.localPlayerIndex].username == this.lobby.admin_lobby)
         this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
       else

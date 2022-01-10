@@ -3,11 +3,11 @@ import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ErrorManagerService } from 'src/app/services/error-manager/error-manager.service';
 import { GameLogic } from 'src/app/PlayWithUnicam-Games/game-logic';
-import { MemoryGameLogicService } from '../../services/game-logic/memory-game-logic.service';
 import { HttpClient } from '@angular/common/http';
 import { LobbyManagerService } from 'src/app/services/lobby-manager/lobby-manager.service';
 import { LoginService } from 'src/app/services/login-service/login.service';
 import { MemoryCard } from '../memory-card';
+import { MemoryGameLogicService } from '../../services/game-logic/memory-game-logic.service';
 import { MemoryPlayer } from '../memory-player';
 import { ModalController } from '@ionic/angular';
 import { QuestionModalPage } from 'src/app/modal-pages/question-modal/question-modal.page';
@@ -51,12 +51,15 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
    */
   classifica: any[] = [];
 
+  private someoneHasWon = false;
+
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
   lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
 
   private timerInfoPartita;
   private timerPing;
   private timerClassifica;
+  private workerTimer = new Worker(new URL('src/app/workers/timer-worker.worker', import.meta.url));
 
   selectedCards: MemoryCard[] = [];
 
@@ -80,12 +83,10 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
   ) { }
 
   async ngOnInit() {
+    this.isLeavingPage = false;
     this.ping();
     this.loadInfoLobby();
-    this.timerInfoPartita = this.timerCtrl.getTimer(() => { this.getInfoPartita() }, 2000);
-    this.timerPing = this.timerCtrl.getTimer(() => { this.ping() }, 4000);
-    this.timerClassifica = this.timerCtrl.getTimer(() => { this.calculateRanking() }, 2000);
-    this.isLeavingPage = false;
+    this.initializeTimers();
 
     this.getGameConfig()
       .then(_ => { return this.loadPlayers() })
@@ -98,8 +99,36 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
 
   ngOnDestroy() {
     this.memoryGameLogic.reset();
-    this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing, this.timerClassifica);
+    this.stopTimers();
     this.timerFinale.stopTimer();
+    this.isLeavingPage = true;
+  }
+
+  /**
+   * Inizializza i timer della pagina.
+   */
+  private initializeTimers() {
+    if (typeof Worker !== 'undefined') {
+      this.workerTimer.onmessage = () => {
+        this.ping();
+        this.calculateRanking();
+        this.getInfoPartita();
+      };
+      this.workerTimer.postMessage(2000);
+    } else {
+      // Gli Web Worker non sono supportati.
+      this.timerInfoPartita = this.timerCtrl.getTimer(() => { this.getInfoPartita() }, 2000);
+      this.timerPing = this.timerCtrl.getTimer(() => { this.ping() }, 4000);
+      this.timerClassifica = this.timerCtrl.getTimer(() => { this.calculateRanking() }, 2000);
+    }
+  }
+
+  /**
+   * Ferma i timer della pagina
+   */
+  private stopTimers() {
+    this.workerTimer.terminate();
+    this.timerCtrl.stopTimers(this.timerClassifica, this.timerInfoPartita, this.timerPing);
   }
 
   /**
@@ -150,26 +179,28 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
    * Effettua la chiamata REST per ottenere le informazioni della partita di tutti i giocatori.
    */
   async getInfoPartita() {
-    var button = [{ text: 'Continua a giocare' }];
-    const token_value = (await this.loginService.getToken()).value;
-    const headers = { 'token': token_value };
+    if (!this.someoneHasWon) {
+      var button = [{ text: 'Continua a giocare' }];
+      const token_value = (await this.loginService.getToken()).value;
+      const headers = { 'token': token_value };
 
-    this.http.get('/game/status', { headers }).subscribe(
-      async (res) => {
-        this.info_partita = res['results'];
+      this.http.get('/game/status', { headers }).subscribe(
+        async (res) => {
+          this.info_partita = res['results'];
 
-        this.info_partita.info.giocatori.forEach(p => {
-          if (p.info_giocatore.guessed_cards == (this.memoryGameLogic.memoryCards.length / 2)) {
-            if (p.username != this.localPlayer.nickname) {
-              this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button, true);
-              this.timerCtrl.stopTimers(this.timerInfoPartita);
-              this.timerFinale.startTimer();
+          this.info_partita.info.giocatori.forEach(p => {
+            if (p.info_giocatore.guessed_cards == (this.memoryGameLogic.memoryCards.length / 2)) {
+              if (p.username != this.localPlayer.nickname) {
+                this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button, true);
+                this.someoneHasWon = true;
+                this.timerFinale.startTimer();
+              }
             }
-          }
-        });
-      },
-      async (res) => { this.handleError(res, 'Recupero informazioni partita fallito!'); }
-    );
+          });
+        },
+        async (res) => { this.handleError(res, 'Recupero informazioni partita fallito!'); }
+      );
+    }
   }
 
   //TODO commentare
@@ -187,7 +218,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
    * Fa uscire il giocatore dalla partita.
    */
   leaveMatch() {
-    this.timerCtrl.stopTimers(this.timerPing, this.timerInfoPartita);
+    this.stopTimers();
     return new Promise<void>(async (resolve, reject) => {
       (await this.lobbyManager.abbandonaLobby()).subscribe(
         async (res) => {
@@ -224,7 +255,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
    */
   handleError(res, errorText: string) {
     if (!this.isLeavingPage) {
-      this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
+      this.stopTimers();
       this.router.navigateByUrl(this.memoryGameLogic.redirectPath, { replaceUrl: true });
       this.errorManager.stampaErrore(res, errorText);
       this.isLeavingPage = true;
@@ -385,7 +416,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
       this.terminaPartita();
 
       this.alertCreator.createAlert("Fine partita!", "Complimenti, hai indovinato tutte le carte in " + this.display, button, false);
-      this.timerCtrl.stopTimers(this.timerInfoPartita);
+      this.someoneHasWon = true;
       this.stopTimer();
       this.timerFinale.enabled = false;
     }
@@ -406,7 +437,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
     });
 
     modal.onDidDismiss().then(async () => {
-      this.timerCtrl.stopTimers(this.timerInfoPartita, this.timerPing);
+      this.stopTimers();
       if (this.localPlayer.nickname == this.lobby.admin_lobby)
         this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
       else
