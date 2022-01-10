@@ -1,5 +1,5 @@
 {
-    "game_name": "Memory SINGLE",
+    "game_name": "Memory multiplayer a schermo condiviso",
     "version": "single",
     "end_countdown": 60,
     "cards": [
