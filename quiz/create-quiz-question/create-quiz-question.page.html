@@ -1,0 +1,56 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-button slot="start" (click)="closeModal()" fill="clear" color="unicamblue" title="Annulla">
+      <ion-icon slot="icon-only" name="close"></ion-icon>
+    </ion-button>
+
+    <ion-title>{{pageTitle}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div style="padding: 20px;">
+    <p>Durata del countdown</p>
+    <ion-item lines="none">
+      <ion-icon slot="start" name="hourglass"></ion-icon>
+      <ion-datetime displayFormat="mm:ss" [(ngModel)]="questionCountdown" placeholder="Scegli la durata della partita">
+      </ion-datetime>
+    </ion-item>
+
+    <p>Domanda</p>
+    <ion-input type="text" placeholder="Inserisci la domanda" [(ngModel)]="question.question">
+    </ion-input>
+
+    <p>URL immagine della domanda (opzionale)</p>
+    <ion-input type="text" placeholder="Inserisci l'URL dell'immagine'" [(ngModel)]="question.imgUrl">
+    </ion-input>
+
+    <p>URL video della domanda (opzionale)</p>
+    <ion-input type="text" placeholder="Inserisci l'URL del video" [(ngModel)]="question.videoUrl">
+    </ion-input>
+
+    <div *ngIf="question.answers.length > 0">
+      <p style="color: var(--ion-color-unicamred);">* La risposta corretta deve essere inserita per prima!</p>
+
+      <ion-item lines="none" *ngFor="let answer of question.answers; let j = index; trackBy:trackEditList">
+        <ion-input type="text" placeholder="Inserisci la risposta {{j+1}}" [(ngModel)]="question.answers[j]">
+        </ion-input>
+        <ion-button slot="end" (click)="deleteAnswer(j)" fill="clear" color="unicamgrey" title="Elimina">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+    </div>
+
+    <ion-button (click)="addAnswer()" color="unicamred" style="margin-top: 15px;">Aggiungi risposta
+    </ion-button>
+  </div>
+
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar color="unicamblue">
+    <ion-button (click)="createQuestion()" expand="block" fill="clear" color="light">Salva</ion-button>
+  </ion-toolbar>
+</ion-footer>

@@ -1,0 +1,62 @@
+{
+    "game_name": "Quiz",
+    "version": "multi",
+    "cards": [
+        {
+            "title": "Hard Disk",
+            "text": "Questo è un hard disk.",
+            "url": "https://bit.ly/3GKrant",
+            "question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Un hard disk",
+                    "Un processore",
+                    "Un microchip"
+                ],
+                "countdown_seconds": 10
+            }
+        },
+        {
+            "title": "Mouse",
+            "text": "Questo è un mouse.",
+            "url": "https://dell.to/3m4k5Gq",
+            "question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Un mouse",
+                    "Un criceto",
+                    "Un dispositivo di archiviazione USB"
+                ],
+                "countdown_seconds": 15
+            }
+        },
+        {
+            "title": "Monitor",
+            "text": "Questo è un monitor",
+            "url": "https://bit.ly/321sWS4",
+            "question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Un monitor",
+                    "Un tablet",
+                    "Un libro"
+                ],
+                "countdown_seconds": 20
+            }
+        },
+        {
+            "title": "Ventola per PC",
+            "text": "Questa è una ventola per PC.",
+            "url": "https://bit.ly/3ERURCw",
+            "question": {
+                "question": "Cos'è l'oggetto in foto?",
+                "answers": [
+                    "Una ventola per PC",
+                    "L'elica di un elicottero",
+                    "Un tritarifiuti"
+                ],
+                "countdown_seconds": 25
+            }
+        }
+    ]
+}

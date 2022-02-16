@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans&display=swap');
+
+ion-content{
+    --background: rgb(255,247,234) !important;
+}
+
+.toolbarContent{
+    max-width: 900px;
+    margin: auto;
+    padding: 0 10px;
+    color:#fff;
+
+    h2{
+        font-family: 'Balsamiq Sans', cursive;
+    }
+}
+
+.score{
+    margin-left: 10px;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.question{
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 40px;
+}
+
+.questionContent{
+    position: relative;
+    z-index: 1000;
+    margin-top: 50px;
+    max-width: 900px;
+    margin: auto;
+    padding:20px;
+    // border: 2px solid #737373;
+    animation: 0.5s ease-out 0s 1 slideInFromBottom;
+}
+
+.questionsBox{
+    max-width: 250px;
+}
+
+.questionIcon{
+    border: 2px solid #737373;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.answersBox{
+
+}
+
+.disabledAnswers{
+    pointer-events: none;
+}
+
+.answer{
+    position: relative;
+    display: flex;
+    // justify-content: center;
+    // text-align: left;
+    align-items: center;
+    border: 2px solid #737373;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    padding:15px;
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 22px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.answer img{
+    max-width: 35px;
+    position: absolute;
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.answer:hover{
+    transform: scale(1.03);
+    box-shadow: 0 5px rgba(199, 197, 197, 0.7);
+}
+
+.answer:active {
+    background-color: #cccccc;
+    transform: scale(1);
+}
+
+.correctAnswer{
+    background-color: #1fbe81;
+    color: #fff;
+    // border: 2px solid #0a9962;
+    img{ opacity: 1; }
+}
+
+.wrongAnswer{
+    background-color: #e24a4a;
+    color: #fff;
+    // border: 2px solid #b80b0b;
+    img{ opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+}
+
+.applauseImg{  
+    text-align: center;
+    // width: 100%;
+
+    // img{
+        position: absolute;
+        // z-index: 1;
+        top: 0;
+        height: 100vh;
+        margin: auto;
+        overflow: auto;
+        animation: 0.5s ease-out 0s 1 slideInFromBottom;
+    // }
+}
+  

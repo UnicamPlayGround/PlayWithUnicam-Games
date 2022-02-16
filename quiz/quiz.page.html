@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar>
+    <div class="toolbarContent">
+      <div style="display: flex;">
+        <h2>Punteggio:</h2>
+        <h2 class="score" #scoreEl>{{score}}/{{questions.length}}</h2>
+      </div>
+    </div>
+  </ion-toolbar>
+
+  <app-progress-bar-timer [timer]="timer" color="danger" reversed="true"></app-progress-bar-timer>
+</ion-header>
+
+<ion-content fullscreen>
+
+  <!-- <ion-card class="questionsBox">
+    <ion-card-header>
+      <ion-card-subtitle>Awesome Subtitle</ion-card-subtitle>
+      <ion-card-title>Domande</ion-card-title>
+    </ion-card-header>
+
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col size="4" *ngFor="let question of questions; let i=index;">
+          <div class="questionIcon">{{i+1}}</div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card> -->
+
+  <div class="questionContent">
+    <h1 class="question">{{activeQuestion.question}}</h1>
+
+    <div class="answersBox" [class.disabledAnswers]="disableAnswers">
+      <div *ngFor="let answer of shuffledAnswers;" (click)="selectAnswer(answer)" tappable class="answer"
+        [class.correctAnswer]="(answer == activeQuestion.answers[0]) && disableAnswers"
+        [class.wrongAnswer]="(answer != activeQuestion.answers[0] && answer == selectedAnswer)">
+        {{answer}}
+        <img src="game-assets/quiz/game-assets/correct_answer.png" alt="" *ngIf="(answer == activeQuestion.answers[0])">
+        <img src="game-assets/quiz/game-assets/wrong_answer.png" alt="" *ngIf="(answer != activeQuestion.answers[0])">
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="applauseImg"> -->
+    <img src="game-assets/quiz/game-assets/applause.jpg" alt="" *ngIf="disableAnswers" class="applauseImg">
+  <!-- </div> -->
+  
+</ion-content>

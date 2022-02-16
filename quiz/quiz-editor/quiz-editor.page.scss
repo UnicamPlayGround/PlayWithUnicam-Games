@@ -1,0 +1,62 @@
+ion-title, ion-subtitle{
+    text-transform: none !important;
+}
+
+.toolbarContent{
+    max-width: 910px;
+    padding: 0 10px;
+    margin: auto;
+}
+
+.content{
+    max-width: 910px;
+    padding: 10px;
+    margin: auto;
+}
+
+.listHeader{
+    max-width: 910px;
+    margin: auto;
+    animation: 0.7s ease-out 0s 1 fadeIn;
+}
+
+@keyframes fadeIn {
+    0% {
+      opacity: 0;
+      pointer-events: none;
+    }
+    100% {
+      opacity: 1;
+      pointer-events: all;
+    }
+}
+
+.questionItem{
+    max-width: 910px;
+    margin: auto;
+    animation: 0.5s ease-out 0s 1 slideInFromLeft;
+    --background: transparent;
+
+    ion-label{
+        transition: 0.5s ease-out;
+    }
+}
+
+.checkbox{
+    animation: 0.2s ease-out 0s 1 slideInFromLeft;
+}
+
+.questionButtons{
+    animation: 1s ease-out 0s 1 fadeIn;
+}
+
+@keyframes slideInFromLeft {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+}

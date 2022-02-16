@@ -1,0 +1,47 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="toolbarContent">
+      <ion-buttons slot="start">
+        <ion-button (click)="addQuestion()" color="unicamblue">
+          <ion-icon slot="start" name="add"></ion-icon>
+          Nuova
+        </ion-button>
+        <ion-button (click)="toggleBulkEdit()" color="unicamblue">
+          <ion-icon slot="start" name="checkbox"></ion-icon>
+          Seleziona
+        </ion-button>
+        <ion-button (click)="bulkDelete()" color="unicamblue">
+          <ion-icon slot="start" name="trash"></ion-icon>
+          Elimina
+        </ion-button>
+      </ion-buttons>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list style="background-color:transparent;">
+    <ion-list-header class="listHeader">
+      <ion-label text-wrap style="font-size: 22px; font-weight: bold; color:var(--ion-color-unicamblue)">Elenco delle
+        domande del quiz:</ion-label>
+    </ion-list-header>
+
+    <ion-item *ngFor="let question of questions; let i=index;" (click)="editQuestion(question)" class="questionItem">
+      <ion-checkbox slot="start" *ngIf="bulkEdit" [(ngModel)]="edit[i]" class="checkbox"></ion-checkbox>
+      <ion-label text-wrap>
+        <p>Domanda {{i+1}}</p>
+        <h2>{{question.question}}</h2>
+      </ion-label>
+
+      <ion-buttons slot="end" class="questionButtons">
+        <ion-button (click)="editQuestion()" color="unicamblue" title="Modifica domanda">
+          <ion-icon slot="icon-only" name="create"></ion-icon>
+        </ion-button>
+        <ion-button (click)="deleteQuestion()" color="unicamblue" title="Elimina domanda">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

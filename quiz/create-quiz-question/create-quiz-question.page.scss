@@ -1,0 +1,46 @@
+ion-title{
+    font-family: "Poppins" sans-serif !important;
+    font-weight: bold !important;
+    color:var(--ion-color-unicamblue) !important;
+    font-size: 26px !important;
+}
+
+ion-content{
+    --background:var(--ion-color-light);
+}
+
+p{
+    margin: 8px 0;
+}
+
+ion-card{
+    border-radius: 10px !important;
+}
+
+ion-button{
+    --border-radius: 10px !important;
+    text-transform: none !important;
+    height: 44px !important;
+}
+
+ion-textarea, ion-input{
+    border: 2px solid var(--ion-color-light);
+    border-radius: 10px !important;
+    margin: 0px;
+    font-size: 14px;
+    color:#000;
+    padding-left: 10px !important;
+}
+
+.container{
+    max-width: 1000px;
+    margin: auto;
+}
+
+.form-title{
+    font-size: 26px;
+    margin: 0px;
+    font-family: "Poppins" sans-serif;
+    font-weight: bold;
+    color:#000;
+}
