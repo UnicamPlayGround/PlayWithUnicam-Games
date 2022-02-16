@@ -34,10 +34,10 @@
       </ion-label>
 
       <ion-buttons slot="end" class="questionButtons">
-        <ion-button (click)="editQuestion()" color="unicamblue" title="Modifica domanda">
+        <ion-button (click)="editQuestion(question, i)" color="unicamblue" title="Modifica domanda">
           <ion-icon slot="icon-only" name="create"></ion-icon>
         </ion-button>
-        <ion-button (click)="deleteQuestion()" color="unicamblue" title="Elimina domanda">
+        <ion-button (click)="deleteQuestion(question, i)" color="unicamblue" title="Elimina domanda">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
       </ion-buttons>

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
-import { Question } from 'src/app/modal-pages/question-modal/question';
+import { QuizQuestion } from '../quiz-question';
 
 @Component({
   selector: 'app-create-quiz-question',
@@ -9,38 +9,33 @@ import { Question } from 'src/app/modal-pages/question-modal/question';
 })
 export class CreateQuizQuestionPage implements OnInit {
   pageTitle = "Nuova domanda";
-  @Input() newQuestion: Question;
-  title: String = "";
-  text: String = "";
-  url: String = "";
-  question: Question = new Question("", [], "", "", 10);
+  @Input() newQuizQuestion: QuizQuestion;
+  question: QuizQuestion = new QuizQuestion("", [], "", "", 10, 1);
   questionCountdown: string = new Date("2022-01-01T00:00:10").toISOString();
 
   constructor(private modalCtrl: ModalController, private navParams: NavParams) { }
 
   ngOnInit() {
-    this.newQuestion = this.navParams.get('question');
+    this.newQuizQuestion = this.navParams.get('question');
 
-    if (this.newQuestion) {
+    if (this.newQuizQuestion) {
       this.pageTitle = "Modifica domanda";
-      // this.title = this.newQuestion.title;
-      // this.text = this.newQuestion.text;
-      // this.url = this.newQuestion.url;
-      // this.question = new Question(
-      //   this.newQuestion.question.question,
-      //   [],
-      //   this.newQuestion.question.imgUrl,
-      //   this.newQuestion.question.videoUrl,
-      //   this.newQuestion.question.countdownSeconds
-      // );
+      this.question = new QuizQuestion(
+        this.newQuizQuestion.question,
+        [],
+        this.newQuizQuestion.imgUrl,
+        this.newQuizQuestion.videoUrl,
+        this.newQuizQuestion.countdownSeconds,
+        this.newQuizQuestion.score
+      );
 
-      // this.newQuestion.question.answers.forEach(a => {
-      //   this.question.answers.push(a);
-      // })
+      this.newQuizQuestion.answers.forEach(a => {
+        this.question.answers.push(a);
+      })
 
-      // var date = new Date(null);
-      // date.setSeconds(this.newQuestion.question.countdownSeconds);
-      // this.questionCountdown = date.toISOString();
+      var date = new Date(null);
+      date.setSeconds(this.newQuizQuestion.countdownSeconds);
+      this.questionCountdown = date.toISOString();
     }
   }
 
@@ -48,16 +43,13 @@ export class CreateQuizQuestionPage implements OnInit {
     var date = new Date(this.questionCountdown);
     this.question.countdownSeconds = (date.getMinutes() * 60) + date.getSeconds();
 
-    // if (this.newMemoryCard) {
-    //   this.newMemoryCard.title = this.title;
-    //   this.newMemoryCard.text = this.text;
-    //   this.newMemoryCard.url = this.url;
-    //   this.newMemoryCard.question = this.question;
-    // } else {
-    //   this.newMemoryCard = new MemoryCard(this.title, this.text, this.url, this.question);
-    // }
+    if (this.newQuizQuestion) {
+      this.newQuizQuestion = this.question;
+    } else {
+      this.newQuizQuestion = new QuizQuestion(this.question.question, this.question.answers, this.question.imgUrl, this.question.videoUrl, this.question.countdownSeconds, this.question.score);
+    }
 
-    // this.modalCtrl.dismiss(this.newMemoryCard);
+    this.modalCtrl.dismiss(this.newQuizQuestion);
   }
 
   closeModal() {

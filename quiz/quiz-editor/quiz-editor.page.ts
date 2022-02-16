@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { GameEditorComponent } from 'src/app/components/game-editor/game-editor.component';
-import { Question } from 'src/app/modal-pages/question-modal/question';
 import { AlertCreatorService } from 'src/app/services/alert-creator/alert-creator.service';
 import { CreateQuizQuestionPage } from '../create-quiz-question/create-quiz-question.page';
+import { QuizQuestion } from '../quiz-question';
 
 @Component({
   selector: 'app-quiz-editor',
@@ -11,7 +11,7 @@ import { CreateQuizQuestionPage } from '../create-quiz-question/create-quiz-ques
   styleUrls: ['./quiz-editor.page.scss'],
 })
 export class QuizEditorPage implements OnInit, GameEditorComponent {
-  questions: Question[] = [];
+  questions: QuizQuestion[] = [];
   bulkEdit = false;
   edit = {};
 
@@ -23,12 +23,19 @@ export class QuizEditorPage implements OnInit, GameEditorComponent {
   constructor(private alertCreator: AlertCreatorService, private modalCtrl: ModalController) { }
 
   ngOnInit() {
-    this.questions = [
-      new Question("Che anno è?", ["2022", "2021", "2020"], "", "", 10),
-      new Question("Che mese è?", ["Febbraio", "Marzo", "Aprile"], "", "", 15),
-      new Question("Che giorno è?", ["Martedì", "Mercoledì", "Giovedì"], "", "", 20),
-      new Question("Che ora è?", ["Le 16:00", "Le 17:00", "Le 18:00"], "", "", 25),
-    ]
+    if (this.config.questions) {
+      this.config.questions.forEach(question => {
+        this.questions.push(
+          new QuizQuestion(
+            question.question,
+            question.answers,
+            question.img_url,
+            question.video_url,
+            question.countdown_seconds,
+            question.score
+          ));
+      });
+    }
   }
 
   /**
@@ -106,11 +113,33 @@ export class QuizEditorPage implements OnInit, GameEditorComponent {
     await modal.present();
   }
 
-  editQuestion(question: Question) {
+  async editQuestion(question: QuizQuestion, index: number) {
+    if (!this.bulkEdit) {
+      const modal = await this.modalCtrl.create({
+        component: CreateQuizQuestionPage,
+        componentProps: {
+          question: question
+        },
+        cssClass: 'lobby-pubbliche'
+      });
+
+      modal.onDidDismiss().then((data) => {
+        const newQuizQuestion = data['data'];
+
+        if (newQuizQuestion) {
+          this.config.questions[index] = newQuizQuestion.getJSON();
+          this.questions[index] = newQuizQuestion;
+        }
+      });
+
+      await modal.present();
+    }
   }
 
-  deleteQuestion() {
-
+  deleteQuestion(question: QuizQuestion, index: number) {
+    this.questions.splice(index, 1);
+    if (this.config.questions)
+      this.config.questions.splice(index, 1);
   }
 
 }
