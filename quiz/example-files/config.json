@@ -1,0 +1,30 @@
+{
+    "game_name": "Quiz",
+    "version": "multi",
+    "questions": [
+        {
+            "question": "Cos'è l'oggetto in foto?",
+            "img_url": "",
+            "video_url": "",
+            "answers": [
+                "Un hard disk",
+                "Un processore",
+                "Un microchip"
+            ],
+            "countdown_seconds": 10,
+            "score": 1
+        },
+        {
+            "question": "Cos'è l'oggetto in foto?",
+            "img_url": "",
+            "video_url": "",
+            "answers": [
+                "Un hard disk",
+                "Un processore",
+                "Un microchip"
+            ],
+            "countdown_seconds": 10,
+            "score": 1
+        }
+    ]
+}
