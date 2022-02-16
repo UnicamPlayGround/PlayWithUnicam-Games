@@ -4,7 +4,7 @@
     "questions": [
         {
             "question": "Cos'è l'oggetto in foto?",
-            "img_url": "",
+            "img_url": "https://www.street-price.it/data/image/product/big/DT01ACA100-zKeJ.jpg",
             "video_url": "",
             "answers": [
                 "Un hard disk",
@@ -16,12 +16,24 @@
         },
         {
             "question": "Cos'è l'oggetto in foto?",
-            "img_url": "",
+            "img_url": "https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg",
             "video_url": "",
             "answers": [
-                "Un hard disk",
-                "Un processore",
-                "Un microchip"
+                "Un mouse",
+                "Un criceto",
+                "Un dispositivo di archiviazione USB"
+            ],
+            "countdown_seconds": 10,
+            "score": 1
+        },
+        {
+            "question": "Cos'è l'oggetto in foto?",
+            "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg",
+            "video_url": "",
+            "answers": [
+                "Un monitor",
+                "Un tablet",
+                "Un libro"
             ],
             "countdown_seconds": 10,
             "score": 1
