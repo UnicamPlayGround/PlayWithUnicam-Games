@@ -26,7 +26,7 @@
         domande del quiz:</ion-label>
     </ion-list-header>
 
-    <ion-item *ngFor="let question of questions; let i=index;" (click)="editQuestion(question)" class="questionItem">
+    <ion-item *ngFor="let question of questions; let i=index;" class="questionItem">
       <ion-checkbox slot="start" *ngIf="bulkEdit" [(ngModel)]="edit[i]" class="checkbox"></ion-checkbox>
       <ion-label text-wrap>
         <p>Domanda {{i+1}}</p>

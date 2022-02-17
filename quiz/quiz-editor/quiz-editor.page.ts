@@ -125,13 +125,12 @@ export class QuizEditorPage implements OnInit, GameEditorComponent {
 
       modal.onDidDismiss().then((data) => {
         const newQuizQuestion = data['data'];
-
         if (newQuizQuestion) {
           this.config.questions[index] = newQuizQuestion.getJSON();
           this.questions[index] = newQuizQuestion;
         }
       });
-
+      
       await modal.present();
     }
   }
