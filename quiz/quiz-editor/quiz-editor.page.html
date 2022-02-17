@@ -10,7 +10,7 @@
           <ion-icon slot="start" name="checkbox"></ion-icon>
           Seleziona
         </ion-button>
-        <ion-button (click)="bulkDelete()" color="unicamblue">
+        <ion-button (click)="bulkDelete()" *ngIf="bulkEdit" color="unicamblue">
           <ion-icon slot="start" name="trash"></ion-icon>
           Elimina
         </ion-button>
@@ -33,7 +33,7 @@
         <h2>{{question.question}}</h2>
       </ion-label>
 
-      <ion-buttons slot="end" class="questionButtons">
+      <ion-buttons slot="end" class="questionButtons" *ngIf="!bulkEdit">
         <ion-button (click)="editQuestion(question, i)" color="unicamblue" title="Modifica domanda">
           <ion-icon slot="icon-only" name="create"></ion-icon>
         </ion-button>
