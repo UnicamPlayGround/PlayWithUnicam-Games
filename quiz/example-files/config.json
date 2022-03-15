@@ -1,41 +1,291 @@
 {
     "game_name": "Quiz",
-    "version": "multi",
+	"version": "multi",
     "questions": [
         {
-            "question": "Cos'è l'oggetto in foto?",
-            "img_url": "https://www.street-price.it/data/image/product/big/DT01ACA100-zKeJ.jpg",
-            "video_url": "",
+            "question": "Cos’è Bitcoin?",
             "answers": [
-                "Un hard disk",
-                "Un processore",
-                "Un microchip"
+                "Una criptovaluta",
+                "Una transazione monetaria",
+                "Il processo di Mining",
+                "Un metaverso"
             ],
-            "countdown_seconds": 10,
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
             "score": 1
         },
         {
-            "question": "Cos'è l'oggetto in foto?",
-            "img_url": "https://m.media-amazon.com/images/I/61UxfXTUyvL._AC_SL1500_.jpg",
-            "video_url": "",
+            "question": "Cos’è la blockchain?",
             "answers": [
-                "Un mouse",
-                "Un criceto",
-                "Un dispositivo di archiviazione USB"
+                "Una struttura dati decentralizzata",
+                "Una criptovaluta",
+                "Un database",
+                "Una struttura dati centralizzata"
             ],
-            "countdown_seconds": 10,
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
             "score": 1
         },
         {
-            "question": "Cos'è l'oggetto in foto?",
-            "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg",
-            "video_url": "",
+            "question": "Cos’è il mining?",
             "answers": [
-                "Un monitor",
-                "Un tablet",
-                "Un libro"
+                "Processo di verifica di un blocco",
+                "Compravendita di criptomoneta",
+                "Esecuzione di un contratto",
+                "Creazione di una blockchain"
             ],
-            "countdown_seconds": 10,
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Quale di questi non è un ruolo del mining?",
+            "answers": [
+                "Convalidare i blocchi",
+                "Scegliere le transazioni di un blocco",
+                "Generare una ricompensa",
+                "Evitare la doppia spesa"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Un nuovo blocco viene accettato solo se",
+            "answers": [
+                "Il suo hash inizia con un numero di zeri",
+                "Contiene almeno tre transazioni",
+                "Il suo nonce è uguale a 0",
+                "Il suo hash è identico a quello del blocco precedente"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Quando è stato creato il protocollo Bitcoin?",
+            "answers": [
+                "2008",
+                "2020",
+                "2010",
+                "1990"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Qual è la principale caratteristica di una criptovaluta?",
+            "answers": [
+                "Senza intermediari",
+                "Anonimato",
+                "Sicurezza",
+                "Ricchezza"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Quale tra queste non è una caratteristica della blockchain?",
+            "answers": [
+                "Privacy",
+                "Immutabilità",
+                "Distribuzione",
+                "Sicurezza"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Come sono legati i blocchi?",
+            "answers": [
+                "Tramite un hash",
+                "Tramite la criptomoneta",
+                "Tramite una transazione",
+                "Tramite l’esecuzione di uno Smart Contract"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Come viene rappresentato un blocco?",
+            "answers": [
+                "Un file",
+                "Un sito internet",
+                "Un link",
+                "Un concetto"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Da cosa è composto un blocco?",
+            "answers": [
+                "Un header e delle transazioni",
+                "Delle transazioni e un nonce",
+                "Un header e un nonce",
+                "Un hash e un nonce"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Quale tra queste non è una proprietà dell’hash?",
+            "answers": [
+                "Reversibilità",
+                "Univocità",
+                "Determinismo",
+                "Facilità di computazione"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "A cosa serve la validazione?",
+            "answers": [
+                "A verificare che non ci siano errori in un blocco",
+                "A distribuire un nuovo blocco",
+                "Ad estrarre bitcoin",
+                "A determinare l’ordine delle transazioni"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Il Proof of Work è:",
+            "answers": [
+                "Un meccanismo di consenso",
+                "Un gioco decentralizzato",
+                "Una ricompensa per i miner",
+                "Un tipo di attacco"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Per fare un attacco del 51% serve:",
+            "answers": [
+                "La maggioranza dell’hashing power",
+                "Un computer molto potente",
+                "Una grande quantità di bitcoin",
+                "Il 51% di computer fisici"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "In una blockchain pubblica:",
+            "answers": [
+                "Puoi interagire liberamente con la blockchain",
+                "Puoi leggere e scrivere se autenticato",
+                "Puoi solo leggere dalla blockchain",
+                "Puoi solo scrivere nella blockchain"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Uno smart contract ti permette di:",
+            "answers": [
+                "Regolare accordi in modo automatico",
+                "Controllare il traffico di rete",
+                "Produrre criptomonete",
+                "Scrivere programmi per una banca"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Perché gli Smart Contracts riducono le attività fraudolente?",
+            "answers": [
+                "Il codice non può essere modificato",
+                "Lo sviluppatore assicura il rispetto dei termini",
+                "Il codice è nascosto ad eventuali attaccanti",
+                "Il codice è crittografato"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Chi è Vitalik Buterin?",
+            "answers": [
+                "il fondatore di Ethereum",
+                "L’ideatore della blockchain",
+                "Il creatore del Bitcoin",
+                "L’ideatore del Proof-Of-Work"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Cosa contraddistingue Ethereum da Bitcoin?",
+            "answers": [
+                "L’esecuzione di Smart Contracts",
+                "Lo scambio di criptomonete",
+                "Investimenti più sicuri",
+                "L’anonimato"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Che cos’è un NFT?",
+            "answers": [
+                "Un token che certifica la proprietà",
+                "Una criptovaluta per blockchain private",
+                "Un asset di gioco",
+                "Un’opera d’arte digitale"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
+            "score": 1
+        },
+        {
+            "question": "Per essere considerato tale, un progetto DeFi deve garantire:",
+            "answers": [
+                "L’offerta di servizi finanziari senza l’intermediazione di banche",
+                "Un marketplace per la compravendita di NFT",
+                "l’intermediazione di una banca",
+                "La possibilità di eseguire scambi sicuri e privati"
+            ],
+            "img_url": "",
+            "video_url": "",
+            "countdown_seconds": 30,
             "score": 1
         }
     ]

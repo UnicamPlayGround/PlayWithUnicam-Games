@@ -1,12 +1,12 @@
-export class QuizQuestion{
-    question: String;
-    answers: String[];
-    imgUrl: String;
-    videoUrl: String;
+export class QuizQuestion {
+    question: string;
+    answers: string[];
+    imgUrl: string;
+    videoUrl: string;
     countdownSeconds: number;
     score: number;
 
-    constructor(question: String, answers: String[], imgUrl: String, videoUrl: String, countdownSeconds: number, score: number) {
+    constructor(question: string, answers: string[], imgUrl: string, videoUrl: string, countdownSeconds: number, score: number) {
         this.question = question;
         this.answers = answers;
         this.imgUrl = imgUrl;

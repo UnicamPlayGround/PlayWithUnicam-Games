@@ -1,49 +1,127 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar [color]="toolbarColor">
     <div class="toolbarContent">
       <div style="display: flex;">
         <h2>Punteggio:</h2>
-        <h2 class="score" #scoreEl>{{score}}/{{questions.length}}</h2>
+        <h2 class="score" #scoreEl>{{score}}</h2>
       </div>
     </div>
+    <ion-button (click)="confirmLeaveMatch()" slot="end" fill="clear" color="light" shape="round">
+      <ion-label class="ion-hide-md-down">Abbandona</ion-label>
+      <ion-icon class="ion-hide-md-down" slot="start" name="exit-outline"></ion-icon>
+      <ion-icon class="ion-hide-md-up" slot="icon-only" name="exit-outline"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 
-  <app-progress-bar-timer [timer]="timer" color="danger" reversed="true"></app-progress-bar-timer>
+  <app-progress-bar-timer [timer]="timerDomanda" color="danger" reversed="true"></app-progress-bar-timer>
 </ion-header>
 
 <ion-content fullscreen>
+  <!-- 
+  <div *ngIf="questions" class="question-number">
+    <p>Domanda</p>
+    <h3>{{questionsTotalNumber - questions.length}} di {{questionsTotalNumber}}</h3>
+  </div>
 
-  <!-- <ion-card class="questionsBox">
-    <ion-card-header>
-      <ion-card-subtitle>Awesome Subtitle</ion-card-subtitle>
-      <ion-card-title>Domande</ion-card-title>
-    </ion-card-header>
-
-    <ion-grid fixed>
-      <ion-row>
-        <ion-col size="4" *ngFor="let question of questions; let i=index;">
-          <div class="questionIcon">{{i+1}}</div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card> -->
-
-  <div class="questionContent">
+  <div class=" questionContent" *ngIf="activeQuestion">
     <h1 class="question">{{activeQuestion.question}}</h1>
 
-    <div class="answersBox" [class.disabledAnswers]="disableAnswers">
-      <div *ngFor="let answer of shuffledAnswers;" (click)="selectAnswer(answer)" tappable class="answer"
-        [class.correctAnswer]="(answer == activeQuestion.answers[0]) && disableAnswers"
-        [class.wrongAnswer]="(answer != activeQuestion.answers[0] && answer == selectedAnswer)">
-        {{answer}}
-        <img src="game-assets/quiz/game-assets/correct_answer.png" alt="" *ngIf="(answer == activeQuestion.answers[0])">
-        <img src="game-assets/quiz/game-assets/wrong_answer.png" alt="" *ngIf="(answer != activeQuestion.answers[0])">
+    <div *ngIf="activeQuestion.videoUrl && activeQuestion.videoUrl.length > 0" style="margin-top: 30px;">
+      <div style="max-width: 600px; margin:auto;">
+        <div class="video-container">
+          <iframe [src]="activeQuestion.videoUrl | safe" title="video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
       </div>
+    </div>
+
+    <div *ngIf="activeQuestion.imgUrl && activeQuestion.imgUrl.length > 0" class="image-container">
+      <img src="{{ activeQuestion.imgUrl }}">
     </div>
   </div>
 
-  <!-- <div class="applauseImg"> -->
-    <img src="game-assets/quiz/game-assets/applause.jpg" alt="" *ngIf="disableAnswers" class="applauseImg">
-  <!-- </div> -->
-  
+  <div *ngIf="shuffledAnswers" class="answersBox" [class.disabledAnswers]="disableAnswers">
+    <div *ngFor="let answer of shuffledAnswers;" (click)="selectAnswer(answer)" tappable class="answer"
+      [class.correctAnswer]="(answer == activeQuestion.answers[0]) && disableAnswers"
+      [class.wrongAnswer]="(answer != activeQuestion.answers[0] && answer == selectedAnswer)" style="width: 100%;">
+      <ion-label text-wrap>{{answer}}</ion-label>
+      <img src="game-assets/quiz/game-assets/correct_answer.png" alt="" *ngIf="(answer == activeQuestion.answers[0])">
+      <img src="game-assets/quiz/game-assets/wrong_answer.png" alt="" *ngIf="(answer != activeQuestion.answers[0])">
+    </div>
+  </div> -->
+
+  <div style="max-width: 900px; margin: auto;">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" *ngIf="questions" class="ion-padding ion-text-center"
+          style="padding-bottom: 0; font-family: 'Balsamiq Sans', cursive;" text-center>
+          <p style="margin-bottom: 0;">Domanda</p>
+          <h3 style="margin: 8px 0;">{{questionsTotalNumber - questions.length}} di {{questionsTotalNumber}}</h3>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="12" *ngIf="activeQuestion" style="padding: 0 16px;">
+          <h1 class="question">{{activeQuestion.question}}</h1>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="activeQuestion">
+        <ion-col size="12" *ngIf="activeQuestion.videoUrl && activeQuestion.videoUrl.length > 0">
+          <div style="margin-top: 30px;">
+            <div style="max-width: 600px; margin:auto;">
+              <div class="video-container">
+                <iframe [src]="activeQuestion.videoUrl | safe" title="video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="activeQuestion">
+        <ion-col size="12" *ngIf="activeQuestion.imgUrl && activeQuestion.imgUrl.length > 0">
+          <div class="image-container">
+            <img src="{{ activeQuestion.imgUrl }}">
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <div *ngIf="shuffledAnswers" class="answerBox" [class.disabledAnswers]="disableAnswers">
+    <ion-grid class="answersBox" style="padding: 0 !important;">
+      <ion-row class="ion-align-items-baseline">
+        <ion-col size="12">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12" size-sm="12" size-md="6" size-lg="6" *ngFor="let answer of shuffledAnswers;">
+                <ion-card [class.correctAnswer]="(answer == activeQuestion.answers[0]) && disableAnswers"
+                  [class.wrongAnswer]="(answer != activeQuestion.answers[0] && answer == selectedAnswer)" class="answer"
+                  (click)="selectAnswer(answer)" tappable>
+                  <ion-grid>
+                    <ion-row>
+                      <ion-col size="10.5">
+                        <ion-label text-wrap>{{answer}}</ion-label>
+                      </ion-col>
+                      <ion-col size="1.5"
+                        style="display: flex; justify-content: center; align-items: center; text-align: center;">
+                        <img src="game-assets/quiz/game-assets/correct_answer.png" alt=""
+                          *ngIf="(answer == activeQuestion.answers[0])">
+                        <img src="game-assets/quiz/game-assets/wrong_answer.png" alt=""
+                          *ngIf="(answer != activeQuestion.answers[0])">
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+                </ion-card>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
 </ion-content>
