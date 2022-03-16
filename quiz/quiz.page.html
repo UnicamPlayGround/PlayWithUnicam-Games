@@ -146,6 +146,7 @@
           </ion-col>
         </ion-row>
 
+        <!-- GIOCATORI CHE HANNO TERMINATO -->
         <ion-row *ngFor="let giocatore of classifica; let i = index">
           <ion-col size-lg="10" size-md="10" size-sm="10" size="9.3">
             <ion-item lines="full">
@@ -172,6 +173,22 @@
             </ion-item>
           </ion-col>
         </ion-row>
+
+        <!-- GIOCATORI ANCORA IN GIOCO -->
+        <ion-row *ngFor="let giocatore of ancoraInGioco; let i = index">
+          <ion-col size-lg="10" size-md="10" size-sm="10" size="9.3">
+            <ion-item lines="full">
+              <ion-avatar slot="start">
+                <img src="../../../assets/icon/lobby-player.png" alt="Giocatore {{ giocatore.username }}">
+              </ion-avatar>
+
+              <ion-label text-wrap>{{ giocatore.username }}</ion-label>
+              <ion-badge color="secondary">{{ giocatore.score }}</ion-badge>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+
       </ion-grid>
     </ion-card>
   </div>

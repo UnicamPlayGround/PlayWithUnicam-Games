@@ -83,6 +83,11 @@ export class QuizPage implements OnInit, OnDestroy {
   classifica: any[] = [];
 
   /**
+   * Elenco dei giocatori ancora in gioco
+   */
+  ancoraInGioco: any[] = [];
+
+  /**
   * Giocatore locale
   */
   localPlayer: string;
@@ -397,22 +402,47 @@ export class QuizPage implements OnInit, OnDestroy {
    * @returns la lista ordinata ottenuta richiamando il metodo 'sortRanking'
    */
   private saveRanking() {
-    this.classifica.splice(0, this.classifica.length);
+    // this.classifica.splice(0, this.classifica.length);
+    this.ancoraInGioco.splice(0, this.ancoraInGioco.length);
     var toSave;
     this.info_partita.info.giocatori.forEach(p => {
       if (p.username == this.localPlayer)
         toSave = {
           "username": this.localPlayer,
-          "answered": (this.questionsTotalNumber - this.questions.length),
-          "time": this.seconds, "score": this.score
+          "answered": p.info_giocatore.answered,
+          "time": p.info_giocatore.time,
+          "score": p.info_giocatore.score
         };
       else {
-        if (p.info_giocatore.answered == this.questionsTotalNumber)
-          toSave = { "username": p.username, "answered": p.info_giocatore.answered, "time": p.info_giocatore.time, "score": p.info_giocatore.score }
-        else
-          toSave = { "username": p.username, "answered": p.info_giocatore.answered, "time": p.info_giocatore.time, "score": "ancora in gioco" }
+        if (p.info_giocatore.answered == this.questionsTotalNumber) {
+          toSave = {
+            "username": p.username,
+            "answered": p.info_giocatore.answered,
+            "time": p.info_giocatore.time,
+            "score": p.info_giocatore.score
+          }
+        }
+        else {
+          toSave = {
+            "username": p.username,
+            "answered": p.info_giocatore.answered,
+            "time": p.info_giocatore.time,
+            "score": "ancora in gioco"
+          }
+        }
       }
-      this.classifica.push(toSave);
+      if (toSave.score == "ancora in gioco")
+        this.ancoraInGioco.push(toSave);
+      else {
+        if (toSave.answered == this.questionsTotalNumber) {
+          var isPresent = false;
+          this.classifica.forEach(g => {
+            if (g.username == toSave.username) isPresent = true;
+          })
+          if (!isPresent)
+            this.classifica.push(toSave);
+        }
+      }
     });
     this.sortRanking();
     this.updateScore();
@@ -440,12 +470,14 @@ export class QuizPage implements OnInit, OnDestroy {
  * giocatore che ha vinto più il tempo del Timer finale.
  */
   private updateScore() {
-    var tempoVittoria = this.classifica[0].time;
+    if (this.classifica.length > 0) {
+      var tempoVittoria = this.classifica[0].time;
 
-    this.classifica.forEach(giocatore => {
-      if (giocatore.time >= (tempoVittoria + this.timerFinale.getTimerTime()) - 1)
-        giocatore.punteggio = this.transform(giocatore.time);
-    });
+      this.classifica.forEach(giocatore => {
+        if (giocatore.time >= (tempoVittoria + this.timerFinale.getTimerTime()) - 1)
+          giocatore.punteggio = this.transform(giocatore.time);
+      });
+    }
   }
 
   // /**
