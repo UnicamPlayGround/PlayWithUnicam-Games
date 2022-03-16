@@ -33,6 +33,7 @@ export class QuizPage implements OnInit, OnDestroy {
   timerDomanda: Timer = new Timer(30, false, () => { this.setActiveQuestion(); });
   disableAnswers = false;
   toolbarColor: string = 'primary';
+  amIDone: boolean = false;
 
   /**
    * stringa per mostare il tempo (formato 'min:sec')
@@ -41,6 +42,7 @@ export class QuizPage implements OnInit, OnDestroy {
 
   backgrounds = ['primary', 'secondary', 'tertiary', 'success', 'warning', 'danger', 'medium'];
 
+  private someoneHasWon = false;
   info_partita = { codice: null, codice_lobby: null, giocatore_corrente: null, id_gioco: null, info: null, vincitore: null };
   lobby = { codice: null, admin_lobby: null, pubblica: false, min_giocatori: 0, max_giocatori: 0, nome: null, link: null, regolamento: null };
 
@@ -55,6 +57,15 @@ export class QuizPage implements OnInit, OnDestroy {
    * * **false** altrimenti
    */
   isLeavingPage: boolean;
+
+  /**
+   * Timer che viene avviato quando un giocatore vince
+   */
+  timerFinale: Timer = new Timer(null, false, () => {
+    this.stopTimer();
+    this.sendMatchData();
+    this.showRanking();
+  });
 
   /**
    * timer della partita (conteggio dei secondi della partita)
@@ -103,6 +114,7 @@ export class QuizPage implements OnInit, OnDestroy {
         this.questionsTotalNumber = this.questions.length;
         this.setActiveQuestion();
         this.startTimer();
+        this.timerFinale.setTimerTime(60);
         // this.timerDomanda.startTimer();
       });
   }
@@ -110,6 +122,7 @@ export class QuizPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.quizLogic.reset();
     this.stopTimers();
+    this.timerFinale.stopTimer();
     this.isLeavingPage = true;
   }
 
@@ -120,6 +133,7 @@ export class QuizPage implements OnInit, OnDestroy {
     this.timerPartita = setInterval(() => {
       this.seconds++;
       this.display = this.transform(this.seconds);
+      // console.log('secondi trascorsi:', this.seconds);
     }, 1000);
   }
 
@@ -192,12 +206,14 @@ export class QuizPage implements OnInit, OnDestroy {
    */
   async sendMatchData() {
     const tokenValue = (await this.loginService.getToken()).value;
-    var answered = [];
-    this.answeredQuestions.forEach(q => {
-      answered.push[q.getJSON()];
-    });
-
-    const toSend = { 'token': tokenValue, 'info_giocatore': { "answered_questions": answered } }
+    const toSend = {
+      'token': tokenValue,
+      'info_giocatore': {
+        "answered": (this.questionsTotalNumber - this.questions.length),
+        "score": this.score,
+        "time": this.seconds
+      }
+    }
 
     this.http.put('/game/save', toSend).subscribe(
       async (res) => { },
@@ -223,130 +239,32 @@ export class QuizPage implements OnInit, OnDestroy {
   }
 
   /**
- * Ferma il timer della partita.
- */
-  private stopTimer() {
-    clearInterval(this.timerPartita);
-  }
-
-  /**
-   * Controlla se l'utente ha indovinato tutte le carte oppure no.
-   * In caso positivo, viene mostrato un alert di fine partita e, successivamente,
-   * la classifica finale.
-   */
-  private checkEndMatch() {
-    // var button = [{ text: 'Vai alla classifica', handler: () => { this.showRanking(); } }];
-    var button = [{ text: 'Esci', handler: () => { this.leaveMatch() } }];
-    if (this.answeredQuestions.length == this.questionsTotalNumber) {
-      this.sendMatchData();
-      this.terminaPartita();
-
-      this.alertCreator.createAlert("Complimenti!", "Hai completato il quiz in " + this.display, button, false);
-      // this.someoneHasWon = true;
-      this.stopTimer();
-    }
-  }
-
-  /**
-   * Mostra la classifica finale della partita.
-   * @returns presenta la modal
-   */
-  private async showRanking() {
-    this.saveRanking();
-    const modal = await this.modalController.create({
-      component: ClassificaPage,
-      componentProps: {
-        classifica: this.classifica
-      },
-      cssClass: 'fullscreen'
-    });
-
-    modal.onDidDismiss().then(async () => {
-      this.stopTimers();
-      if (this.localPlayer == this.lobby.admin_lobby)
-        this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
-      else
-        this.router.navigateByUrl('/lobby-guest', { replaceUrl: true });
-    });
-
-    return await modal.present();
-  }
-
-  /**
-   * Inserisce all'interno di una lista tutti i giocatori con il relativo punteggio.
-   * * Se il giocatore non ha ancora completato il memory avrà come punteggio "ancora in gioco".
-   * @returns la lista ordinata ottenuta richiamando il metodo 'sortRanking'
-   */
-  private saveRanking() {
-    this.classifica.splice(0, this.classifica.length);
-    var toSave;
-    this.info_partita.info.giocatori.forEach(p => {
-      if (p.username == this.localPlayer)
-        toSave = { "username": this.localPlayer, "answered_questions": this.answeredQuestions.length, "time": this.seconds, "punteggio": this.transform(this.seconds) }
-      else {
-        if (p.info_giocatore.answered_questions.length == this.questionsTotalNumber)
-          toSave = { "username": p.username, "answered_questions": p.info_giocatore.answered_questions, "time": p.info_giocatore.time, "punteggio": this.transform(p.info_giocatore.time) }
-        else
-          toSave = { "username": p.username, "answered_questions": p.info_giocatore.answered_questions, "time": p.info_giocatore.time, "punteggio": "ancora in gioco" }
-      }
-      this.classifica.push(toSave);
-    });
-    this.sortRanking();
-    this.updateScore();
-  }
-
-  /**
- * Quando il Timer finale arriva a 0 aggiorna il punteggio dei giocatori che non hanno indovinato tutte le carte,
- * passando da *"ancora in gioco"* al tempo del 
- * giocatore che ha vinto più il tempo del Timer finale.
- */
-  private updateScore() {
-    var tempoVittoria = this.classifica[0].time;
-
-    this.classifica.forEach(giocatore => {
-      // if (giocatore.time >= (tempoVittoria + this.timerFinale.getTimerTime()) - 1)
-      giocatore.punteggio = this.transform(giocatore.time);
-    });
-  }
-
-  /**
-   * Ordina la classifica.
-   */
-  private sortRanking() {
-    this.classifica.sort(function (a, b) {
-      if (a.guessed_cards == b.guessed_cards)
-        return a.time - b.time;
-      else
-        return b.guessed_cards - a.guessed_cards;
-    });
-  }
-
-  /**
-   * Effettua la chiamata REST per ottenere le informazioni della partita di tutti i giocatori.
-   */
+  * Effettua la chiamata REST per ottenere le informazioni della partita di tutti i giocatori.
+  */
   async getInfoPartita() {
-    // if (!this.someoneHasWon) {
-    var button = [{ text: 'Continua a giocare' }];
-    const token_value = (await this.loginService.getToken()).value;
-    const headers = { 'token': token_value };
+    if (!this.someoneHasWon) {
+      var button = [{ text: 'Continua a giocare' }];
+      const token_value = (await this.loginService.getToken()).value;
+      const headers = { 'token': token_value };
 
-    // this.http.get('/game/status', { headers }).subscribe(
-    //   async (res) => {
-    //     this.info_partita = res['results'];
+      this.http.get('/game/status', { headers }).subscribe(
+        async (res) => {
+          this.info_partita = res['results'];
+          // console.log('info_partita', this.info_partita);
 
-    //     this.info_partita.info.giocatori.forEach(p => {
-    //       if (p.info_giocatore.answered_questions == (this.memoryGameLogic.memoryCards.length / 2)) {
-    //         if (p.username != this.localPlayer.nickname) {
-    //           this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button, true);
-    //           this.someoneHasWon = true;
-    //           this.timerFinale.startTimer();
-    //         }
-    //       }
-    //     });
-    //   },
-    //   async (res) => { this.handleError(res, 'Recupero informazioni partita fallito!'); }
-    // );
-    // }
+          this.info_partita.info.giocatori.forEach(p => {
+            if (p.info_giocatore.answered == this.questionsTotalNumber) {
+              if (p.username != this.localPlayer) {
+                this.alertCreator.createAlert("Veloce!", p.username + " ha già finito il quiz per primo!", button, true);
+                this.someoneHasWon = true;
+                this.timerFinale.startTimer();
+              }
+            }
+          });
+        },
+        async (res) => { this.handleError(res, 'Recupero informazioni partita fallito!'); }
+      );
+    }
   }
 
   //TODO commentare
@@ -416,6 +334,118 @@ export class QuizPage implements OnInit, OnDestroy {
     const decodedToken: any = jwt_decode(token);
     this.localPlayer = decodedToken.username;
     this.sendMatchData();
+  }
+
+  /**
+ * Ferma il timer della partita.
+ */
+  private stopTimer() {
+    clearInterval(this.timerPartita);
+  }
+
+  /**
+   * Controlla se l'utente ha indovinato tutte le carte oppure no.
+   * In caso positivo, viene mostrato un alert di fine partita e, successivamente,
+   * la classifica finale.
+   */
+  private checkEndMatch() {
+    // var button = [{ text: 'Vai alla classifica', handler: () => { this.showRanking(); } }];
+    var button = [{ text: 'Vedi classifica', handler: () => { } }];
+    // var button = [{ text: 'Esci', handler: () => { this.leaveMatch() } }];
+    if (this.answeredQuestions.length == this.questionsTotalNumber) {
+      this.sendMatchData();
+      this.terminaPartita();
+
+      this.alertCreator.createAlert("Complimenti!", "Hai completato il quiz in " + this.display, button, false);
+      this.amIDone = true;
+      this.someoneHasWon = true;
+      this.stopTimer();
+      this.timerFinale.enabled = false;
+    }
+  }
+
+  /**
+   * Mostra la classifica finale della partita.
+   * @returns presenta la modal
+   */
+  private async showRanking() {
+    this.saveRanking();
+    console.log('classifica', this.classifica);
+
+    const modal = await this.modalController.create({
+      component: ClassificaPage,
+      componentProps: {
+        classifica: this.classifica
+      },
+      cssClass: 'fullscreen'
+    });
+
+    modal.onDidDismiss().then(async () => {
+      this.stopTimers();
+      if (this.localPlayer == this.lobby.admin_lobby)
+        this.router.navigateByUrl('/lobby-admin', { replaceUrl: true });
+      else
+        this.router.navigateByUrl('/lobby-guest', { replaceUrl: true });
+    });
+
+    return await modal.present();
+  }
+
+  /**
+   * Inserisce all'interno di una lista tutti i giocatori con il relativo punteggio.
+   * * Se il giocatore non ha ancora completato il quiz avrà come punteggio "ancora in gioco".
+   * @returns la lista ordinata ottenuta richiamando il metodo 'sortRanking'
+   */
+  private saveRanking() {
+    this.classifica.splice(0, this.classifica.length);
+    var toSave;
+    this.info_partita.info.giocatori.forEach(p => {
+      if (p.username == this.localPlayer)
+        toSave = {
+          "username": this.localPlayer,
+          "answered": (this.questionsTotalNumber - this.questions.length),
+          "time": this.seconds, "score": this.score
+        };
+      else {
+        if (p.info_giocatore.answered == this.questionsTotalNumber)
+          toSave = { "username": p.username, "answered": p.info_giocatore.answered, "time": p.info_giocatore.time, "score": p.info_giocatore.score }
+        else
+          toSave = { "username": p.username, "answered": p.info_giocatore.answered, "time": p.info_giocatore.time, "score": "ancora in gioco" }
+      }
+      this.classifica.push(toSave);
+    });
+    this.sortRanking();
+    this.updateScore();
+  }
+
+  /**
+   * Ordina la classifica.
+   */
+  private sortRanking() {
+    this.classifica.sort(function (a, b) {
+      if (a.score == "ancora in gioco" || b.score == "ancora in gioco")
+        return a.time;
+      else {
+        if (a.score == b.score)
+          return a.time - b.time;
+        else
+          return b.score - a.score;
+      }
+    });
+  }
+
+  /**
+ * Quando il Timer finale arriva a 0 aggiorna il punteggio dei giocatori che non hanno indovinato tutte le carte,
+ * passando da *"ancora in gioco"* al tempo del 
+ * giocatore che ha vinto più il tempo del Timer finale.
+ */
+  private updateScore() {
+    var tempoVittoria = this.classifica[0].time;
+
+    this.classifica.forEach(giocatore => {
+      if (giocatore.time >= (tempoVittoria + this.timerFinale.getTimerTime()) - 1)
+        giocatore.punteggio = this.transform(giocatore.time);
+    });
   }
 
   // /**

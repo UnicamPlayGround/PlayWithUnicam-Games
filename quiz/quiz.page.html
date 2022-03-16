@@ -16,7 +16,7 @@
   <app-progress-bar-timer [timer]="timerDomanda" color="danger" reversed="true"></app-progress-bar-timer>
 </ion-header>
 
-<ion-content fullscreen>
+<ion-content fullscreen *ngIf="!amIDone">
   <!-- 
   <div *ngIf="questions" class="question-number">
     <p>Domanda</p>
@@ -125,3 +125,63 @@
   </div>
 
 </ion-content>
+
+<!-- CLASSIFICA FINALE -->
+<ion-content *ngIf="amIDone">
+  <div class="container-classifica" *ngIf="classifica">
+    <ion-card style="--background: #fff; padding-top:20px; padding-bottom:20px">
+      <ion-grid fixed>
+        <ion-row *ngIf="display">
+          <ion-col size="12">
+            <ion-item lines="none">
+              <p style="font-size: 16px;">Il tuo tempo: <strong>{{ display}}</strong></p>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-item lines="none">
+              <p style="font-size: 16px;">Ecco la classifica finale dei giocatori!</p>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngFor="let giocatore of classifica; let i = index">
+          <ion-col size-lg="10" size-md="10" size-sm="10" size="9.3">
+            <ion-item lines="full">
+              <ion-avatar slot="start">
+                <img src="../../../assets/icon/lobby-player.png" alt="Giocatore {{ giocatore.username }}">
+              </ion-avatar>
+
+              <ion-label text-wrap>{{ giocatore.username }}</ion-label>
+              <ion-badge color="secondary">{{ giocatore.score }}</ion-badge>
+            </ion-item>
+          </ion-col>
+
+          <ion-col size-lg="2" size-md="2" size-sm="2" size="2.7">
+            <ion-item lines="none">
+              <ion-avatar *ngIf="i==0">
+                <img src="../../../assets/icon/gold-medal.png">
+              </ion-avatar>
+              <ion-avatar *ngIf="i==1">
+                <img src="../../../assets/icon/silver-medal.png">
+              </ion-avatar>
+              <ion-avatar *ngIf="i==2">
+                <img src="../../../assets/icon/bronze-medal.png">
+              </ion-avatar>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+  </div>
+</ion-content>
+
+<ion-footer *ngIf="amIDone">
+  <ion-toolbar color="unicamred">
+    <ion-button fill="clear" expand="block" color="light" (click)="leaveMatch()">
+      Esci
+      <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

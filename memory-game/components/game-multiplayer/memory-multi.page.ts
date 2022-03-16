@@ -105,6 +105,38 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
   }
 
   /**
+ * Fa partire il timer del gioco.
+ */
+  startTimer() {
+    this.timerPartita = setInterval(() => {
+      this.seconds++;
+      this.display = this.transform(this.seconds);
+    }, 1000);
+  }
+
+  /**
+   * Trasforma il contatore dei secondi passati in input.
+   * Esso ritornerà infatti il tempo seguendo il formato:
+   * * *"minuti:secondi"* *
+   * @param value la stringa relativa al conteggio passato in input
+   * @returns la stringa del tempo in formato 'min:sec'
+   */
+  private transform(value) {
+    var minutes = Math.floor(value / 60);
+    var seconds = value - (minutes * 60);
+    var minString: string;
+    var secString: string;
+
+    if (minutes < 10) minString = "0" + minutes;
+    else minString = "" + minutes;
+
+    if (seconds < 10) secString = "0" + seconds;
+    else secString = "" + seconds;
+
+    return minString + ":" + secString;
+  }
+
+  /**
    * Inizializza i timer della pagina.
    */
   private initializeTimers() {
@@ -191,7 +223,7 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
           this.info_partita.info.giocatori.forEach(p => {
             if (p.info_giocatore.guessed_cards == (this.memoryGameLogic.memoryCards.length / 2)) {
               if (p.username != this.localPlayer.nickname) {
-                this.alertCreator.createAlert("PECCATO!", p.username + " ha vinto la partita", button, true);
+                this.alertCreator.createAlert("Peccato!", p.username + " ha vinto la partita", button, true);
                 this.someoneHasWon = true;
                 this.timerFinale.startTimer();
               }
@@ -281,38 +313,6 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
    */
   getCards() {
     return this.memoryGameLogic.getCards()
-  }
-
-  /**
-   * Fa partire il timer del gioco.
-   */
-  startTimer() {
-    this.timerPartita = setInterval(() => {
-      this.seconds++;
-      this.display = this.transform(this.seconds);
-    }, 1000);
-  }
-
-  /**
-   * Trasforma il contatore dei secondi passati in input.
-   * Esso ritornerà infatti il tempo seguendo il formato:
-   * * *"minuti:secondi"* *
-   * @param value la stringa relativa al conteggio passato in input
-   * @returns la stringa del tempo in formato 'min:sec'
-   */
-  private transform(value) {
-    var minutes = Math.floor(value / 60);
-    var seconds = value - (minutes * 60);
-    var minString: string;
-    var secString: string;
-
-    if (minutes < 10) minString = "0" + minutes;
-    else minString = "" + minutes;
-
-    if (seconds < 10) secString = "0" + seconds;
-    else secString = "" + seconds;
-
-    return minString + ":" + secString;
   }
 
   /**
@@ -467,7 +467,12 @@ export class MemoryMultiGamePage implements OnInit, OnDestroy, GameLogic {
     var toSave;
     this.info_partita.info.giocatori.forEach(p => {
       if (p.username == this.localPlayer.nickname)
-        toSave = { "username": this.localPlayer.nickname, "guessed_cards": this.localPlayer.guessedCards.length, "time": this.seconds, "punteggio": this.transform(this.seconds) }
+        toSave = {
+          "username": this.localPlayer.nickname,
+          "guessed_cards": this.localPlayer.guessedCards.length,
+          "time": this.seconds,
+          "punteggio": this.transform(this.seconds)
+        }
       else {
         if (p.info_giocatore.guessed_cards == (this.memoryGameLogic.memoryCards.length / 2))
           toSave = { "username": p.username, "guessed_cards": p.info_giocatore.guessed_cards, "time": p.info_giocatore.time, "punteggio": this.transform(p.info_giocatore.time) }
