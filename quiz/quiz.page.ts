@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef, Renderer2, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ElementRef, Renderer2, OnDestroy, Pipe, PipeTransform } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { DomController, ModalController } from '@ionic/angular';
 import { Timer } from 'src/app/components/timer-components/timer';
@@ -14,7 +14,17 @@ import { GameLogic } from '../game-logic';
 import { QuizQuestion } from './quiz-question';
 import { ClassificaPage } from 'src/app/modal-pages/classifica/classifica.page';
 import jwt_decode from 'jwt-decode';
+import { DomSanitizer } from '@angular/platform-browser';
 
+@Pipe({ name: 'safe' })
+export class SafePipe implements PipeTransform {
+
+  constructor(private sanitizer: DomSanitizer) { }
+
+  transform(url) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+}
 
 @Component({
   selector: 'app-quiz',

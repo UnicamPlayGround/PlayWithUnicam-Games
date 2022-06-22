@@ -6,7 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { QuizPageRoutingModule } from './quiz-routing.module';
 
-import { QuizPage } from './quiz.page';
+import { QuizPage, SafePipe } from './quiz.page';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 
 @NgModule({
@@ -17,6 +17,6 @@ import { SharedComponentsModule } from 'src/app/components/shared-components.mod
     QuizPageRoutingModule,
     SharedComponentsModule
   ],
-  declarations: [QuizPage]
+  declarations: [QuizPage, SafePipe]
 })
-export class QuizPageModule {}
+export class QuizPageModule { }
