@@ -1,0 +1,114 @@
+[ 
+
+{
+    "nome": "disegno-1",
+    "dim": 10,
+    "tavolozza":["rosso","verde","nero","bianco"],
+    "codice": ["bianco","bianco","bianco","bianco","bianco","bianco","bianco","bianco","bianco","bianco",
+        "verde","rosso","rosso","rosso","rosso","rosso","rosso","nero","rosso","verde",
+        "verde","rosso","rosso","rosso","nero","rosso","rosso","rosso","rosso","verde",
+        "verde","rosso","nero","rosso","rosso","rosso","rosso","rosso","rosso","verde",
+        "verde","rosso","rosso","rosso","rosso","nero","rosso","rosso","rosso","verde",
+        "verde","rosso","rosso","rosso","rosso","rosso","rosso","rosso","nero","verde",
+        "verde","rosso","rosso","nero","rosso","rosso","rosso","rosso","rosso","verde",
+        "bianco","verde","rosso","rosso","rosso","nero","rosso","rosso","verde","bianco", 
+        "bianco","bianco","verde","verde","rosso","rosso","verde","verde","bianco","bianco",
+        "bianco","bianco","bianco","verde","verde","verde","verde","bianco","bianco","bianco"]
+},
+{
+    "nome": "disegno-2",
+    "dim": 10,
+    "tavolozza":["rosso","nero","bianco"],
+    "codice":["bianco","bianco","bianco","bianco","bianco","bianco","bianco","bianco","bianco","bianco",
+    "bianco","bianco","rosso","rosso","bianco","rosso","rosso","bianco","bianco","bianco",
+    "bianco","rosso","rosso","rosso","rosso","rosso","rosso","rosso","bianco","bianco",
+    "rosso","rosso","rosso","nero","rosso","nero","rosso","rosso","rosso","bianco",
+    "rosso","rosso","rosso","rosso","rosso","rosso","rosso","rosso","rosso","bianco",
+    "rosso","rosso","nero","rosso","rosso","rosso","nero","rosso","rosso","bianco",
+    "bianco","rosso","rosso","nero","nero","nero","rosso","rosso","bianco","bianco",
+    "bianco","bianco","rosso","rosso","rosso","rosso","rosso","bianco","bianco","bianco",
+    "bianco","bianco","bianco","rosso","rosso","rosso","bianco","bianco","bianco","bianco",
+    "bianco","bianco","bianco","bianco","rosso","bianco","bianco","bianco","bianco","bianco"] 
+},
+{
+    "nome": "disegno-3",
+    "dim": 10,
+    "tavolozza":["arancione","giallo","verde","bianco"],
+    "codice":["bianco","giallo","giallo","giallo","bianco","bianco","bianco","bianco","bianco","bianco",
+    "bianco","giallo","verde","giallo","bianco","bianco","bianco","bianco","bianco","bianco",
+    "arancione","giallo","giallo","giallo","bianco","bianco","bianco","bianco","bianco","bianco",
+    "bianco","giallo","giallo","giallo","bianco","bianco","bianco","bianco","bianco","bianco",
+    "bianco","bianco","giallo","giallo","bianco","bianco","bianco","bianco","bianco","giallo",
+    "bianco","bianco","giallo","giallo","giallo","giallo","giallo","giallo","giallo","giallo",
+    "bianco","bianco","giallo","giallo","giallo","giallo","giallo","giallo","giallo","giallo",
+    "bianco","bianco","bianco","giallo","giallo","giallo","giallo","giallo","giallo","giallo",
+    "bianco","bianco","bianco","bianco","giallo","giallo","giallo","giallo","giallo","bianco",
+    "bianco","bianco","bianco","bianco","bianco","arancione","bianco","arancione","bianco","bianco"
+    ] 
+},
+{
+    "nome": "disegno-4",
+    "dim": 10,
+    "tavolozza":["giallo","marrone","nero","bianco"],
+    "codice":["bianco","bianco","nero","bianco","bianco","bianco","bianco","nero","bianco","bianco",
+    "bianco","bianco","bianco","nero","bianco","bianco","nero","bianco","bianco","bianco",
+    "bianco","bianco","bianco","bianco","nero","nero","bianco","bianco","bianco","bianco",
+    "bianco","bianco","giallo","giallo","marrone","marrone","giallo","giallo","bianco","bianco",
+    "bianco","nero","nero","nero","marrone","marrone","nero","nero","nero","bianco",
+    "giallo","giallo","giallo","giallo","marrone","marrone","giallo","giallo","giallo","giallo",
+    "nero","nero","nero","nero","marrone","marrone","nero","nero","nero","nero",
+    "giallo","giallo","giallo","giallo","marrone","marrone","giallo","giallo","giallo","giallo",
+    "bianco","nero","nero","nero","marrone","marrone","nero","nero","nero","bianco",
+    "bianco","bianco","giallo","giallo","marrone","marrone","giallo","giallo","bianco","bianco"
+    ] 
+},
+{
+    "nome": "disegno-5",
+    "dim": 10,
+    "tavolozza":["arancione","verde","nero","bianco"],
+    "codice":["bianco","bianco","bianco","bianco","verde","verde","bianco","bianco","bianco","bianco",
+    "bianco","bianco","bianco","bianco","bianco","verde","bianco","bianco","bianco","bianco",
+    "bianco","bianco","arancione","arancione","arancione","arancione","arancione","arancione","bianco","bianco",
+    "bianco","arancione","arancione","nero","arancione","arancione","nero","arancione","arancione","bianco",
+    "arancione","arancione","nero","nero","arancione","arancione","nero","nero","arancione","arancione",
+    "arancione","arancione", "arancione","arancione", "arancione","arancione", "arancione","arancione", "arancione","arancione",
+    "arancione","arancione", "arancione","arancione","nero","nero","arancione","arancione", "arancione","arancione",
+    "arancione","arancione","nero","arancione","arancione","arancione","arancione","nero","arancione","arancione",
+    "bianco","arancione","arancione","nero","nero","nero","nero","arancione","arancione","bianco",
+    "bianco","bianco","arancione","arancione","arancione","arancione","arancione","arancione","bianco","bianco"
+    ] 
+},
+{
+    "nome": "disegno-6",
+    "dim": 10,
+    "tavolozza":["azzurro","grigio","nero","bianco"],
+    "codice":["bianco","bianco","azzurro","bianco","bianco","bianco","bianco","azzurro","bianco","bianco",
+    "bianco","bianco","grigio","bianco","bianco","bianco","bianco","grigio","bianco","bianco",
+    "bianco","bianco","grigio","bianco","bianco","bianco","bianco","grigio","bianco","bianco",
+    "bianco","bianco","grigio","bianco","bianco","bianco","bianco","grigio","bianco","bianco",
+    "bianco","grigio","grigio","grigio","grigio","grigio","grigio","grigio","grigio","bianco",
+    "azzurro","grigio","nero","nero","grigio","grigio","nero","nero","grigio","azzurro",
+    "azzurro","grigio","nero","nero","grigio","grigio","nero","nero","grigio","azzurro",
+    "azzurro","grigio","grigio","grigio","grigio","grigio","grigio","grigio","grigio","azzurro",
+    "arancione","grigio","bianco","bianco","bianco","bianco","bianco","bianco","grigio","azzurro",
+    "bianco","grigio","grigio","grigio","grigio","grigio","grigio","grigio","grigio","bianco"
+    ] 
+},
+{
+    "nome": "disegno-7",
+    "dim": 10,
+    "tavolozza":["viola","verde","giallo","bianco"],
+    "codice":["bianco","bianco","bianco","bianco","bianco","bianco","bianco","bianco","bianco","bianco",
+    "bianco","bianco","bianco","bianco","viola","viola","viola","bianco","bianco","bianco",
+    "bianco","bianco","bianco","viola","viola","giallo","viola","viola","bianco","bianco",
+    "bianco","bianco","bianco","viola","giallo","giallo","giallo","viola","bianco","bianco",
+    "bianco","bianco","bianco","viola","viola","giallo","viola","viola","bianco","bianco",
+    "bianco","bianco","bianco","bianco","viola","viola","viola","bianco","bianco","bianco",
+    "bianco","bianco","bianco","bianco","bianco","verde", "bianco","bianco","bianco","bianco",
+    "bianco","bianco","bianco","bianco","bianco","verde", "bianco","bianco","bianco","bianco",
+    "bianco","bianco","bianco","verde","bianco","verde","bianco","verde","bianco","bianco",
+    "bianco","bianco","bianco","bianco","verde","verde","verde","bianco","bianco","bianco"
+    ] 
+}
+
+]

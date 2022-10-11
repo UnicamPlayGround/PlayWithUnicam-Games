@@ -1,0 +1,40 @@
+[ 
+
+{
+    "nome": "percorso-1",
+    "dim": 10,
+    "tema":["base"],
+    "partenza":["00"],
+    "arrivo":["99"],
+    "codice": ["free-box","free-box","free-box","bonus-box","free-box","free-box","free-box","bonus-box","free-box","free-box",
+    "free-box","free-box","danger-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box",
+    "free-box","free-box","free-box","danger-box","free-box","free-box","free-box","free-box","free-box","free-box",
+    "free-box","bonus-box","free-box","free-box","danger-box","free-box","free-box","free-box","bonus-box","free-box",
+    "free-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box",
+    "free-box","free-box","bonus-box","free-box","danger-box","free-box","free-box","free-box","free-box","free-box",
+    "free-box","free-box","free-box","free-box","free-box","danger-box","free-box","danger-box","free-box","free-box",
+    "free-box","free-box","danger-box","free-box","bonus-box","free-box","bonus-box","free-box","danger-box","free-box",
+    "free-box","free-box","bonus-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box",
+    "free-box","free-box","free-box","free-box","bonus-box","free-box","free-box","free-box","free-box","free-box"
+       ]
+},
+{
+    "nome": "percorso-2",
+    "dim": 10,
+    "tema":["base"],
+    "partenza":["00"],
+    "arrivo":["99"],
+    "codice":["free-box","bonus-box","danger-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box",
+    "free-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box",
+    "free-box","free-box","free-box","free-box","free-box","free-box","free-box","danger-box","free-box","free-box",
+    "free-box","free-box","free-box","free-box","free-box","free-box","bonus-box","free-box","free-box","free-box",
+    "free-box","free-box","danger-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box",
+    "free-box","free-box","bonus-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box",
+    "free-box","free-box","free-box","danger-box","free-box","free-box","free-box","free-box","free-box","free-box",
+    "free-box","free-box","free-box","free-box","free-box","free-box","free-box","danger-box","free-box","bonus-box",
+    "free-box","free-box","free-box","bonus-box","free-box","free-box","free-box","free-box","danger-box","free-box",
+    "free-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box","free-box"
+       ]
+} 
+
+]

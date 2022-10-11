@@ -1,0 +1,173 @@
+#container {
+  text-align: center;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#container strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#container p {
+  font-size: 16px;
+  line-height: 22px;
+
+  color: #8c8c8c;
+
+  margin: 0;
+}
+
+#container a {
+  text-decoration: none;
+}
+
+
+
+#header{
+  //height: 8vh;
+  display: inherit;}
+#pixel-content{
+  height: 95vh;
+  padding-left: 15%;
+  padding-right: 15%;
+  background-image: url("./assets/logo-percorsi.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+// #pulisciButton, app-scegli-percorso{float: left;}
+// PERCORSI GAME
+::ng-deep.drawing-area {
+  background-color: #fff;
+ 
+  text-align: center;
+}
+
+
+
+::ng-deep.color-select {
+  font-weight: bold;
+text-decoration: underline;
+text-decoration-thickness: 4px;
+text-decoration-color: #000;
+}
+
+
+
+
+
+::ng-deep.pixel {
+
+  border: 1px solid #000;
+  float: left;
+  background-color: rgb(5, 243, 29);
+  --background: transparent;
+  color: #000;
+
+}
+
+::ng-deep.tema {
+  height: 50px;
+  width: 40%;
+  color: #fff;
+  margin: 1px;
+  float: left;
+}
+
+
+
+::ng-deep.grid10 {
+  width: 10%;
+  height: 3.6vw !important;
+  margin: 0!important;
+}
+
+
+::ng-deep.bottoneDirez {
+  border: 1px solid rgb(0, 204, 255);
+  float: left;
+  background-color: rgb(0, 204, 255);
+  --background: transparent;
+  color: #000;
+  width: 50%;
+}
+
+::ng-deep.bottoneDirezElimina {
+  border: 1px solid rgb(255, 0, 0);
+  float: left;
+  background-color: rgb(255, 0, 0);
+  --background: transparent;
+  color: rgb(255, 255, 255);
+  width: 35%;
+  background-image: url("./assets/delete.png");
+  background-position:  right 40%  ;
+  background-repeat: no-repeat;
+  background-size: 17%;
+}
+
+.free-box {
+
+  background-image: url("./assets/grass.png"); 
+  background-size: cover;
+
+}
+
+.danger-box {
+
+  background-image: url("./assets/water.jpeg");  
+  background-size: cover;
+
+}
+
+.bonus-box {
+  
+
+  background-image: url("./assets/carrot.png");
+  background-size: cover;
+}
+
+.rabbit {
+  background-image: url("./assets/rabbit.png")!important;
+  background-size: cover;
+} 
+
+//indica dove il coniglio è passato (cioè rappresenta il percorso)
+.traverse {
+
+  background-image: url("./assets/traverse.jpg"); 
+  background-size: cover;
+
+}
+//indica la classe di arrivo, cioè il bottone 99 
+.finish {
+
+  background-image: url("./assets/finish.png"); 
+  background-size: cover;
+
+}
+
+#stampaArrivo{
+  color: green;
+  font-size: 20px;
+
+}
+
+#stampaErr {
+  color:red;
+  font-size: 20px ;
+  margin-top: 30px;
+}
+
+#stampaBonus {
+  color:rgb(255, 132, 0);
+  font-size: 20px ;
+  margin-top: 30px;
+}
+
+#pulisciPercorsoButton {
+margin-right: 10%;
+}

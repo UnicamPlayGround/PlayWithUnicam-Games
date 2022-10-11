@@ -1,0 +1,7 @@
+<ion-item>
+  <ion-label>Scegli disegno</ion-label>
+  <ion-select [(ngModel)]="dis" multiple="false" (ionChange)="scegliDisegno(dis)">
+    <ion-select-option *ngFor="let disegni of disegnis" value="{{disegni.nome}}">{{disegni.nome}}</ion-select-option>
+  </ion-select>
+<ion-button (click)="controllaDisegno(dis)" disabled="yes" expand="full" size="medium" id="controllaButton" >CONTROLLA DISEGNO</ion-button>
+</ion-item>

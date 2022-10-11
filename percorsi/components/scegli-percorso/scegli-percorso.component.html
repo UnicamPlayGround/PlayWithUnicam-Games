@@ -1,0 +1,20 @@
+<ion-item>
+  <ion-label>Scegli percorso</ion-label>
+  <ion-select [(ngModel)]="perc" multiple="false" (ionChange)="scegliPercorso(perc)">
+    <ion-select-option *ngFor="let percorsi of percorsis" value="{{percorsi.nome}}">{{percorsi.nome}}</ion-select-option>
+  </ion-select>
+<ion-button (click)="controllaPercorso(perc)" #newItem disabled="yes" expand="full" size="medium" id="controllaButton" >CONTROLLA PERCORSO</ion-button>
+
+<ion-button  (click)="pulisciPercorso()" id="pulisciPercorsoButton" expand="full" color="success" size="medium">PULISCI PERCORSO</ion-button>
+
+</ion-item>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,68 @@
+<ion-header id="header">
+  <ion-toolbar>
+
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col size="auto">
+          <img src="../../../assets/pixel-art.png" alt="" style="width: 100px;">
+        </ion-col>
+        <ion-col size="auto">
+          <!--Pulisce Disegno-->
+         
+
+        </ion-col>
+        <ion-col size="auto">
+          <!--SCEGLI DISEGNO-->
+          <app-scegli-disegno (newItemEvent)="getDim($event)">
+
+          </app-scegli-disegno>
+          <ion-button (click)="pulisciDisegno(n)" id="pulisciButton" expand="full" color="warning" size="medium">Pulisci disegno</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="2" style="text-transform: uppercase;">
+     <h2>LEGENDA COLORI</h2>
+        <p id="tavolozza"></p>
+        <p class="codice" id="codice1">1: </p>
+        <p class="codice" id="codice2">2: </p>
+        <p class="codice" id="codice3">3: </p>
+        <p class="codice" id="codice4">4: </p>
+        <p class="codice" id="codice5">5: </p>
+        <p class="codice" id="codice6">6: </p>
+        <p class="codice" id="codice7">7: </p>
+        <p class="codice" id="codice8">8: </p>
+        <p class="codice" id="codice9">9: </p>
+        <p class="codice" id="codice10">10: </p>
+      </ion-col>
+
+      <ion-col size="8" style="background-color: #fff; border: solid 1px rgb(219, 219, 219);">
+
+        <ion-col class="drawing-area">
+
+          <div id="pixel-content">
+
+            <ion-button *ngFor="let b of buttons; let i=index;" id="button{{i}}" (click)="cambio('button'+i)"
+              pixel-color="neutro" class="pixel grid10">
+              {{i}}
+            </ion-button>
+          </div>
+        </ion-col>
+
+      </ion-col>
+
+      <ion-col size="2" style="text-align: center;">
+        <app-color-picker>
+
+        </app-color-picker>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+

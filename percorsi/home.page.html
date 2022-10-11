@@ -1,0 +1,129 @@
+<ion-header id="header">
+  <ion-toolbar>
+
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col size="auto">
+          <img src="../../../assets/logo-percorsi.png" alt="" style="width: 100px;"> 
+        </ion-col>
+        
+        <ion-col size="auto">
+
+        </ion-col>
+        <ion-col size="auto">
+          <!--SCEGLI PERCORSO--> 
+          <app-scegli-percorso (newItemEvent)="getDim($event)" 
+         (newEventFinish)="addItem($event)"  (newEventError)="addError($event)" (newEventBonus)="addBonus($event)">
+
+          </app-scegli-percorso>
+          
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+
+
+
+
+
+
+  <ion-row >
+    <ion-col>
+      <div id="input-direzione">
+       
+    <ion-item id="item1">
+      <ion-input id="input1" value="1" type="number" min="1" ></ion-input>  
+   
+      <ion-button  class="bottoneDirez" id="b1" (click)="cambioDirezione('b1')" direzione="nessuna" > Direzione </ion-button> 
+     
+      <ion-button (click) = "eliminaInputDirez1()" class="bottoneDirezElimina">elimina  </ion-button>
+
+    </ion-item>
+  </div>
+      
+    <ion-button (click)="addInputButton()"> aggiungi</ion-button> 
+    </ion-col>
+
+    
+
+  
+
+      
+   
+    <ion-col size="8" style="background-color: #fff; border: solid 1px rgb(219, 219, 219);">
+
+      <ion-col class="drawing-area">
+
+        <div id="pixel-content">
+
+          <ion-button *ngFor="let b of buttons; let i=index;" id="button{{i}}" 
+            type-square="nessuna" class="pixel grid10"> 
+            {{i}}
+          </ion-button>
+        </div>
+      </ion-col>
+
+    </ion-col>
+
+    <ion-col size="2" style="text-align: center;">
+     <div id="direzione">
+      <h3>Direzione scelta: <h2> {{direz}} </h2> </h3>
+      <ion-grid>
+        <ion-row>
+          <ion-col center>               
+            <ion-button class = "direzione su" id="direzione-su" value= "su"(click)="impostaDirezione('su')" >su
+              <ion-icon name="arrow-up-outline"  size="large"></ion-icon> </ion-button><!--UP-->
+          </ion-col>
+          </ion-row>
+          <ion-row>
+          <ion-col>
+            <ion-button class = "direzione sinistra" id="direzione-sinistra" value= "sinistra"(click)="impostaDirezione('sinistra')" >sinistra
+            <ion-icon name="arrow-back-outline" size="large"></ion-icon> </ion-button><!--LEFT-->
+          </ion-col>
+          
+          <ion-col>
+           
+            <ion-button class = "direzione destra" id="direzione-destra" value= "destra"(click)="impostaDirezione('destra')" ><ion-icon name="arrow-forward-outline"  size="large"></ion-icon>  destra
+              </ion-button> <!--RIGHT-->
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button class = "direzione giu" id="direzione-giu" value= "giu"(click)="impostaDirezione('giu')" >giù
+            <ion-icon name="arrow-down-outline"  size="large"></ion-icon> </ion-button><!--DOWN-->
+          </ion-col>
+
+       
+          
+        </ion-row>
+
+ 
+       <div id="stampaArrivo">
+        <p id="istruzioni"></p>
+       <!--STAMPA RISULTATO, cioè se si è arrivati al bottone di arrivo-->
+       {{ris}}
+       </div>
+
+      <div id="stampaErr">
+        <!--STAMPA ERRORI, ad esempio se si esce dall griglia-->
+        {{err}}
+      </div>
+
+      <div id="stampaBonus">
+        <!--STAMPA quanti bonus sono stati presi lungo il percorso-->
+        {{bonus}}
+      </div>
+
+      </ion-grid> <!--chiusura griglia direzioni-->
+     </div>
+    </ion-col>
+         
+         
+        </ion-row>
+      
+
+
+
+
